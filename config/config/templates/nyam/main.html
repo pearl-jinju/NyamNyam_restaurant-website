@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+  <!-- 요기에 구글 머티리얼 아이콘 -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp|Material+Symbols+Outlined"
+    rel="stylesheet">
+
+  <title>세상의 모든 맛집! NyamNyam </title>
+</head>
+
+<style>
+.main_body {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+    background-color: #FAFAFA;
+}
+
+.left_body {
+    {#background-color: skyblue;#}
+    margin-right: 100px;
+    width: 500px;
+    height: 2000px;
+    display: flex;
+    flex-direction: column;
+}
+
+.right_body {
+    {#background-color: yellow;#}
+    padding-top: 20px;
+    width: 300px;
+    height: 1000px;
+    left: 72%;
+    position: fixed
+}
+
+.feed_box {
+    background-color: white;
+    width: 480px;
+    margin: 10px;
+    min-height: auto;
+    padding-bottom: 10px;
+}
+
+.feed_img{
+    width: 100%;
+    object-fit: contain;
+}
+
+.feed_content{
+    padding: 0px 10px;
+}
+
+.feed_like{
+    padding: 0px 10px;
+}
+
+.feed_reply{
+    padding: 0px 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.feed_txt{
+    font-size: 14px;
+}
+
+
+
+.feed_icon{
+    padding: 5px 5px 0px 5px;
+    display: flex;
+    justify-content: space-between;
+}span{
+     padding-right: 5px;
+}
+
+.feed_name{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.feed_name_txt{
+    font-size: 14px;
+    padding: 0px 10px;
+    font-weight: bold;
+}
+
+.profile_box {
+    width: 40px;
+    height: 40px;
+    border-radius: 70%;
+    overflow: hidden;
+}
+.profile_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.name_content{
+    display: flex;
+    flex-direction: column;
+}
+
+.name_content_txt{
+    font-size: 12px;
+    padding: 0px 10px;
+    font-weight: bold;
+    color: lightgray;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 190px;
+}
+
+.big_profile_box {
+    width: 60px;
+    height: 60px;
+    border-radius: 70%;
+    overflow: hidden;
+}
+
+.link_txt{
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.recommend_box {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.comment_box{
+    margin: 40px 0 0 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: lightgray;
+    display: flex;
+    flex-direction: column;
+}
+
+</style>
+
+<body>
+
+
+
+
+
+<!-- 상단 내비게이션 바 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 50px;position: fixed;" >
+  <div class="container">
+    <img style="height: 30px; object-fit: contain"
+         src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FK7tzs%2FbtrVZWnV7X6%2F2aQ3ncwIFzKkjH0559QyF0%2Fimg.png">
+    <input class="form-control" style="width: 200px" type="search" placeholder="Search" aria-label="Search">
+    <div>
+      <span class="material-icons">home</span>
+      <span class="material-icons">send</span>
+      <span class="material-icons-outlined">add_box</span>
+      <span class="material-icons-outlined">explore</span>
+      <span class="material-icons-outlined">favorite_border</span>
+    </div>
+  </div>
+</nav>
+
+<!-- 바디 영역 -->
+<div class="main_body">
+  <div class="left_body">
+    {% for feed in feeds %}
+    <div class="border feed_box">
+      <div class="feed_name">
+        <div class="profile_box">
+          <img class="profile_img" src="https://img.freepik.com/premium-vector/chef-icon-with-tray-of-food-in-hand_602006-191.jpg">
+        </div>
+        <span class="feed_name_txt"> {{feed.name}} </span>
+      </div>
+      <img class="feed_img" src={{feed.img_url}}>
+  
+      <div class="feed_icon">
+        <div>
+          <span class="material-icons-outlined">
+            favorite_border
+          </span>
+          <span class="material-symbols-outlined">
+            thumb_down
+            </span>
+  
+          <span class="material-icons-outlined">
+            mode_comment
+          </span>
+          <span class="material-icons-outlined">
+            send
+          </span>
+        </div>
+        <div>
+          <span class="material-icons-outlined">
+            turned_in_not
+          </span>
+        </div>
+      </div>
+      <div class="feed_like">
+        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}  평점 {{feed.rating}}</b></p>
+      </div>
+      <div class="feed_content">
+        <p class="feed_txt" id = "text"> <b> 주소 - </b> {{feed.road_address}} </p>      
+        <p class="feed_txt"> <b> 전화번호 -</b>  {{feed.phone_number}}</p>
+        <p class="feed_txt"> <b> {{feed.comment}}</b>  </p>
+  
+      </div>
+      <div class="feed_reply">
+        <span class="feed_txt"> <b> 댓글 아이디 </b> 댓글 </span>
+      </div>
+    {% endfor %}
+  
+ 
+  <div class="right_body">
+    <div class="feed_name" style="justify-content: space-between">
+      <div style="display: flex; align-items: center; ">
+        <div class="big_profile_box">
+          <img class="profile_img"
+               src="https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/s1080x2048/165180104_277246477102900_6106347261862438192_n.jpg?_nc_cat=102&ccb=1-5&_nc_sid=730e14&_nc_ohc=1sN4d8i7rn8AX-7aKYN&_nc_ht=scontent-ssn1-1.xx&oh=5049b7cd176848e330b0f5ea95f28172&oe=615A08D1">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> jin.99 </span>
+          <span class="name_content_txt"> Moon Kyujin</span>
+        </div>
+      </div>
+
+      <a class="link_txt" >
+        전환
+      </a>
+    </div>
+
+    <div class="recommend_box">
+      <span style="color: gray"> 회원님을 위한 추천</span>
+      <span style="font-size: 12px"> 모두 보기 </span>
+    </div>
+    <div>
+      <div class="feed_name" style="justify-content: space-between">
+        <div class="profile_box">
+          <img class="profile_img"
+               src="https://i.pinimg.com/736x/93/a6/8b/93a68b57a54e4bdc73d43d1d049b94b3.jpg">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> dation3388 </span>
+          <span class="name_content_txt"> Jinstargram 신규가입</span>
+        </div>
+        <a class="link_txt">
+          팔로우
+        </a>
+      </div>
+      <div class="feed_name" style="justify-content: space-between">
+        <div class="profile_box">
+          <img class="profile_img"
+               src="http://file3.instiz.net/data/cached_img/upload/2021/01/27/18/2ce2f41f7e9f09c0acc77faac7452dbf.jpg">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> gaoudi </span>
+          <span class="name_content_txt"> IU 외 5명이 팔로우</span>
+        </div>
+        <a class="link_txt">
+          팔로우
+        </a>
+      </div>
+      <div class="feed_name" style="justify-content: space-between">
+        <div class="profile_box">
+          <img class="profile_img"
+               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTiCVWdogd6Ocsm08kL8ph4sb1MN0AYEiSUQ&usqp=CAU">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> CAU </span>
+          <span class="name_content_txt"> IU 외 5명이 팔로우</span>
+        </div>
+        <a class="link_txt">
+          팔로우
+        </a>
+      </div>
+      <div class="feed_name" style="justify-content: space-between">
+        <div class="profile_box">
+          <img class="profile_img"
+               src="https://pbs.twimg.com/media/EhzH0_DU4AEZ9yr.jpg">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> 123456789 </span>
+          <span class="name_content_txt"> 그냥 추천해봄 </span>
+        </div>
+        <a class="link_txt">
+          팔로우
+        </a>
+      </div>
+      <div class="feed_name" style="justify-content: space-between">
+        <div class="profile_box">
+          <img class="profile_img"
+               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHPNYM5RQgA2F7BtpBQ-OrNFKDXVDUpypRuw&usqp=CAU">
+        </div>
+        <div class="name_content">
+          <span class="feed_name_txt"> instiz </span>
+          <span class="name_content_txt"> 애도 유명해 </span>
+        </div>
+        <a class="link_txt">
+          팔로우
+        </a>
+      </div>
+    </div>
+    <div class="comment_box">
+      <span> 인스타그램 클론 코딩 </span>
+      <span> https://cholol.tistory.com </span>
+      <br>
+      <span> @2021 Jin.99 </span>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+<!-- Option 2: Separate Popper and Bootstrap JS -->
+<!--
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+-->
+
+</body>
+</html>
