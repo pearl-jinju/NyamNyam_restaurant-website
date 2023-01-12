@@ -20,5 +20,5 @@ from content.views import Main
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('main/',Main.as_view())
+    path('main/', Main.as_view())
 ]
