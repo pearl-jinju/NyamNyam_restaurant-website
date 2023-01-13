@@ -4,6 +4,8 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=0.5">
+  <!--static load-->
+  {% load static %}   
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -239,8 +241,14 @@
         </div>
         <span class="feed_name_txt"> {{feed.name}} </span>
       </div>
+    <!-- 기존 이미지(https가 있는 이미지와 신규이미지에 별도 처리)-->
+    {% if "https" in feed.img_url %}
+        <img class="feed_img"  style="width:100%" src={{feed.img_url}}>
+    {% else %}
+        <!-- get_media_prefix로 media_dir 반영-->
+        <img class="feed_img"  style="width:100%" src="{% get_media_prefix %}{{feed.img_url}}">
+    {% endif %}
 
-      <img class="feed_img"  style="width:100%" src={{feed.img_url}}>
   
       <div class="feed_icon">
         <div>
@@ -274,18 +282,18 @@
           <!--버튼 디자인-->
           <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
           {% for vector in feed.vectors_1row.split %}
-          <button type="button" class="btn btn-primary feed_txt vector_{{vector}}" style=" text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; padding: 2px 23px 2px 23px; ">{{vector}}</button>
+          <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
           {% endfor %}
           </div>
         <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
           {% for vector in feed.vectors_2row.split %}
-          <button type="button" class="btn btn-primary feed_txt vector_{{vector}}" style=" text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 23px 2px 23px;">{{vector}}</button>
+          <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 15px;">{{vector}}</button>
           {% endfor %}
         </div>
           
   
       </div>
-      <div class="feed_reply">
+      <div class="feed_reply" style="margin-top: 12px;">
         <span class="feed_txt"> <b> 댓글 아이디 </b> 댓글 </span>
       </div>
     </div>
@@ -298,13 +306,13 @@
             <div class="big_profile_box">
                 <img
                     class="profile_img"
-                    src="https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/s1080x2048/165180104_277246477102900_6106347261862438192_n.jpg?_nc_cat=102&ccb=1-5&_nc_sid=730e14&_nc_ohc=1sN4d8i7rn8AX-7aKYN&_nc_ht=scontent-ssn1-1.xx&oh=5049b7cd176848e330b0f5ea95f28172&oe=615A08D1"></div>
+                    src="https://i.pinimg.com/736x/93/a6/8b/93a68b57a54e4bdc73d43d1d049b94b3.jpg"></div>
                 <div class="name_content">
-                    <span class="feed_name_txt">
-                        jin.99
+                    <span id="user_id" class="feed_name_txt">
+                        jeong_pearl
                     </span>
                     <span class="name_content_txt">
-                        Moon Kyujin</span>
+                        jinju-jeong</span>
                 </div>
             </div>
             <a class="link_txt">
@@ -429,12 +437,12 @@
               </div>
 
               <div>
-                  <span id="close_modal" class="material-icons-outlined">close</span>
+                  <span id="close_modal1" class="material-icons-outlined">close</span>
               </div>
 
           </div>
 
-          <div class="img_upload_sapce" style="opacity:75%; background-color:gray; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
+          <div class="img_upload_sapce" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
 
       </div>
   </div>
@@ -452,7 +460,7 @@
             </div>
 
             <div>
-                <span class="material-icons-outlined">close</span>
+                <span id="close_modal2" class="material-icons-outlined">close</span>
             </div>
 
         </div>
@@ -460,17 +468,20 @@
           <div class="img_upload_sapce" style=" width:415px; height:540px; "></div>
           <div style ="margin-left:20px;" >
             <div>
-              <p style="text-align:center; color:gray;  margin-bottom:10px;"><b> 냠냠에게 새로운 맛집을 알려주세요! </b></p>
+              <p style="text-align:center; color:gray;  margin-bottom:10px;">냠냠에게 새로운 맛집을 알려주세요!</p>
               <p style="text-align:center;"><b> 맛집명 </b></p>
-              <textarea class="form-control" style="position:center; width:385px; height:20px; margin-bottom:5px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-              <p style="text-align:center;"><b> 주소 </b></p>
-              <textarea class="form-control" style="position:center; width:385px; height:20px; margin-bottom:5px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-              <p style="text-align:center;"><b> 전화번호 </b></p>
-              <textarea class="form-control" style="position:center; width:385px; height:20px; margin-bottom:5px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-              <p style="text-align:center;"><b> 한줄평 </b></p>
-              <textarea class="form-control" style="position:center; width:385px; height:100px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+              <textarea id ="input_name" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+              
+              <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">정확한 주소를 입력해주세요</span> </p>
+              <textarea id ="input_address" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+              
+              <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 전화번호 </b> <br> <span style="color:gray; font-size:13px;">000-0000-0000 형식으로 작성해주세요.</span> </p>
+              <textarea id ="input_phone" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+              
+              <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
+              <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:125px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
 
-              <button type="button" class="btn btn-primary" style="width:385px;">공유하기</button>
+              <button id="feed_ceate_button" type="button" class="btn btn-primary" style="width:385px; margin-top:5px;">공유하기</button>
             </div>
           </div>
 
@@ -498,7 +509,7 @@
 
           </div>
 
-          <div class="img_upload_sapce" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
+          <div class="img_upload_sapce" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center; background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
 
       </div>
   </div>
@@ -540,6 +551,11 @@
 
 <!-- Optional JavaScript; choose one of the two! -->
 <script>
+// 전역변수 설정
+let files; // 파일명
+
+
+
 
 // + 버튼 modal 띄우기
 const modal = document.getElementById("first_modal");
@@ -551,12 +567,40 @@ buttonAddFeed.addEventListener("click", e => {
 });
 
 
-// x버튼 modal 닫기 코드
-const buttonCloseModal = document.getElementById("close_modal");
-buttonCloseModal.addEventListener("click", e => {
-    modal.style.display = "none";
+// x버튼 modal 닫기 코드 -1단계 닫기
+const buttonCloseModal1 = document.getElementById("close_modal1");
+const buttonCloseModal2 = document.getElementById("close_modal2");
+const modal1 = document.getElementById("first_modal");
+const modal2 = document.getElementById("second_modal");
+buttonCloseModal1.addEventListener("click", e => {
+    modal1.style.display = "none";
     document.body.style.overflowY = "visible";
+    $('.img_upload_sapce').css({
+        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
+        "opacity":"100%",
+        "outline": "none",
+        "background-size": "65%",
+        "background-repeat" : "no-repeat",
+        "background-position" : "center",
+        "background-color" : "white",
+    });
 });
+//-2단계 닫기
+buttonCloseModal2.addEventListener("click", e => {
+    modal2.style.display ="none";
+    document.body.style.overflowY = "visible";
+    $('.img_upload_sapce').css({
+        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
+        "opacity":"100%",
+        "outline": "none",
+        "background-size": "65%",
+        "background-repeat" : "no-repeat",
+        "background-position" : "center",
+        "background-color" : "white",
+    });
+});
+
+
 
 
 $('.img_upload_sapce')
@@ -570,16 +614,16 @@ function dragOver(e) {
     if (e.type == "dragover") {
         $(e.target).css({"background-color": "black", "outline-offset": "-20px"});
     } else {
-        $(e.target).css({"background-color": "gray", "outline-offset": "-10px"});
+        $(e.target).css({"background-color": "white", "outline-offset": "-10px"});
     }
-}
+};
 
 function uploadFiles(e){
     e.stopPropagation();
     e.preventDefault();
 
     e.dataTransfer = e.originalEvent.dataTransfer; //2
-    var files = e.target.files || e.dataTransfer.files;
+    files = e.target.files || e.dataTransfer.files;
     console.log("file_upload"+files[0].name)
 
     if (files.length > 1) {
@@ -591,25 +635,73 @@ function uploadFiles(e){
       <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
       $('#first_modal').css({
         display:'none'
-        
       })
       
       $('#second_modal').css({
-        display:'flex'
+        display:'flex',
+        // 현재위치에 띄우기
+        top:window.scrollY+'px',
       })
       $('.img_upload_sapce').css({
           "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
           "outline": "none",
           "background-size": "100%",
           "background-repeat" : "no-repeat",
-          "background-position" : "center"
+          "background-position" : "center",
+        
       });
     }else{
     alert('이미지파일이 아닙니다. 파일형식을 확인해주세요 아닙니다.');
     return;
     }
 
-}
+};
+
+// 공유하기 버튼 클릭시
+$('#feed_ceate_button').click(function () {
+    let image = files[0].name;
+    let file = files[0];
+    
+
+    // 입력된 값 가져오기
+    let name = $('#input_name').val();
+    let road_address = $('#input_address').val();
+    let phone_number = $('#input_phone').val();
+    let comment = $('#input_comment').val();
+    let user_id = $('#user_id').text(); // 유저 id
+    // form data 변환하기
+    let fd = new FormData();
+    fd.append('user_id', user_id);
+    fd.append('file', file);
+    fd.append('image', image);
+    fd.append('name', name);
+    fd.append('road_address', road_address);
+    fd.append('phone_number', phone_number);
+    fd.append('comment', comment);
+
+    $.ajax({
+        url: "/content/upload",
+        data: fd,
+        method: "POST",
+        processData: false,
+        contentType: false,
+        success: function (data) {
+           alert("성공적으로 업로드 되었습니다.");
+        },
+        error: function (request, status, error) {
+            alert("주소가 올바르지 않거나, 한줄평에 부적절한 내용이 있습니다. 또는 전화번호 양식을 확인해주세요");
+        },
+        complete: function () {
+            
+        }
+    })
+
+});
+
+
+
+
+
 </script>
 <!-- Option 1: Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
