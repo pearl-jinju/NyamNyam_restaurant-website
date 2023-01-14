@@ -206,6 +206,14 @@
   height: 548px;
 }
 
+
+.carousel-item{
+    max-height: 50vh;
+    height:100%;
+    width:100%;
+    object-fit: cover;
+  }
+
 </style>
 
 <body>
@@ -230,75 +238,185 @@
   </div>
 </nav>
 
+
+
+
+
+
 <!-- 바디 영역 -->
 <div class="main_body">
-  <div class="left_body">
-    {% for feed in feeds %}
-    <div class="border feed_box">
-      <div class="feed_name">
-        <div class="profile_box">
-          <img class="profile_img" src="https://img.freepik.com/premium-vector/chef-icon-with-tray-of-food-in-hand_602006-191.jpg">
-        </div>
-        <span class="feed_name_txt"> {{feed.name}} </span>
-      </div>
-    <!-- 기존 이미지(https가 있는 이미지와 신규이미지에 별도 처리)-->
-    {% if "https" in feed.img_url %}
-        <img class="feed_img"  style="width:100%" src={{feed.img_url}}>
-    {% else %}
-        <!-- get_media_prefix로 media_dir 반영-->
-        <img class="feed_img"  style="width:100%" src="{% get_media_prefix %}{{feed.img_url}}">
-    {% endif %}
+  <div class="left_body"> 
 
-  
-      <div class="feed_icon">
-        <div>
-          <span class="material-icons-outlined">
-            favorite_border
-          </span>
-          <span class="material-symbols-outlined">
-            thumb_down
-            </span>
-          <span class="material-icons-outlined">
-            mode_comment
-          </span>
-          <span class="material-icons-outlined">
-            send
-          </span>
-        </div>
-      <div>
-          <span class="material-icons-outlined">
-            turned_in_not
-          </span>
-        </div>
-      </div>
-
-      <div class="feed_like">
-        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}  평점 {{feed.rating}}</b></p>
-      </div>
-      <div class="feed_content">
-        <p class="feed_txt" id = "text"> <b> 주소 - </b> {{feed.road_address}} </p>      
-        <p class="feed_txt"> <b> 전화번호 -</b>  {{feed.phone_number}}</p>
+      
+    <div id="carouselExampleIndicators1" class="carousel slide" data-bs-ride="carousel">
         
-          <!--버튼 디자인-->
-          <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
-          {% for vector in feed.vectors_1row.split %}
-          <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
-          {% endfor %}
-          </div>
-        <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
-          {% for vector in feed.vectors_2row.split %}
-          <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 15px;">{{vector}}</button>
-          {% endfor %}
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators1" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators1" data-bs-slide-to="1" aria-label="Slide 5"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators1" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
-          
-  
-      </div>
-      <div class="feed_reply" style="margin-top: 12px;">
-        <span class="feed_txt"> <b> 댓글 아이디 </b> 댓글 </span>
-      </div>
+
+
+        <div class="carousel-inner">
+
+          <div class="carousel-item active">
+            <img src="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/471840_1491355616814858.jpg" class="d-block w-100 " alt="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/471840_1491355616814858.jpg">
+          </div>
+          <div class="carousel-item">
+            <img src="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/624098_1474804386692608.jpg" class="d-block w-100" alt="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/624098_1474804386692608.jpg">
+          </div>
+          <div class="carousel-item">
+            <img src="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/184434_1469272187616182.jpg" class="d-block w-100" alt="https://mp-seoul-image-production-s3.mangoplate.com/added_restaurants/184434_1469272187616182.jpg">
+          </div>
+
+        </div>
+
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators1" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators1" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+
     </div>
 
-  {% endfor %}
+
+    
+        {% for feed in feeds %}
+            <div class="border feed_box">
+            <div class="feed_name">
+                <div class="profile_box">
+                <img class="profile_img" src="https://img.freepik.com/premium-vector/chef-icon-with-tray-of-food-in-hand_602006-191.jpg">
+                </div>
+                <span  class="feed_name_txt"> {{feed.name}} </span>
+            </div>
+
+
+            <!--캐러셀 디자인-->
+            <div id="{{feed.name}}_carousel" class="carousel slide" data-bs-ride="carousel">
+
+                <!--캐러셀 인덱스버튼디자인-->
+                <div class="carousel-indicators">
+                    <!--이미지 개수만큼 인덱스 반복 생성--> 
+                    {% for img in  feed.img_url %}
+                        <!--1번째 이미지의 경우 active 추가할것--> 
+                        {% if forloop.first %}
+                            <button type='button' data-bs-target="#{{feed.name}}_carousel"  data-bs-slide-to = {{forloop.counter0}} class="active"  aria-current="true"  aria-label="slide {{forloop.counter0}}"></button>
+                        {% else %}
+                            <button type='button' data-bs-target="#{{feed.name}}_carousel"  data-bs-slide-to= {{forloop.counter0}}  aria-label="slide {{forloop.counter0}}"></button>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!--캐러셀 내부 이미지 디자인-->
+                <div class="carousel-inner">
+                    <!--이미지 개수만큼 인덱스 반복 생성--> 
+                    {% for img in  feed.img_url %}
+                        <!-- 기존 이미지(https가 있는 이미지와 신규이미지에 별도 처리)-->
+                        {% if "https" in img %}
+                            <!--1번째 이미지라면-->
+                            {% if forloop.first %}
+                                <div class="carousel-item active">
+                                <img src={{img}} class="d-block w-100 h-75" alt="Max-height: 5vh">  
+                                </div>
+                            <!--2번째 이미지라면-->
+                            {% else %}
+                                <div class="carousel-item">
+                                <img src={{img}} class="d-block w-100 h-75" alt="Max-height: 5vh">
+                                </div>
+                            {% endif %}
+                        
+                        <!-- 이미지 주소 prefix 추가-->
+                        {% else %}
+                            <!--1번째 이미지라면-->
+                            {% if forloop.first %}
+                                <div class="carousel-item active">
+                                <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-75" alt="Max-height: 5vh">  
+                                </div>
+                            <!--2번째 이미지라면-->
+                            {% else %}
+                                <div class="carousel-item">
+                                <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-75" alt="Max-height: 5vh">
+                                </div>
+                            {% endif%} 
+                        {% endif%}
+                    {% endfor %}
+                </div>
+            
+
+
+            
+                <button  class="carousel-control-prev" type="button" data-bs-target="#{{feed.name}}_carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+                </button>
+  
+                <button class="carousel-control-next" type="button" data-bs-target="#{{feed.name}}_carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            
+
+
+            <!-- 콘텐츠 내용-->
+                                
+            <div class="feed_icon">
+                <div>
+                <span class="material-icons-outlined">favorite_border</span>
+                <span class="material-symbols-outlined">thumb_down</span>
+                <span class="material-icons-outlined">mode_comment</span>
+                <span class="material-icons-outlined">send</span>
+                </div>
+
+                <div>
+                <span class="material-icons-outlined">turned_in_not</span>
+                </div>
+
+            </div>
+
+            <div class="feed_like">
+                <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}  평점 {{feed.rating}}</b></p>
+            </div>
+
+            <div class="feed_content">
+                <p class="feed_txt" id = "text"> <b> 주소 - </b> {{feed.road_address}} </p>      
+                <p class="feed_txt"> <b> 전화번호 -</b>  {{feed.phone_number}}</p>
+        
+                <!--버튼 디자인-->
+                <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+                    {% for vector in feed.vectors_1row.split %}
+                        <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
+                    {% endfor %}
+                </div>
+
+                <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+                    {% for vector in feed.vectors_2row.split %}
+                        <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 15px;">{{vector}}</button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="feed_reply" style="margin-top: 12px;">
+                <span class="feed_txt"> <b> 댓글 아이디 </b> 댓글 </span>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+  
+
+
+
 
   <div class="right_body">
     <div class="feed_name" style="justify-content: space-between">

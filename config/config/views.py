@@ -62,8 +62,8 @@ class Main(APIView):
         df =  pd.DataFrame(list(feed_list.values()))
         
         # img_url 추출
-        # TODO 랜덤한 이미지 보여주기? 또는 이미지 전체를 넘겨가며 보여주는 방식으로 구현할것
-        df['img_url'] =  df['img_url'].apply(lambda x: literal_eval(x)[0]) 
+        # TODO  이미지 전체를 넘겨가며 보여주는 방식으로 구현할것 --> 캐러셀로 구현 이미지 리스트를 넘겨줌
+        df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(x)).split(" ")) 
         # vector 전처리
         df['vectors_1row'] =  df['vectors'].apply(lambda x: " ".join(literal_eval(x)[:5])) 
         df['vectors_2row'] =  df['vectors'].apply(lambda x: " ".join(literal_eval(x)[5:10])) 
