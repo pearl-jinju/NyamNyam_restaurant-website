@@ -62,8 +62,11 @@ class Main(APIView):
         df =  pd.DataFrame(list(feed_list.values()))
         
         # img_url 추출
-        # TODO  이미지 전체를 넘겨가며 보여주는 방식으로 구현할것 --> 캐러셀로 구현 이미지 리스트를 넘겨줌
+        # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
         df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(x)).split(" ")) 
+        
+        # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
+        df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
         # vector 전처리
         df['vectors_1row'] =  df['vectors'].apply(lambda x: " ".join(literal_eval(x)[:5])) 
         df['vectors_2row'] =  df['vectors'].apply(lambda x: " ".join(literal_eval(x)[5:10])) 
