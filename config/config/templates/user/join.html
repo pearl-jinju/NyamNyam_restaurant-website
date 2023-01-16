@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <title>냠냠 회원가입</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <!-- Jquery-->
+    <script  src="http://code.jquery.com/jquery-latest.min.js"></script> 
+
+
+</head>
+  <body style="background-color: #F1F1F1;">
+    
+    <div style="display:flex; justify-content:center; width:100%; flex-direction:column; align-items:center;" >
+        <div style=' border: solid 1px rgba(219,219,219,1);   text-align:center;  background-color: white; width: 300px; height: 400px; margin-top:30px;'>
+            <div style=" padding: 10px;"> 
+                <img style="width: 250px;" 
+                src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FBbAfb%2FbtrV0HcjpkT%2FHVU0STUk5KrFfCaeMPu8xk%2Fimg.png"> 
+            </div>
+    
+            <div class="form-floating mb-2" style="padding:4px 10px 0px 10px; margin-top:5px;">
+                <input type="text" class="form-control" id="input_nickname" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" placeholder="name@example.com">
+                <label for="input_nickname" style="padding:8px 10px 0px 15px;">닉네임 입력</label>
+            </div>
+
+            <div class="form-floating mb-2" style="padding:4px 10px 0px 10px; margin-top:5px;">
+                <input type="email" class="form-control" id="input_email" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" placeholder="name@example.com">
+                <label for="input_email" style="padding:8px 10px 0px 15px;">이메일 주소 입력(로그인 ID)</label>
+            </div>
+
+            <div class="form-floating" style="padding:4px 10px 0px 10px; margin-top:5px;">
+                <input type="password" class="form-control" id="input_password" placeholder="Password" style="font-size:14px; height:40px; padding: 8px 15px 0px 15px;" >
+                <label for="input_password" style="padding: 8px 10px 0px 15px;">비밀번호</label>
+            </div>
+
+            <div class="form-floating" style="padding:4px 10px 0px 10px; margin-top:5px;">
+                <input type="password" class="form-control" id="input_password_check" placeholder="Password" style="font-size:14px; height:40px; padding: 8px 15px 0px 15px;" >
+                <label for="input_password_check" style="padding: 8px 10px 0px 15px;">비밀번호 확인</label>
+            </div>
+
+            <div class="form-floating" style="padding:4px 10px 0px 10px; margin-top:5px;">
+            <button id="join_button" type="button" style="width:100%; " class="btn btn-primary">가입하기</button>
+            </div>
+
+
+        </div >
+        
+        <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 80px; margin-top:15px; padding:20px; font-size:14px;'> 계정이 이미 있으신가요? <a href="login">로그인</a>  </div>
+    </div>
+
+    <script>
+    // 가입하기 버튼 클릭시
+    $('#join_button').click(function () {
+    
+        // 입력된 값 가져오기
+        let input_nickname = $('#input_nickname').val();
+        let input_email = $('#input_email').val();
+        let input_password = $('#input_password').val();
+        let input_password_check = $('#input_password_check').val();
+
+        $.ajax({
+            url: "/user/join",
+            data: {
+                nickname:input_nickname,
+                email:input_email,
+                password:input_password,
+                password_check:input_password_check,
+            },
+            method: "POST",
+            dataTyoe: "json",
+            success: function () {
+            alert("회원가입에 성공했습니다! 냠냠에 오신것을 환영합니다!");
+            },
+            error: function (request, status, error) {
+                alert("이미 사용중인 이메일이거나, 잘못된 이메일입니다. 또는 비밀번호가 일치하지 않습니다.");
+            },
+            complete: function () {
+                location.replace('login')
+            }
+        })
+
+
+    });
+        </script>
+    
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+  </body>
+</html>

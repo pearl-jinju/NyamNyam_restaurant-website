@@ -7,6 +7,7 @@
   <!--static load-->
   {% load static %}   
 
+
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
@@ -21,6 +22,11 @@
 </head>
 
 <style>
+
+.navbar{
+    z-index:9; 
+    }
+
 .main_body {
     display: flex;
     justify-content: center;
@@ -75,7 +81,7 @@
 
 
 .feed_txt{
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .feed_icon{
@@ -93,7 +99,14 @@
 }
 
 .feed_name_txt{
-    font-size: 28px;
+    font-size: 24px;
+    padding: 0px 10px;
+    font-weight: bold;
+    align: center;
+}
+
+.user_name_txt{
+    font-size: 15px;
     padding: 0px 10px;
     font-weight: bold;
     align: center;
@@ -216,6 +229,7 @@
     object-fit: cover;
     background-size: cover;
     background-size: contain;
+    background-color: #BAF0EF;
     
   }
 
@@ -228,8 +242,8 @@
   <div class="container">
     <img style="height: 30px; object-fit: contain"
          src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FK7tzs%2FbtrVZWnV7X6%2F2aQ3ncwIFzKkjH0559QyF0%2Fimg.png">
-    <input class="form-control" style="width: 200px" type="search" placeholder="Search" aria-label="Search">
-    <div>
+    <input class="form-control" style="width: 500px; margin-left:70px;" type="search" placeholder="맛집명 또는 태그 검색" aria-label="Search">
+    <div >
       <span class="material-icons">home</span>
       <span class="material-icons">send</span>
       <span id="nav_bar_add_box" class="material-icons-outlined">add_box</span>
@@ -340,12 +354,13 @@
             <p class="feed_txt" id = "text"> <b> 주소 : </b> {{feed.road_address}} </p>      
             <p class="feed_txt"> <b> 전화번호 : </b>  {{feed.phone_number}}</p>
     
-
-            <p class="feed_txt" style="margin: 0px 0px 2px 0px;"> <b> 주요 키워드 </b> </p>
+            <hr>
+            <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 주요 키워드 </b> </p>
+            
             <!--버튼 디자인-->
             <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
                 {% for vector in feed.vectors_1row.split %}
-                    <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; padding: 0px 15px 2px 15px; ">{{vector}}</button>
+                    <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; margin:0px 10px 0px 0px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
                 {% endfor %}
             </div>
 
@@ -364,7 +379,6 @@
     </div>
     {% endfor %}
 </div>
-{% comment %} 
 
 <div class="right_body">
 <div class="feed_name" style="justify-content: space-between">
@@ -374,7 +388,7 @@
                 class="profile_img"
                 src="https://i.pinimg.com/736x/93/a6/8b/93a68b57a54e4bdc73d43d1d049b94b3.jpg"></div>
             <div class="name_content">
-                <span id="user_id" class="feed_name_txt">
+                <span id="user_id" class="user_name_txt">
                     jeong_pearl
                 </span>
                 <span class="name_content_txt">
@@ -398,7 +412,7 @@
                     class="profile_img"
                     src="https://i.pinimg.com/736x/93/a6/8b/93a68b57a54e4bdc73d43d1d049b94b3.jpg"></div>
                 <div class="name_content">
-                    <span class="feed_name_txt">
+                    <span class="user_name_txt">
                         dation3388
                     </span>
                     <span class="name_content_txt">
@@ -414,7 +428,7 @@
                         class="profile_img"
                         src="http://file3.instiz.net/data/cached_img/upload/2021/01/27/18/2ce2f41f7e9f09c0acc77faac7452dbf.jpg"></div>
                     <div class="name_content">
-                        <span class="feed_name_txt">
+                        <span class="user_name_txt">
                             gaoudi
                         </span>
                         <span class="name_content_txt">
@@ -430,7 +444,7 @@
                             class="profile_img"
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTiCVWdogd6Ocsm08kL8ph4sb1MN0AYEiSUQ&usqp=CAU"></div>
                         <div class="name_content">
-                            <span class="feed_name_txt">
+                            <span class="user_name_txt">
                                 CAU
                             </span>
                             <span class="name_content_txt">
@@ -444,7 +458,7 @@
                         <div class="profile_box">
                             <img class="profile_img" src="https://pbs.twimg.com/media/EhzH0_DU4AEZ9yr.jpg"></div>
                             <div class="name_content">
-                                <span class="feed_name_txt">
+                                <span class="user_name_txt">
                                     123456789
                                 </span>
                                 <span class="name_content_txt">
@@ -461,7 +475,7 @@
                                     class="profile_img"
                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHPNYM5RQgA2F7BtpBQ-OrNFKDXVDUpypRuw&usqp=CAU"></div>
                                 <div class="name_content">
-                                    <span class="feed_name_txt">
+                                    <span class="user_name_txt">
                                         instiz
                                     </span>
                                     <span class="name_content_txt">
@@ -487,7 +501,7 @@
 
                             </div>
                         </div>
-                    </div> {% endcomment %}
+                    </div> 
 
 <!--1번째 modal-->
 <div id="first_modal" class="modal_overlay">
@@ -750,7 +764,7 @@ $('#feed_ceate_button').click(function () {
             alert("주소가 올바르지 않거나, 한줄평에 부적절한 내용이 있습니다. 또는 전화번호 양식을 확인해주세요");
         },
         complete: function () {
-            
+            location.replace('/main')
         }
     })
 });
