@@ -22,6 +22,7 @@
 </head>
 
 <style>
+
 .navbar{
     z-index:9; 
     }
@@ -30,7 +31,9 @@
     display: flex;
     justify-content: center;
     padding-top: 50px;
+    background-color: #FAFAFA;
 }
+
 .left_body {
     {#background-color: skyblue;#}
     margin-right: 0px;
@@ -38,8 +41,6 @@
     height: 2000px;
     display: flex;
     flex-direction: column;
-    position: relative;
-    z-index:1; 
 }
 
 .right_body {
@@ -48,10 +49,9 @@
     width: 300px;
     height: 1000px;
     left: 72%;
-    position: fixed;
-    z-index:0; 
-
+    position: fixed
 }
+
 .feed_box {
     background-color: white;
     width: 480px;
@@ -59,49 +59,59 @@
     min-height: auto;
     padding-bottom: 10px;
 }
+
 .feed_img{
     width: 100%;
     object-fit: contain;
 }
+
 .feed_content{
     padding: 0px 10px;
 }
+
 .feed_like{
     padding: 0px 10px;
 }
+
 .feed_reply{
     padding: 0px 10px;
     display: flex;
     flex-direction: column;
 }
+
+
 .feed_txt{
     font-size: 16px;
 }
+
 .feed_icon{
     padding: 5px 5px 0px 5px;
     display: flex;
     justify-content: space-between;
-}
-.span{
+}span{
      padding-right: 5px;
 }
+
 .feed_name{
     padding: 10px;
     display: flex;
     align-items: center;
 }
+
 .feed_name_txt{
     font-size: 24px;
     padding: 0px 10px;
     font-weight: bold;
     align: center;
 }
+
 .user_name_txt{
     font-size: 15px;
     padding: 0px 10px;
     font-weight: bold;
     align: center;
 }
+
 .profile_box {
     width: 40px;
     height: 40px;
@@ -113,10 +123,12 @@
     height: 100%;
     object-fit: cover;
 }
+
 .name_content{
     display: flex;
     flex-direction: column;
 }
+
 .name_content_txt{
     font-size: 12px;
     padding: 0px 10px;
@@ -126,19 +138,22 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 190px;
-}   
+}
+
 .big_profile_box {
     width: 60px;
     height: 60px;
     border-radius: 70%;
     overflow: hidden;
 }
+
 .link_txt{
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     text-decoration: none;
 }
+
 .recommend_box {
     display: flex;
     justify-content: space-between;
@@ -147,6 +162,7 @@
     font-weight: bold;
     align-items: center;
 }
+
 .comment_box{
     margin: 40px 0 0 5px;
     font-size: 12px;
@@ -170,6 +186,7 @@
   -webkit-backdrop-filter: blur(1.5px);
   z-index:999;
 }
+
 .modal_window {
   background: white;
   backdrop-filter: blur(13.5px);
@@ -182,6 +199,7 @@
   padding: 10px;
   z-index:999;
 }
+
 .modal_title{
   display: flex;
   flex-direction: row;
@@ -189,6 +207,7 @@
   font-weight: bold;
   font-size: 20px;
 }
+
 .modal_title_side{
   flex: 0 0 40px;
   text-align: center;
@@ -200,6 +219,8 @@
   width:780px;
   height: 548px;
 }
+
+
 .carousel-item{
     max-height: 100vh;
     height:100%;
@@ -212,20 +233,21 @@
     background-color: #BAF0EF;
     
   }
+
 </style>
 
 <body >
 
 <!-- 상단 내비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 50px; position: fixed;" >
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 50px;position: fixed;" >
   <div class="container-fluid">
-    <a  href="">
-    <img class="navbar_brand" style="height: 30px; object-fit: contain;"
+    <a href="main">
+    <img class="navbar_brand" style="height: 30px; object-fit: contain;" 
          src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FK7tzs%2FbtrVZWnV7X6%2F2aQ3ncwIFzKkjH0559QyF0%2Fimg.png">
     </a>
-    <input class="form-control" style="width: 35%;" type="search" placeholder="맛집명 또는 태그 검색" aria-label="Search">
+         <input class="form-control" style="width: 35%;" type="search" placeholder="맛집명 또는 태그 검색" aria-label="Search">
     <div style="display:flex;">
-      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;;" href="/main" > home</span></a>
+      <a href="main"> <span class="material-icons" style="padding:5px 20px 0px 0px;">home </span></a>
       <span id="nav_bar_add_box" class="material-icons-outlined" style="padding:5px 20px 0px 0px;">add_box</span>
 
 
@@ -244,9 +266,8 @@
                 </div>
         </a>
         
-      
         <ul class="dropdown-menu" style="left:-160px;" aria-labelledby="dropdownMenuLink">
-          <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
+          <li><a class="dropdown-item" href="#">프로필</a></li>
           <li><a class="dropdown-item" href="#">정보수정</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
@@ -262,145 +283,45 @@
 
 
 <!-- 바디 영역 -->
-<div class="main_body">
-  <div class="left_body" > 
-    <div id="append_body">
-
+<div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:60px;">
+    <!-- 프로필 사진 영역 -->
+    <div style="padding:20px 60px;">
+        <div class="profile_box" style=" width:250px; height:250px;">
+            <!--http 포함시 -->
+            {% if "https" in img %}
+            <img class="profile_img"
+            src="{{user.profile_img}}">
+            <!--미포함시 -->
+            {% else %}
+            <img class="profile_img"
+            src="{% get_media_prefix %}{{user.profile_img}}">
+            {% endif %}
+        </div>
     </div>
+    <div>
+        <div style="display:flex; flex-direction:row; margin-bottom:40px;  margin-top:65px;">
+            <div id="user_id" style="font-size:20px; margin-right:40px;">
+                {{user.nickname}}
+            </div>
+            <button id="button_profile_upload" type="button" class="label btn btn-primary" style="margin-right:40px;">
+                프로필 사진 변경
+            </button>
 
+            <input type="file" id="input_fileupload" onchange="profile_upload();" style="display:none;"/>
+
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            게시물 00 팔로워 00 팔로잉 00
+        </div>
+
+        <div>
+            {{user.grade}}
+        </div>
+    </div>
 </div>
 
-<div class="right_body">
-<div class="feed_name" style="justify-content: space-between">
-    <div style="display: flex; align-items: center; ">
-        <div class="big_profile_box">
-            
-                <!--http 포함시 -->
-                {% if "https" in img %}
-                <img class="profile_img"
-                src="{{user.profile_img}}">
-                <!--미포함시 -->
-                {% else %}
-                <img class="profile_img"
-                src="{% get_media_prefix %}{{user.profile_img}}">
-                {% endif %}
-            
-            </div>
-            <div class="name_content" style="text-align: center;">
-                <span id="user_id" class="user_name_txt">
-                    {{user.nickname}}
-                </span>
-                <span class="name_content_txt" style="text-align: center;">
-                    {{user.grade}}</span>
-            </div>
-        </div>
-        <a class="link_txt">
-            전환
-        </a>
-    </div>
 
-    <div class="recommend_box">
-        <span style="color: gray">회원님을 위한 추천</span>
-        <span style="font-size: 12px">모두 보기</span>
-    </div>
-
-    <div>
-        <div class="feed_name" style="justify-content: space-between">
-            <div class="profile_box">
-                <img
-                    class="profile_img"
-                    src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                <div class="name_content">
-                    <span class="user_name_txt">
-                        추천식당
-                    </span>
-                    <span class="name_content_txt">
-                        주요 태그</span>
-                </div>
-                <a class="link_txt">
-                    이동
-                </a>
-            </div>
-            <div class="feed_name" style="justify-content: space-between">
-                <div class="profile_box">
-                    <img
-                        class="profile_img"
-                        src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                    <div class="name_content">
-                        <span class="user_name_txt">
-                            추천식당
-                        </span>
-                        <span class="name_content_txt">
-                            주요 태그</span>
-                    </div>
-                    <a class="link_txt">
-                        이동
-                    </a>
-                </div>
-                <div class="feed_name" style="justify-content: space-between">
-                    <div class="profile_box">
-                        <img
-                            class="profile_img"
-                            src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                        <div class="name_content">
-                            <span class="user_name_txt">
-                                추천식당
-                            </span>
-                            <span class="name_content_txt">
-                                주요 태그</span>
-                        </div>
-                        <a class="link_txt">
-                            이동
-                        </a>
-                    </div>
-                    <div class="feed_name" style="justify-content: space-between">
-                        <div class="profile_box">
-                            <img class="profile_img" src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                            <div class="name_content">
-                                <span class="user_name_txt">
-                                    추천식당
-                                </span>
-                                <span class="name_content_txt">
-                                    주요 태그
-                                </span>
-                            </div>
-                            <a class="link_txt">
-                                이동
-                            </a>
-                        </div>
-                        <div class="feed_name" style="justify-content: space-between">
-                            <div class="profile_box">
-                                <img
-                                    class="profile_img"
-                                    src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                                <div class="name_content">
-                                    <span class="user_name_txt">
-                                        추천식당
-                                    </span>
-                                    <span class="name_content_txt">
-                                        주요 태그
-                                    </span>
-                                </div>
-                                <a class="link_txt">
-                                    이동
-                                </a>
-                            </div>
-                        </div>
-                        <div class="comment_box">
-                            <span>
-                                세상의 모든 맛집! 냠냠
-                            </span>
-                            <span>
-                                y2kwlswn@naver.com
-                            </span>
-                            <br>
-                                <span>
-                                    @2023 jinju
-                                </span>
-
-                            </div>
-                        </div>
-                    </div> 
 
 <!--1번째 modal-->
 <div id="first_modal" class="modal_overlay">
@@ -434,8 +355,6 @@
         
         </div>
 </div>
-
-
 <!--2번째 modal-->
 <div id="second_modal" class="modal_overlay">
 <div class="modal_window">
@@ -536,55 +455,6 @@
 
     </div>
 </div>
-<!-- feed를 가져오기 위한 위치함수 선언-->
-<script>
-    function getLocation() {
-        if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showFeeds);
-        } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-    }
-    
-    function showFeeds(position) {
-        console.log(position.coords.latitude); 
-        console.log(position.coords.longitude);
-
-        let latitude =  position.coords.latitude;
-        let longitude =  position.coords.longitude;
-        let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude
-        console.log(url)
-
-        $.ajax({
-            url: url,
-            data: {},
-            method: "GET",
-            success: function (response) {
-                let temp_html = response
-
-                 console.log("실행됨")
-            $('#append_body').append(temp_html);
-
-            },
-            error: function (request, status, error) {
-                alert("error");
-            },
-            complete: function () {
-                
-            }
-        });
-
-            }
-    
-</script>
-
-
-<script>
-    
-    getLocation()
-
-</script>
-
 
 
 
@@ -687,6 +557,7 @@ function uploadFiles(e){
 
 };
 
+
 //파일 업로드 버튼
 $('#button_upload').click(function (){
     $('#input_feed_fileupload').click();
@@ -695,6 +566,7 @@ $('#button_upload').click(function (){
 function upload(){
 
     files = $('#input_feed_fileupload')[0].files;
+    console.log()
 
     if (files[0].type.match(/image.*/)) {
         <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
@@ -721,11 +593,11 @@ function upload(){
     }
 };
 
-
 // 공유하기 버튼 클릭시
 $('#feed_ceate_button').click(function () {
     let image = files[0].name;
-    file = files[0];
+    let file = files[0];
+    
 
     // 입력된 값 가져오기
     let name = $('#input_name').val();
@@ -750,22 +622,51 @@ $('#feed_ceate_button').click(function () {
         processData: false,
         contentType: false,
         success: function (data) {
-           location.replace('')
+           location.replace('/content/profile')
            alert("성공적으로 업로드 되었습니다.");
         },
         error: function (request, status, error) {
             alert("주소가 올바르지 않거나, 한줄평에 부적절한 내용이 있습니다. 또는 전화번호 양식을 확인해주세요");
         },
         complete: function () {
-            location.replace('')
+            location.replace('/content/profile')
         }
     })
 });
 
 
+$('#button_profile_upload').click(function (){
+    $('#input_fileupload').click();
+});
 
+    function profile_upload(){
+        let file = $('#input_fileupload')[0].files[0];
+        let email = "{{user.email}}";
+        
+        // form data 변환하기
+        let fd = new FormData();
+        fd.append('file', file);
+        fd.append('email', email);
 
-    
+        $.ajax({
+            url: "/content/profile/upload",
+            data: fd,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: function (data) {
+            alert("프로필 이미지가 성공적으로 변경되었습니다.");
+            },
+            error: function (request, status, error) {
+                alert("업로드 오류입니다.");
+            },
+            complete: function () {
+                location.replace('/content/profile')
+            }
+        })    
+
+    };
+
 
 
 </script>

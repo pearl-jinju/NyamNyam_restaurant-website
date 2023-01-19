@@ -1,0 +1,125 @@
+<!--static load-->
+{% load static %}  
+
+<!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
+<!--feed data 출력시작-->
+{% for feed in mainfeeds %}
+    <div class="border feed_box" data-wow-delay="3s">
+    <div class="feed_name">
+        <div class="profile_box">
+        <img class="profile_img" src="{% get_media_prefix %}img_default.jpg">
+        </div>
+        <span  class="feed_name_txt"> {{feed.name}} </span>
+    </div>
+
+
+    <!--캐러셀 디자인-->
+    <div id="{{feed.name}}_carousel" class="carousel slide" data-bs-ride="carousel">
+
+        <!--캐러셀 인덱스버튼디자인-->
+        <div class="carousel-indicators">
+            <!--이미지 개수만큼 인덱스 반복 생성--> 
+            {% for img in  feed.img_url %}
+                <!--1번째 이미지의 경우 active 추가할것--> 
+                {% if forloop.first %}
+                    <button type='button' data-bs-target="#{{feed.name}}_carousel"  data-bs-slide-to = {{forloop.counter0}} class="active"  aria-current="true"  aria-label="slide {{forloop.counter0}}"></button>
+                {% else %}
+                    <button type='button' data-bs-target="#{{feed.name}}_carousel"  data-bs-slide-to= {{forloop.counter0}}  aria-label="slide {{forloop.counter0}}"></button>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!--캐러셀 내부 이미지 디자인-->
+        <div class="carousel-inner">
+            <!--이미지 개수만큼 인덱스 반복 생성--> 
+            {% for img in  feed.img_url %}
+                <!-- 기존 이미지(https가 있는 이미지와 신규이미지에 별도 처리)-->
+                {% if "https" in img %}
+                    <!--1번째 이미지라면-->
+                    {% if forloop.first %}
+                        <div class="carousel-item active" data-bs-interval="100000">
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 6vh">  
+                        </div>
+                    <!--2번째 이미지라면-->
+                    {% else %}
+                        <div class="carousel-item" data-bs-interval="100000">
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 6vh">
+                        </div>
+                    {% endif %}
+                
+                <!-- 이미지 주소 prefix 추가-->
+                {% else %}
+                    <!--1번째 이미지라면-->
+                    {% if forloop.first %}
+                        <div class="carousel-item active" data-bs-interval="100000">
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 6vh">  
+                        </div>
+                    <!--2번째 이미지라면-->
+                    {% else %}
+                        <div class="carousel-item" data-bs-interval="100000">
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 6vh">
+                        </div>
+                    {% endif%} 
+                {% endif%}
+            {% endfor %}
+        </div>
+    
+
+        <button  class="carousel-control-prev" type="button" data-bs-target="#{{feed.name}}_carousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+        </button>
+
+        <button class="carousel-control-next" type="button" data-bs-target="#{{feed.name}}_carousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- 콘텐츠 내용-->                        
+    <div class="feed_icon">
+        <div>
+        <span class="material-icons-outlined">favorite_border</span>
+        <span class="material-symbols-outlined">thumb_down</span>
+        <span class="material-icons-outlined">mode_comment</span>
+        <span class="material-icons-outlined">send</span>
+        </div>
+
+        <div>
+        <span class="material-icons-outlined">turned_in_not</span>
+        </div>
+
+    </div>
+
+    <div class="feed_like">
+        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}  평점 {{feed.rating}}  {{feed.distance}}KM</b></p>
+    </div>
+
+    <div class="feed_content">
+        <p class="feed_txt" id = "text"> <b> 주소 : </b> {{feed.road_address}} </p>      
+        <p class="feed_txt"> <b> 전화번호 : </b>  {{feed.phone_number}}</p>
+
+        <hr>
+        <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 주요 키워드 </b> </p>
+        
+        <!--버튼 디자인-->
+        <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+            {% for vector in feed.vectors_1row %}
+                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; margin:0px 10px 0px 0px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
+            {% endfor %}
+        </div>
+
+        <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+            {% for vector in feed.vectors_2row %}
+                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 15px;">{{vector}}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- #TODO 댓글창 비활성화  -> 댓글창 운용계획 확정후 활성화 
+    <div class="feed_reply" style="margin-top: 12px;">
+        <span class="feed_txt"> <b> 댓글 아이디 </b> 댓글 </span>
+    </div>
+    -->
+</div>
+{% endfor %}

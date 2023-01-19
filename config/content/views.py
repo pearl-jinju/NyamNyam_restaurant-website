@@ -3,12 +3,15 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from content.models import Feed, UserData
+from user.models import User
 from uuid import uuid4
 import pandas as pd
 import random
 from ast import literal_eval
 import os
 from config.settings import MEDIA_ROOT
+import string
+
 
 
 import re
@@ -44,10 +47,15 @@ def toVector(phrase, minmum_frequency=2, length_conditions=1):
     noun_list = han.nouns(new_phrase)
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
+
+    # 빈도순 정렬
     main_noun_list_count = noun_list_count.most_common(200)
     # 길이가 2자 이상인 명사, 빈도수가 3회 이상인 단어만
     main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>length_conditions) and (n[1]>=minmum_frequency)][:50]
-    return main_noun_list_count
+    
+    # # 명사 빈도수 딕셔너리 
+    noun_dict_count = dict(noun_list_count)
+    return [main_noun_list_count,noun_dict_count]
 
     
 class UploadFeed(APIView):
@@ -88,8 +96,12 @@ class UploadFeed(APIView):
         if len((phone_number).split("-"))<3:
             return Response(status=400)
         # 4. 주소 유효성 테스트
+        
+        
+        # 5. name 내 특수문자 제거
+        name = name.translate(str.maketrans('', '', string.punctuation))
  
-        # [동일 데이터 유무확인] 값이 있다면 기존값을 가져올것 맛집명과 전화번호가 같은경우로 인식
+        # [동일 데이터 유무확인] 값이 있다면 기존값을 가져올것 맛집명과 주소가 같은경우로 인식
         db_test =  Feed.objects.filter(name=name, phone_number=phone_number)
         
         # 기존에 파일이 있는 경우
@@ -98,17 +110,17 @@ class UploadFeed(APIView):
 
             # 해당 DB data를 가져온다.
             db_data = Feed.objects.get(name=name, phone_number=phone_number)
-            # 이미지 리스트를 가져와 신규 이미지를 추가한다. (literal_eval().append 오류)
-            img_list = " ".join(literal_eval(db_data.img_url))
-            img_list +=f" {image}"
-            img_list = img_list.split(" ")
-            db_data.img_url = img_list
-            # comment를 추가한다.
-            db_data.comment = db_data.comment +" " + comment
-            # 새롭게 추가된 comment의 vector를 구한다.
-            db_data.vectors = toVector(db_data.comment)
-            # 수정된 값을 저장한다.
-            db_data.save()
+            # # 이미지 리스트를 가져와 신규 이미지를 추가한다. (literal_eval().append 오류)
+            # img_list = " ".join(literal_eval(db_data.img_url))
+            # img_list +=f" {image}"
+            # img_list = img_list.split(" ")
+            # db_data.img_url = img_list
+            # # comment를 추가한다.
+            # db_data.comment = db_data.comment +" " + comment
+            # # 새롭게 추가된 comment의 vector를 구한다.
+            # db_data.vectors = toVector(db_data.comment)
+            # # 수정된 값을 저장한다.
+            # db_data.save()
             
             # 기존 DB에서 유저 DB입력정보 가져오기
             # 맛집의 id를 가져온다
@@ -153,8 +165,16 @@ class UploadFeed(APIView):
             restaurant_type = "-"
             #comment 초기화
             new_comment = comment
+            
+            
             #vector 추출
-            new_vectors = toVector(comment)
+            vector_result = toVector(comment)
+            #vector_list 추출
+            new_vectors = vector_result[0]
+            #vector_dict 추출
+            new_vectors_dict = vector_result[1]
+            
+            # user tag act log 가져오기
             
             #like/hate 초기화
             like = 0
@@ -172,8 +192,10 @@ class UploadFeed(APIView):
                 comment=new_comment,
                 restaurant_type=restaurant_type,
                 vectors=new_vectors,
+                vectors_dict = new_vectors_dict,
                 like=like,
-                hate=hate
+                hate=hate,
+                # vectors_dict=
                 )
             # 유저 DB에 입력하기
             UserData.objects.create(
@@ -188,3 +210,50 @@ class UploadFeed(APIView):
                 )
         
             return Response(status=200)
+        
+class Profile(APIView):
+    def get(self, request):
+        # 세션 정보 받아오기
+        #  로그인 관련 정보 출력
+        email = request.session.get('email', None)
+        
+        # 세션정보가 없는경우
+        if email is None:
+             return render(request,"user/login.html") #context html로 넘길것
+        
+        # # 세션 정보가 입력된 경우 데이터 가져오기       
+        user = User.objects.filter(email=email).first()
+        
+        # # 회원 정보가 다르다면?
+        if user is None:
+            return render(request,"user/login.html") #context html로 넘길것 
+        
+        return render(request, "content/profile.html", context=dict(user=user))
+    
+
+
+
+
+class UploadProfile(APIView):
+    def post(self, request):
+        
+        # html ajax을 통해 python으로 Data를 받음
+        # 파일을 불러오는 코드
+        file = request.FILES['file']
+        uuid_name =uuid4().hex
+        save_path = os.path.join(MEDIA_ROOT, uuid_name)
+        
+        # 파일을 저장하는 코드
+        with open(save_path,"wb+") as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        profile_img = uuid_name
+        email = request.data.get('email')
+        
+        user = User.objects.filter(email=email).first()
+        
+        user.profile_img = profile_img
+        
+        user.save()
+        
+        return Response(status=200)

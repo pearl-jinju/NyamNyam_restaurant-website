@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.7">
-    <title>냠냠 가입하기</title>
-    
+    <title>냠냠 로그인</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
@@ -22,18 +22,18 @@
             </div>
 
             <div class="form-floating mb-2" style="padding:4px 10px 0px 10px;">
-                <input type="email" class="form-control" id="floatingInput" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" placeholder="name@example.com">
-                <label for="floatingInput" style="padding:8px 10px 0px 15px;">이메일 주소 입력(로그인 ID)</label>
+                <input type="email" class="form-control" id="input_email" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" placeholder="name@example.com">
+                <label for="input_email" style="padding:8px 10px 0px 15px;">이메일 주소 입력(로그인 ID)</label>
             </div>
 
             <div class="form-floating" style="padding:4px 10px 0px 10px;">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" >
-                <label for="floatingPassword" style="padding: 8px 10px 0px 15px;">비밀번호</label>
+                <input type="password" class="form-control" id="input_password" placeholder="Password" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" >
+                <label for="input_password" style="padding: 8px 10px 0px 15px;">비밀번호</label>
             </div>
 
 
             <div class="form-floating" style="padding:4px 10px 0px 10px;">
-            <button type="button" style="width:100%; " class="btn btn-primary">로그인</button>
+            <button id="login_button" type="button" style="width:100%; " class="btn btn-primary">로그인</button>
             </div>
 
 
@@ -42,7 +42,36 @@
         <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 80px; margin-top:15px; padding:20px; font-size:14px;'> 계정이 없으신가요? <a href="join">회원가입</a>  </div>
     </div>
 
-   
+    <script>
+      // 로그인 버튼 클릭시
+      $('#login_button').click(function () {
+      
+          // 입력된 값 가져오기
+          let input_email = $('#input_email').val();
+          let input_password = $('#input_password').val();
+  
+          $.ajax({
+              url: "/user/login",
+              data: {
+                  email:input_email,
+                  password:input_password,
+              },
+              method: "POST",
+              dataTyoe: "json",
+              success: function () {
+              location.replace('/main')
+              },
+              error: function (request, status, error) {
+                  alert(error);
+              },
+              complete: function () {
+                  
+              }
+          })
+  
+  
+      });
+          </script>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   </body>

@@ -34,7 +34,7 @@
 
             <div class="form-floating" style="padding:4px 10px 0px 10px; margin-top:5px;">
                 <input type="password" class="form-control" id="input_password" placeholder="Password" style="font-size:14px; height:40px; padding: 8px 15px 0px 15px;" >
-                <label for="input_password" style="padding: 8px 10px 0px 15px;">비밀번호</label>
+                <label for="input_password" style="padding: 8px 10px 0px 15px;">비밀번호(8자 이상)</label>
             </div>
 
             <div class="form-floating" style="padding:4px 10px 0px 10px; margin-top:5px;">
@@ -74,12 +74,13 @@
             dataTyoe: "json",
             success: function () {
             alert("회원가입에 성공했습니다! 냠냠에 오신것을 환영합니다!");
+            location.replace('login')
             },
             error: function (request, status, error) {
-                alert("이미 사용중인 이메일이거나, 잘못된 이메일입니다. 또는 비밀번호가 일치하지 않습니다.");
+                alert(error);
             },
             complete: function () {
-                location.replace('login')
+                
             }
         })
 

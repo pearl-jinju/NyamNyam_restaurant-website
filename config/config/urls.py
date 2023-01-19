@@ -16,13 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from .views import Main
+from .views import Main, MainFeed
 from .settings import MEDIA_URL, MEDIA_ROOT
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', Main.as_view()),
+    path('mainfeed/', MainFeed.as_view()),
     # path('content/upload', UploadFeed.as_view())
     path('content/', include('content.urls')),  # api 경로 정의 , 실행할 앱 선택
     path('user/', include('user.urls'))  
