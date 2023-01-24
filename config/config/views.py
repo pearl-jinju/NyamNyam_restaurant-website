@@ -167,7 +167,6 @@ class Main(APIView):
         return render(request,"nyam\main.html", context=dict(feeds=df, user=user)) #context html로 넘길것
 
     def post(self, request):
-        print("POST")
         return render(request,"nyam\main.html")
     
     
@@ -186,12 +185,14 @@ class MainFeed(APIView):
             curr_latitude = float(curr_location['latitude'])
             curr_longitude = float(curr_location['longitude'])
             result = curr_location['result']
+            
         # 만약 위치값이 입력되지 않았다면
         else:
             curr_latitude = float(latitude)
             curr_longitude = float(longitude)
             result = "sucess"
         print(result)
+        print(latitude,longitude)
         
         # DB 내 queryset 호출 
         # 원본 데이터
@@ -222,12 +223,10 @@ class MainFeed(APIView):
             # tag cond
             df = df[df['vectors'].str.contains(tag)]
         # =============================.
-        print(tag)
-        print(df)
 
         
         # 100개 이내로 추출
-        df = df.iloc[:100,:]
+        df = df.iloc[:50,:]
 
         
         # 출력된 맛집 id만 출력
@@ -302,6 +301,11 @@ class MainFeed(APIView):
             
             
             
+            # 현재 위치 저장
+            df['curr_place'] = str(latitude) +"," + str(longitude)
+            
+            
+            
             
             
             
@@ -339,6 +343,7 @@ class MainFeed(APIView):
         # # 회원 정보가 다르다면?
         if user is None:
             return render(request,"user/login.html") #context html로 넘길것 
+        
         
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
         return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
