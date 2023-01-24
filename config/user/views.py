@@ -38,7 +38,7 @@ class Join(APIView):
             email=email,
             password=make_password(password),
             grade='-',
-            profile_img = "https://audition.hanbiton.com/images/common/img_default.jpg"
+            profile_img = "img_default.jpg"
             )
         return Response(status=200)
     
@@ -55,14 +55,17 @@ class LogIn(APIView):
 
         if user_data is None:
             # 해킹 방지를 위한 중의적 메세지 출력
+
             return Response(status=400, data=dict(message="이메일 또는 비밀번호가 올바르지 않습니다"))
         
         if user_data.check_password(password):
             # 로그인 성공, 세션 또는 쿠키에 넣는다
             request.session['email']=email
             return Response(status=200)
+        
         else:
             # 해킹 방지를 위한 중의적 메세지 출력
+
             return Response(status=400, data=dict(message="이메일 또는 비밀번호가 올바르지 않습니다"))            
         
 class LogOut(APIView):

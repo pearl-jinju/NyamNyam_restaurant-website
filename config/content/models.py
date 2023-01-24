@@ -39,3 +39,25 @@ class UserTagLog(models.Model):
     preference        = models.FloatField()  # 더블 클릭 로그
     created_at        = models.DateTimeField(auto_now=True)
 
+class Like(models.Model):
+    feed_id           = models.IntegerField(default=0)
+    email             = models.TextField(default="")
+    is_like           = models.BooleanField(default=True)
+    
+
+class Reply(models.Model):
+    feed_id           = models.IntegerField(default=0)
+    email             = models.TextField(default="")
+    reply_comment     = models.TextField()
+    
+class Bookmark(models.Model):
+    feed_id           = models.IntegerField(default=0)
+    email             = models.TextField(default="")
+    is_marked         = models.BooleanField(default=True)
+
+
+class UserSearchLog(models.Model):
+    email             = models.TextField(default="")
+    keyword           = models.TextField()
+    created_at        = models.DateTimeField(auto_now=True)
+    

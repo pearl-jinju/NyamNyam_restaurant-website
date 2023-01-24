@@ -14,6 +14,10 @@ import re
 from collections import Counter
 from haversine import haversine
 
+# 주소 불러오는 함수
+from geopy.geocoders import Nominatim
+geo_local = Nominatim(user_agent='South Korea')
+
 
 han = Hannanum()
 
@@ -44,6 +48,29 @@ def toVector(phrase, minmum_frequency=2, length_conditions=1):
     # # 명사 빈도수 딕셔너리 
     noun_dict_count = dict(noun_list_count)
     return [main_noun_list_count,noun_dict_count]
+
+def getLocationFromAddress(address,now_latitude,now_longitude):
+    """쿼리로 입력된 주소를 위도 경도로 반환한다
+    단, 주소 오류의 경우 상태를 출력하고 현재위치를 기준으로 탐색한다.
+
+    Args:
+        address (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    try:
+        geo = geo_local.geocode(address)
+    except:
+        curr_location = {"latitude": now_latitude, "longitude":now_longitude, "result":"fail"}
+        return curr_location
+        
+    curr_location = {"latitude": geo.latitude, "longitude": geo.longitude, "result":"success"}
+    return curr_location
+
+
+
+
 
 # Create your views here.
 class Main(APIView):
@@ -149,11 +176,22 @@ class MainFeed(APIView):
         # 쿼리 받아오기
         latitude = request.GET.get('latitude')
         longitude = request.GET.get('longitude')
+        tag = request.GET.get('tag')
+        address = request.GET.get('address')
+        search = request.GET.get('search')
         
-        curr_latitude = float(latitude)
-        curr_longitude = float(longitude)
-        
-        print(curr_latitude,curr_longitude)
+        # 만약 주소값이 입력이 됐다면,
+        if address!="default":
+            curr_location = getLocationFromAddress(address,latitude, longitude)
+            curr_latitude = float(curr_location['latitude'])
+            curr_longitude = float(curr_location['longitude'])
+            result = curr_location['result']
+        # 만약 위치값이 입력되지 않았다면
+        else:
+            curr_latitude = float(latitude)
+            curr_longitude = float(longitude)
+            result = "sucess"
+        print(result)
         
         # DB 내 queryset 호출 
         # 원본 데이터
@@ -162,7 +200,6 @@ class MainFeed(APIView):
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
         
-        
         # 한국 데이터만 가져온다.
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
         df = df[cond]
@@ -170,13 +207,28 @@ class MainFeed(APIView):
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='km')),axis=1 ) 
         
-        # 주변거리 기준 필터링(10km 이내)
-        df = df[df['distance']<15]
+        # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
+        # df = df[df['distance']<15]
         df = df.sort_values(by='distance')
+        
+        
+        # 맛집 검색기능 ========================
+        if search != "default":
+            df = df[df['name'].str.contains(search)] 
+
+        
+        # 태그 검색기능 =========================
+        if tag != "default":     
+            # tag cond
+            df = df[df['vectors'].str.contains(tag)]
+        # =============================.
+        print(tag)
+        print(df)
+
+        
         # 100개 이내로 추출
         df = df.iloc[:100,:]
-        
-        
+
         
         # 출력된 맛집 id만 출력
         feed_restaurant_id_list =  df['restaurant_id'].values
@@ -204,6 +256,26 @@ class MainFeed(APIView):
             # 필터링 된 유저로그를 데이터프레임으로 변환
             user_df =  pd.DataFrame(list(user_data_list.values())).reset_index(drop=True)
             
+            # 피드를 작성한 유저의 아이디 가져오기
+            user_id_list = list(user_df['user_id'].values)
+            user_id_list = [re.sub(r"\r\n                    ",'',user_id) for user_id in user_id_list]
+            user_id_list = [re.sub(r"\r\n                ",'',user_id) for user_id in user_id_list]
+            # 현재 active 상태인지 확인후, active 상태의 유저만 추출
+            user_data = User.objects.filter(nickname__in=user_id_list, is_active="active")
+            
+            # 활성유저 리스트 추출
+            valid_user_list = [str(user_id) for user_id in user_data]
+            
+            # 데이터 전처리
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r\n                    ",'',x))
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r\n                ",'',x))
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : str(x))
+            
+            # 활성유저 피드데이터만 필터링
+            cond = user_df['user_id'].isin(valid_user_list) 
+            user_df = user_df[cond]
+
+            
             # 필터링 된 유저 정보를 원본 데이터에 반영
             for idx_user_df in range(len(user_df)):
                 # 식당명 추출
@@ -230,6 +302,9 @@ class MainFeed(APIView):
             
             
             
+            
+            
+            
             # img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
@@ -242,6 +317,11 @@ class MainFeed(APIView):
 
             # 결과물 출력
             df = df.to_dict('records')
+        
+        # 만약 결과가 없다면?
+        if len(df)<1:
+             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+            
                 
         
         
@@ -260,10 +340,8 @@ class MainFeed(APIView):
         if user is None:
             return render(request,"user/login.html") #context html로 넘길것 
         
-
-
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
-        return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df)) #context html로 넘길것
+        return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
         
         
     

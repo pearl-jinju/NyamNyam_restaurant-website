@@ -4,7 +4,7 @@
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
 {% for feed in mainfeeds %}
-    <div class="border feed_box" data-wow-delay="3s">
+    <div class="border feed_box" data-wow-delay="3s" id="main_content">
     <div class="feed_name">
         <div class="profile_box">
         <img class="profile_img" src="{% get_media_prefix %}img_default.jpg">
@@ -83,6 +83,8 @@
         <span class="material-symbols-outlined">thumb_down</span>
         <span class="material-icons-outlined">mode_comment</span>
         <span class="material-icons-outlined">send</span>
+        <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+        <a href="https://www.google.co.kr/maps/place/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
         </div>
 
         <div>
@@ -96,8 +98,8 @@
     </div>
 
     <div class="feed_content">
-        <p class="feed_txt" id = "text"> <b> 주소 : </b> {{feed.road_address}} </p>      
-        <p class="feed_txt"> <b> 전화번호 : </b>  {{feed.phone_number}}</p>
+           
+        
 
         <hr>
         <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 주요 키워드 </b> </p>
@@ -105,7 +107,7 @@
         <!--버튼 디자인-->
         <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
             {% for vector in feed.vectors_1row %}
-                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin-left:5px; margin:0px 10px 0px 0px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
+                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
             {% endfor %}
         </div>
 

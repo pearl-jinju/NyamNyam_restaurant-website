@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from content.models import Feed, UserData
+from content.models import Feed, UserData, Reply
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -13,50 +13,7 @@ from config.settings import MEDIA_ROOT
 import string
 
 
-
-import re
-from geopy.geocoders import Nominatim
-geo_local = Nominatim(user_agent='South Korea')
-
-
-from ast import literal_eval
-from konlpy.tag import Hannanum
-from collections import Counter
-han = Hannanum()
-
-#TODO 이건 나중에 다른곳으로 옮겨야함!
-def getLocationFromAddress(address):
-    geo = geo_local.geocode(address)
-    crd = {"latitude": geo.latitude, "longitude": geo.longitude}
-    return crd
-
-def toVector(phrase, minmum_frequency=2, length_conditions=1):
-    """
-        빈도순으로 50개의 명사를 추출하는 함수
-    """
-    # 한글만 남기기
-    new_phrase = re.sub(r"^[가-힣]", "", phrase)
-    new_phrase = re.sub("([ㄱ-ㅎㅏ-ㅣ]+)", "", new_phrase)
-    new_phrase = re.sub("([0-9])", "", new_phrase)
-    # 일부 특수문자 제거
-    new_phrase = re.sub(r"/.", "", new_phrase)
-    # new_phrase = re.sub(r",", "", new_phrase)
-    new_phrase = re.sub(r"_", "", new_phrase)
-    new_phrase = re.sub(r"─", "", new_phrase)
-    # 명사만 추출
-    noun_list = han.nouns(new_phrase)
-    # 명사 빈도수 
-    noun_list_count = Counter(noun_list)
-
-    # 빈도순 정렬
-    main_noun_list_count = noun_list_count.most_common(200)
-    # 길이가 2자 이상인 명사, 빈도수가 3회 이상인 단어만
-    main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>length_conditions) and (n[1]>=minmum_frequency)][:50]
-    
-    # # 명사 빈도수 딕셔너리 
-    noun_dict_count = dict(noun_list_count)
-    return [main_noun_list_count,noun_dict_count]
-
+from .tools import getLocationFromAddress, toVector
     
 class UploadFeed(APIView):
     def post(self, request):
@@ -72,8 +29,6 @@ class UploadFeed(APIView):
             for chunk in file.chunks():
                 destination.write(chunk)
         
-        
-        
         image = uuid_name
         user_id = request.data.get('user_id')
         name = request.data.get('name')
@@ -87,7 +42,7 @@ class UploadFeed(APIView):
         
         # 1. image 적합성 테스트(음식 이미지 확인 관련 코드) 
         
-        # 2. 주소 유효성 테스트
+        # 2. 주소 유효성 테스트(임시)
         crd = getLocationFromAddress(road_address)
         # 대한민국 경도/ 위도 범위  동경 124°∼132°, 북위 33°∼43°        
         if (crd['latitude'] <= 32)or(44 <= crd['latitude']) or (crd['longitude']<=123) or (133 <= crd['longitude']):
@@ -95,10 +50,8 @@ class UploadFeed(APIView):
         # 3. 전화번호 적합성 테스트
         if len((phone_number).split("-"))<3:
             return Response(status=400)
-        # 4. 주소 유효성 테스트
         
-        
-        # 5. name 내 특수문자 제거
+        # 4. name 내 특수문자 제거
         name = name.translate(str.maketrans('', '', string.punctuation))
  
         # [동일 데이터 유무확인] 값이 있다면 기존값을 가져올것 맛집명과 주소가 같은경우로 인식
@@ -110,17 +63,6 @@ class UploadFeed(APIView):
 
             # 해당 DB data를 가져온다.
             db_data = Feed.objects.get(name=name, phone_number=phone_number)
-            # # 이미지 리스트를 가져와 신규 이미지를 추가한다. (literal_eval().append 오류)
-            # img_list = " ".join(literal_eval(db_data.img_url))
-            # img_list +=f" {image}"
-            # img_list = img_list.split(" ")
-            # db_data.img_url = img_list
-            # # comment를 추가한다.
-            # db_data.comment = db_data.comment +" " + comment
-            # # 새롭게 추가된 comment의 vector를 구한다.
-            # db_data.vectors = toVector(db_data.comment)
-            # # 수정된 값을 저장한다.
-            # db_data.save()
             
             # 기존 DB에서 유저 DB입력정보 가져오기
             # 맛집의 id를 가져온다
@@ -255,5 +197,26 @@ class UploadProfile(APIView):
         user.profile_img = profile_img
         
         user.save()
+        
+        return Response(status=200)
+
+class UploadReply(APIView):
+    def post(self, request):
+        feed_id = request.data.get('feed_id', None)
+        reply_content = request.data.get('feed_id', None)
+        email = request.session.get('email', None)
+        
+        # 세션정보가 없는경우
+        if email is None:
+             return render(request,"user/login.html") #context html로 넘길것
+        
+        # # 세션 정보가 입력된 경우 데이터 가져오기       
+        user = User.objects.filter(email=email).first()
+        
+        # # 회원 정보가 다르다면?
+        if user is None:
+            return render(request,"user/login.html") #context html로 넘길것 
+        
+        Reply.objects.create(feed_id=feed_id, reply_content=reply_content, email=email)
         
         return Response(status=200)
