@@ -80,12 +80,12 @@
                     <!--1번째 이미지라면-->
                     {% if forloop.first %}
                         <div class="carousel-item active" data-bs-interval="100000">
-                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 6vh">  
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">  
                         </div>
                     <!--2번째 이미지라면-->
                     {% else %}
                         <div class="carousel-item" data-bs-interval="100000">
-                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 6vh">
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">
                         </div>
                     {% endif %}
                 
@@ -94,12 +94,12 @@
                     <!--1번째 이미지라면-->
                     {% if forloop.first %}
                         <div class="carousel-item active" data-bs-interval="100000">
-                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 6vh">  
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">  
                         </div>
                     <!--2번째 이미지라면-->
                     {% else %}
                         <div class="carousel-item" data-bs-interval="100000">
-                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 6vh">
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">
                         </div>
                     {% endif%} 
                 {% endif%}
@@ -138,7 +138,7 @@
 
     <div class="feed_like">
         <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}</b></p>
-        <p class="feed_txt"><b>{{feed.distance}}KM</b></p>
+        <p class="feed_txt"><b>현재 위치로부터 거리 : {{feed.distance}}KM</b></p>
     </div>
 
     <div class="feed_content">
@@ -160,6 +160,20 @@
                 <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
             {% endfor %}
         </div>
+
+        
+        <hr>
+        
+        <!--  등급별로 색깔 다르게 할것 -->
+        <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 작성자 </b> </p>
+        <div style="display: flex; flex-direction: row;">
+        {% for writer in feed.writers %}
+            {% if writer %}
+            <button type="button" class="label btn btn-success feed_txt vector_{{writer}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{writer}}</button>
+            {% endif %}
+        {% endfor %}
+        </div>
+
     </div>
 
     <!-- #TODO 댓글창 비활성화  -> 댓글창 운용계획 확정후 활성화 

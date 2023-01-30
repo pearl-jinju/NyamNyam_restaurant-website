@@ -249,7 +249,6 @@ class MainFeed(APIView):
         
         # 유저 반영 데이터 가져오기
         user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
-        
 
         #좋아요 싫어요 초기화
         df['like']=0
@@ -288,6 +287,8 @@ class MainFeed(APIView):
 
         # 유저 로그가 있는 경우
         else:
+            
+            
             # 필터링 된 유저로그를 데이터프레임으로 변환
             user_df =  pd.DataFrame(list(user_data_list.values())).reset_index(drop=True)
             
@@ -297,6 +298,13 @@ class MainFeed(APIView):
             user_id_list = [re.sub(r"\r\n                ",'',user_id) for user_id in user_id_list]
             # 현재 active 상태인지 확인후, active 상태의 유저만 추출
             user_data = User.objects.filter(nickname__in=user_id_list, is_active="active")
+            
+            
+            # 유저 점수 정보 가져오기
+            user_info = User.objects.filter(nickname__in=user_id_list)
+            user_info = pd.DataFrame(list(user_info.values()))
+            user_info = user_info[['nickname','email','point']]
+            user_info.columns = ['user_id','email', 'point']
             
             # 활성유저 리스트 추출
             valid_user_list = [str(user_id) for user_id in user_data]
@@ -309,7 +317,15 @@ class MainFeed(APIView):
             # 활성유저 피드데이터만 필터링
             cond = user_df['user_id'].isin(valid_user_list) 
             user_df = user_df[cond]
-
+            
+            
+            # 유저 점수테이블과 결합
+            user_df = pd.merge(user_df,user_info,how='left',on='user_id')
+            # 높은 점수순의 아이디 출력 (이미지 우선)
+            user_df = user_df.sort_values(by='point', ascending=False)
+            
+            
+            df['writers'] = "[]"
             
             # 필터링 된 유저 정보를 원본 데이터에 반영
             for idx_user_df in range(len(user_df)):
@@ -333,6 +349,20 @@ class MainFeed(APIView):
                 new_comment =  df.loc[cond,'comment'].values[0] +" " + user_comment
                 new_vectors = list(toVector(new_comment)[0])
                 df.loc[cond,'vectors'] = str(new_vectors)
+                
+                # 작성자 이름 반영
+                user_df['user_id'].values
+                
+                writer_list = user_df[user_df['name']==name]['user_id'].values
+                
+                result_writer_list = []
+                
+            for writer in writer_list:
+                if writer not in result_writer_list:
+                    result_writer_list.append(writer)
+                
+            df.loc[cond,'writers'] = str(result_writer_list)
+                
             # 딕셔너리 점수 반영
             
             
@@ -343,6 +373,11 @@ class MainFeed(APIView):
             # img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
+            
+            
+            # writers 추출
+            # writers 리스트를 넘겨줌
+            df['writers'] =  df['writers'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
             
             # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
