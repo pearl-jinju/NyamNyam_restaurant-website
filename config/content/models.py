@@ -40,20 +40,29 @@ class UserTagLog(models.Model):
     created_at        = models.DateTimeField(auto_now=True)
 
 class Like(models.Model):
-    feed_id           = models.IntegerField(default=0)
+    restaurant_id     = models.IntegerField(default=0)
     email             = models.TextField(default="")
     is_like           = models.BooleanField(default=True)
+    created_at        = models.DateTimeField(auto_now=True)
+    
+class Hate(models.Model):
+    restaurant_id     = models.IntegerField(default=0)
+    email             = models.TextField(default="")
+    is_hate           = models.BooleanField(default=True)
+    created_at        = models.DateTimeField(auto_now=True)
     
 
 class Reply(models.Model):
-    feed_id           = models.IntegerField(default=0)
+    restaurant_id     = models.IntegerField(default=0)
     email             = models.TextField(default="")
     reply_comment     = models.TextField()
+    created_at        = models.DateTimeField(auto_now=True)
     
 class Bookmark(models.Model):
-    feed_id           = models.IntegerField(default=0)
+    restaurant_id     = models.IntegerField(default=0)
     email             = models.TextField(default="")
     is_marked         = models.BooleanField(default=True)
+    created_at        = models.DateTimeField(auto_now=True)
 
 
 class UserSearchLog(models.Model):

@@ -1,6 +1,48 @@
 <!--static load-->
 {% load static %}  
 
+<style>
+.modal_overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(1.5px);
+    -webkit-backdrop-filter: blur(1.5px);
+    z-index:999;
+    }
+    .modal_window {
+    background: white;
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 800px;
+    height: 600px;
+    position: relative;
+    padding: 10px;
+    z-index:999;
+    }
+    .modal_title{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 20px;
+    }
+    .modal_title_side{
+    flex: 0 0 40px;
+    text-align: center;
+    }
+</style>
+
+
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
 {% for feed in mainfeeds %}
@@ -79,9 +121,9 @@
     <!-- 콘텐츠 내용-->                        
     <div class="feed_icon">
         <div>
-        <span class="material-icons-outlined">favorite_border</span>
-        <span class="material-symbols-outlined">thumb_down</span>
-        <span class="material-icons-outlined">mode_comment</span>
+        <span id ="favorite_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="favorite material-icons-outlined" style='color:red; cursor:pointer;'>{% if feed.is_like  %}favorite{% else %}favorite_border{% endif%}</span>
+        <span id ="hate_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="hate material-icons"  style='color:blue; cursor:pointer;'>{% if feed.is_hate  %}thumb_down_alt{% else %}thumb_down_off_alt{% endif%}</span>
+        <span id ="comment_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="comment material-icons-outlined">mode_comment</span>
         <span class="material-icons-outlined">send</span>
         <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
         <a href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
@@ -95,7 +137,8 @@
     </div>
 
     <div class="feed_like">
-        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}  평점 {{feed.rating}}  {{feed.distance}}KM</b></p>
+        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}</b></p>
+        <p class="feed_txt"><b>{{feed.distance}}KM</b></p>
     </div>
 
     <div class="feed_content">
@@ -108,13 +151,13 @@
         <!--버튼 디자인-->
         <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
             {% for vector in feed.vectors_1row %}
-                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 15px; ">{{vector}}</button>
+                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
             {% endfor %}
         </div>
 
         <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
             {% for vector in feed.vectors_2row %}
-                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 15px;">{{vector}}</button>
+                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style=" font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
             {% endfor %}
         </div>
     </div>
@@ -126,3 +169,89 @@
     -->
 </div>
 {% endfor %}
+
+<script>
+// 좋아요 버튼 클릭시
+$(".favorite").click(function (event){
+    // event.target의 restaurant_id 내부 value를 가져오기
+    let restaurant_id = event.target.attributes.getNamedItem("restaurant_id").value;
+
+    // 변경할 id 값 위치 확인 및 변경사항 적용
+    let favorite_id = event.target.id;
+    let favorite_text = $("#"+favorite_id).html()
+
+    // 아이콘 토글 기능 구현
+    if (favorite_text=="favorite"){
+        $("#"+favorite_id).html("favorite_border")
+
+    }else{
+
+        $("#"+favorite_id).html("favorite")
+    }
+
+    $.ajax({
+        url:"/content/like",
+        data:{
+            restaurant_id : restaurant_id,
+            favorite_text  : favorite_text
+
+        },
+        method:"POST",
+        success: function(data){
+            console.log('성공')
+        },
+        error: function(request, status, error){
+            console.log('에러')
+        },
+        complete: function(){
+            console.log('완료')
+
+        }
+    });
+});
+
+// 싫어요 버튼 클릭시
+$(".hate").click(function (event){
+    // event.target의 restaurant_id 내부 value를 가져오기
+    let restaurant_id = event.target.attributes.getNamedItem("restaurant_id").value;
+
+    // 변경할 id 값 위치 확인 및 변경사항 적용
+    let hate_id = event.target.id;
+    let hate_text = $("#"+hate_id).html()
+
+    // 아이콘 토글 기능 구현
+    if (hate_text=="thumb_down_alt"){
+        $("#"+hate_id).html("thumb_down_off_alt")
+
+    }else{
+
+        $("#"+hate_id).html("thumb_down_alt")
+    }
+
+    $.ajax({
+        url:"/content/hate",
+        data:{
+            restaurant_id : restaurant_id,
+            hate_text  : hate_text
+
+        },
+        method:"POST",
+        success: function(data){
+            console.log('성공')
+        },
+        error: function(request, status, error){
+            console.log('에러')
+        },
+        complete: function(){
+            console.log('완료')
+
+        }
+    });
+});
+
+
+
+    
+
+
+</script>

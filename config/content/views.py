@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from content.models import Feed, UserData, Reply
+from content.models import Feed, UserData, Reply, Like, Hate
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -200,23 +200,98 @@ class UploadProfile(APIView):
         
         return Response(status=200)
 
-class UploadReply(APIView):
+# class UploadReply(APIView):
+#     def post(self, request):
+#         feed_id = request.data.get('feed_id', None)
+#         reply_content = request.data.get('feed_id', None)
+#         email = request.session.get('email', None)
+        
+#         # 세션정보가 없는경우
+#         if email is None:
+#              return render(request,"user/login.html") #context html로 넘길것
+        
+#         # # 세션 정보가 입력된 경우 데이터 가져오기       
+#         user = User.objects.filter(email=email).first()
+        
+#         # # 회원 정보가 다르다면?
+#         if user is None:
+#             return render(request,"user/login.html") #context html로 넘길것 
+        
+#         Reply.objects.create(feed_id=feed_id, reply_content=reply_content, email=email)
+        
+#         return Response(status=200)
+
+class ToggleLike(APIView):
     def post(self, request):
-        feed_id = request.data.get('feed_id', None)
-        reply_content = request.data.get('feed_id', None)
+        restaurant_id = request.data.get('restaurant_id', None)
+        favorite_text = request.data.get('favorite_text', True)
+        
+        if favorite_text== "favorite_border":
+            is_like = True
+        else:
+            is_like = False
+            
         email = request.session.get('email', None)
         
-        # 세션정보가 없는경우
-        if email is None:
-             return render(request,"user/login.html") #context html로 넘길것
         
-        # # 세션 정보가 입력된 경우 데이터 가져오기       
-        user = User.objects.filter(email=email).first()
+        # 기존 좋아요 여부 확인
+        like_exp = Like.objects.filter(restaurant_id=restaurant_id, email=email).first()
         
-        # # 회원 정보가 다르다면?
-        if user is None:
-            return render(request,"user/login.html") #context html로 넘길것 
+        # 싫어요 데이터 확인
+        hate_exp = Hate.objects.filter(restaurant_id=restaurant_id, email=email, is_hate=1).first()
         
-        Reply.objects.create(feed_id=feed_id, reply_content=reply_content, email=email)
+        # 있다면?
+        if like_exp:
+            like_exp.is_like = is_like
+            like_exp.save()
+            # 만약 싫어요가 활성화 되어있다면,
+            if hate_exp:
+                hate_exp.is_hate = False
+                hate_exp.save()
+            
+        # 없다면? 새로저장
+        else:    
+            Like.objects.create(restaurant_id=restaurant_id, is_like=is_like, email=email)
+            # 만약 싫어요가 활성화 되어있다면,
+            if hate_exp:
+                hate_exp.is_hate = False
+                hate_exp.save()
+        
+        return Response(status=200)
+    
+class ToggleHate(APIView):
+    def post(self, request):
+        restaurant_id = request.data.get('restaurant_id', None)
+        hate_text = request.data.get('hate_text', True)
+        
+        if hate_text== "thumb_down_off_alt":
+            is_hate = True
+        else:
+            is_hate = False
+            
+        email = request.session.get('email', None)
+        
+        
+        # 기존 싫어요 여부 확인
+        hate_exp = Hate.objects.filter(restaurant_id=restaurant_id, email=email).first()
+        
+        # 좋아요 데이터 확인
+        like_exp = Like.objects.filter(restaurant_id=restaurant_id, email=email, is_like=1).first()
+        
+        # 있다면?
+        if hate_exp:
+            hate_exp.is_hate = is_hate
+            hate_exp.save()
+            # 만약 좋아요가 활성화 되어있다면,
+            if like_exp:
+                like_exp.is_like = False
+                like_exp.save()
+        # 없다면? 새로저장
+        else:    
+            Hate.objects.create(restaurant_id=restaurant_id, is_hate=is_hate, email=email)
+            # 만약 좋아요가 활성화 되어있다면,
+            if like_exp:
+                like_exp.is_like = False
+                like_exp.save()
         
         return Response(status=200)

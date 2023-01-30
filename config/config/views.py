@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from content.models import Feed, UserData
+from content.models import Feed, UserData, Like, Hate
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -21,8 +21,10 @@ geo_local = Nominatim(user_agent='South Korea')
 
 han = Hannanum()
 
+
+
 # 위치 옮길것
-def toVector(phrase, minmum_frequency=2, length_conditions=1):
+def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditions=10):
     """
         빈도순으로 50개의 명사를 추출하는 함수
     """
@@ -37,13 +39,14 @@ def toVector(phrase, minmum_frequency=2, length_conditions=1):
     new_phrase = re.sub(r"─", "", new_phrase)
     # 명사만 추출
     noun_list = han.nouns(new_phrase)
+    
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
 
     # 빈도순 정렬
     main_noun_list_count = noun_list_count.most_common(200)
     # 길이가 2자 이상인 명사, 빈도수가 2회 이상인 단어만
-    main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>length_conditions) and (n[1]>=minmum_frequency)][:50]
+    main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>=length_conditions) and (n[1]>=minmum_frequency) and (len(n[0])<=max_length_conditions)][:10]
     
     # # 명사 빈도수 딕셔너리 
     noun_dict_count = dict(noun_list_count)
@@ -178,6 +181,8 @@ class MainFeed(APIView):
         tag = request.GET.get('tag')
         address = request.GET.get('address')
         search = request.GET.get('search')
+        # 세션 받아오기    
+        email = request.session.get('email', None)
         
         # 만약 주소값이 입력이 됐다면,
         if address!="default":
@@ -191,15 +196,18 @@ class MainFeed(APIView):
             curr_latitude = float(latitude)
             curr_longitude = float(longitude)
             result = "sucess"
-        print(result)
-        print(latitude,longitude)
         
         # DB 내 queryset 호출 
         # 원본 데이터
         feed_list = Feed.objects.all()  #select * from content_feed;
         
+
+        
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
+        
+        
+
         
         # 한국 데이터만 가져온다.
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
@@ -234,6 +242,26 @@ class MainFeed(APIView):
         
         # 유저 반영 데이터 가져오기
         user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
+
+        #좋아요 싫어요 초기화
+        df['like']=0
+        df['hate']=0
+        df['is_like']=False
+        df['is_hate']=False
+
+        for restaurant_id in df['restaurant_id'].values:
+            like_count = Like.objects.filter(restaurant_id=restaurant_id, is_like=True).count()
+            is_like = Like.objects.filter(restaurant_id=restaurant_id, email=email ,is_like=True).exists()
+            cond = df['restaurant_id']==restaurant_id
+            df.loc[cond,'like'] = like_count
+            df.loc[cond,'is_like'] = is_like
+            
+            hate_count = Hate.objects.filter(restaurant_id=restaurant_id, is_hate=True).count()
+            is_hate = Hate.objects.filter(restaurant_id=restaurant_id, email=email ,is_hate=True).exists()
+            df.loc[cond,'hate'] = hate_count
+            df.loc[cond,'is_hate'] = is_hate
+            
+
 
         # 유저로그가 없는 경우
         if len(user_data_list)==0:
@@ -303,12 +331,7 @@ class MainFeed(APIView):
             
             # 현재 위치 저장
             df['curr_place'] = str(latitude) +"," + str(longitude)
-            
-            
-            
-            
-            
-            
+  
             # img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
@@ -326,12 +349,10 @@ class MainFeed(APIView):
         if len(df)<1:
              return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
             
-                
-        
-        
+            
         # 세션 정보 받아오기
         # 로그인 관련 정보 출력
-        email = request.session.get('email', None)
+
         
         # 세션정보가 없는경우
         if email is None:

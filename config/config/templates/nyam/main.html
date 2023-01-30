@@ -276,8 +276,6 @@ function hide_loadingbar(){
 
 <!-- 주소 관련 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
-
 <script>
     function loadAddressWindow() {
 
@@ -352,7 +350,7 @@ function hide_loadingbar(){
     <button id="search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
 </div>
     <div style="display:flex;">
-      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;;" href="/main" > home</span></a>
+      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;;" href="../main" > home</span></a>
       <span id="nav_bar_add_box" class="material-icons-outlined" style="padding:5px 20px 0px 0px;">add_box</span>
 
 
@@ -562,10 +560,7 @@ function hide_loadingbar(){
                 <button id="button_upload" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:25%; position: relative; left: 35%; bottom:50%; margin-right:40px;">
                 맛집 사진 업로드
                 </button>
-                <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">
-
-             
-        
+                <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
         </div>
 </div>
 
@@ -596,7 +591,7 @@ function hide_loadingbar(){
             <p style="text-align:center;"><b> 맛집명 </b></p>
             <textarea id ="input_name" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
             
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명으로 기입됩니다.</span> </p>
+            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명주소로 기입됩니다.</span> </p>
             <textarea id ="input_address"  onclick=loadAddressWindow()  class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
             
             
@@ -906,6 +901,8 @@ $('#feed_ceate_button').click(function () {
         }
     })
 });
+
+
 
 
     
