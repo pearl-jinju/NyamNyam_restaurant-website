@@ -21,12 +21,18 @@ geo_local = Nominatim(user_agent='South Korea')
 
 han = Hannanum()
 
+# 불용어 리스트
+file_path = "config/stopwords.txt"
+
+with open(file_path, encoding='utf-8') as f:
+    stopwords = f.read().splitlines()
+
 
 
 # 위치 옮길것
 def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditions=10):
     """
-        빈도순으로 50개의 명사를 추출하는 함수
+        빈도순으로 10개의 명사를 추출하는 함수
     """
     # 한글만 남기기
     new_phrase = re.sub(r"^[가-힣]", "", phrase)
@@ -39,6 +45,9 @@ def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditi
     new_phrase = re.sub(r"─", "", new_phrase)
     # 명사만 추출
     noun_list = han.nouns(new_phrase)
+   
+    # 불용어/불건전한 단어 제거
+    noun_list = [word for word in noun_list if not word in stopwords]
     
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
@@ -207,8 +216,6 @@ class MainFeed(APIView):
         df =  pd.DataFrame(list(feed_list.values()))
         
         
-
-        
         # 한국 데이터만 가져온다.
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
         df = df[cond]
@@ -242,6 +249,7 @@ class MainFeed(APIView):
         
         # 유저 반영 데이터 가져오기
         user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
+        
 
         #좋아요 싫어요 초기화
         df['like']=0
