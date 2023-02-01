@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.7">
     <title>냠냠 로그인</title>
@@ -59,6 +60,7 @@
               method: "POST",
               dataTyoe: "json",
               success: function () {
+                console.log("로그인 시도")
               location.replace('/main')
               },
               error: function (request, status, error) {

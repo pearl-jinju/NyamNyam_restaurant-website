@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from content.models import Feed, UserData, Reply, Like, Hate
+from content.models import Feed, UserData, Reply, Like, Hate, Bookmark
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -293,5 +293,32 @@ class ToggleHate(APIView):
             if like_exp:
                 like_exp.is_like = False
                 like_exp.save()
+        
+        return Response(status=200)
+    
+class ToggleBookmark(APIView):
+    def post(self, request):
+        restaurant_id = request.data.get('restaurant_id', None)
+        bookmark_text = request.data.get('bookmark_text', True)
+        
+        if bookmark_text== "bookmark_border":
+            is_marked = True
+        else:
+            is_marked = False
+            
+        email = request.session.get('email', None)
+        
+        
+        # 기존 북마크 여부 확인
+        bookmark_exp = Bookmark.objects.filter(restaurant_id=restaurant_id, email=email).first()
+        
+        # 있다면?
+        if bookmark_exp:
+            bookmark_exp.is_marked = is_marked
+            bookmark_exp.save()
+
+        # 없다면? 새로저장
+        else:    
+            Bookmark.objects.create(restaurant_id=restaurant_id, is_marked=is_marked, email=email)
         
         return Response(status=200)

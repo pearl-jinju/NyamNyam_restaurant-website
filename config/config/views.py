@@ -90,7 +90,7 @@ class Main(APIView):
         # DB 내 queryset 호출 
         # 원본 데이터
         feed_list = Feed.objects.all()  #select * from content_feed;
-        feed_list = feed_list[6800:] #임시
+        feed_list = feed_list[:] #임시
         
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
@@ -189,10 +189,26 @@ class MainFeed(APIView):
         longitude = request.GET.get('longitude')
         tag = request.GET.get('tag')
         address = request.GET.get('address')
-        search = request.GET.get('search')
-        # 세션 받아오기    
+        name = request.GET.get('name')
+        # 세션 받아오기
         email = request.session.get('email', None)
         
+                            
+        # 세션정보가 없는경우
+        if email is None:
+            return render(request,"user/login.html") #login html로 넘길것
+        
+        # # 세션 정보가 입력된 경우 데이터 가져오기       
+        user = User.objects.filter(email=email).first()
+        
+        # # 회원 정보가 다르다면?
+        if user is None:
+            return render(request,"user/login.html") #context html로 넘길것 
+        
+        
+        # 데이터 조회 시작
+        
+        # 주소 검색기능  ======================== ======================== ========================
         # 만약 주소값이 입력이 됐다면,
         if address!="default":
             curr_location = getLocationFromAddress(address,latitude, longitude)
@@ -200,23 +216,19 @@ class MainFeed(APIView):
             curr_longitude = float(curr_location['longitude'])
             result = curr_location['result']
             
-        # 만약 위치값이 입력되지 않았다면
+        # 만약 주소값이 입력되지 않았다면(= default)
         else:
             curr_latitude = float(latitude)
             curr_longitude = float(longitude)
             result = "sucess"
         
-        # DB 내 queryset 호출 
-        # 원본 데이터
+        # DB 내 모든 queryset 호출 
         feed_list = Feed.objects.all()  #select * from content_feed;
-        
-
         
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
-        
-        
-        # 한국 데이터만 가져온다.
+
+        # 한국 데이터 필터링
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
         df = df[cond]
         
@@ -228,26 +240,23 @@ class MainFeed(APIView):
         df = df.sort_values(by='distance')
         
         
-        # 맛집 검색기능 ========================
-        if search != "default":
-            df = df[df['name'].str.contains(search)] 
-
+        # 맛집명 검색기능 ======================== ======================== ========================
+        if name != "default":
+            df = df[df['name'].str.contains(name)] 
         
-        # 태그 검색기능 =========================
+        # 태그명 검색기능 ========================= ======================== ========================
         if tag != "default":     
             # tag cond
             df = df[df['vectors'].str.contains(tag)]
         # =============================.
 
-        
-        # 100개 이내로 추출
+        # 50개 이내로 추출
         df = df.iloc[:50,:]
 
-        
         # 출력된 맛집 id만 출력
         feed_restaurant_id_list =  df['restaurant_id'].values
         
-        # 유저 반영 데이터 가져오기
+        # 출력된 맛집 id에 해당하는 유저 피드 데이터만 가져오기
         user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
 
         #좋아요 싫어요 초기화
@@ -256,39 +265,45 @@ class MainFeed(APIView):
         df['is_like']=False
         df['is_hate']=False
 
+        # DB 조회 후, df 내 value 변경
         for restaurant_id in df['restaurant_id'].values:
+            # 좋아요 수 가져오기
             like_count = Like.objects.filter(restaurant_id=restaurant_id, is_like=True).count()
+            # restaurant_id 기준 유저 개인의 좋아요 기록 가져오기
             is_like = Like.objects.filter(restaurant_id=restaurant_id, email=email ,is_like=True).exists()
             cond = df['restaurant_id']==restaurant_id
             df.loc[cond,'like'] = like_count
             df.loc[cond,'is_like'] = is_like
             
+            # 싫어요 수 가져오기
             hate_count = Hate.objects.filter(restaurant_id=restaurant_id, is_hate=True).count()
+            # restaurant_id 기준 유저 개인의 싫어요 기록 가져오기
             is_hate = Hate.objects.filter(restaurant_id=restaurant_id, email=email ,is_hate=True).exists()
             df.loc[cond,'hate'] = hate_count
             df.loc[cond,'is_hate'] = is_hate
             
 
-
+        # 유저로그 분기 =========================================================================
+        
         # 유저로그가 없는 경우
         if len(user_data_list)==0:
             
-            # img_url 추출
+            # 1. img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: literal_eval(x)) 
             
-            # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
+            # 2. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
-            # vector 전처리
+            
+            # 3. vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10])
-            # # 결과물 출력
+            
+            # 4.결과물 출력
             df = df.to_dict('records')
 
         # 유저 로그가 있는 경우
-        else:
-            
-            
+        else:            
             # 필터링 된 유저로그를 데이터프레임으로 변환
             user_df =  pd.DataFrame(list(user_data_list.values())).reset_index(drop=True)
             
@@ -320,11 +335,12 @@ class MainFeed(APIView):
             
             
             # 유저 점수테이블과 결합
-            user_df = pd.merge(user_df,user_info,how='left',on='user_id')
+            user_df = pd.merge(user_df,user_info, how='left', on='user_id')
             # 높은 점수순의 아이디 출력 (이미지 우선)
             user_df = user_df.sort_values(by='point', ascending=False)
             
             
+            # 작성자 리스트 초기화
             df['writers'] = "[]"
             
             # 필터링 된 유저 정보를 원본 데이터에 반영
@@ -363,51 +379,34 @@ class MainFeed(APIView):
                 
             df.loc[cond,'writers'] = str(result_writer_list)
                 
-            # 딕셔너리 점수 반영
+            # 딕셔너리 점수 반영 로직
             
             
             
             # 현재 위치 저장
             df['curr_place'] = str(latitude) +"," + str(longitude)
   
-            # img_url 추출
+            # 1. img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
             
             
-            # writers 추출
+            # 2. writers 추출
             # writers 리스트를 넘겨줌
             df['writers'] =  df['writers'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
             
-            # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
+            # 3. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
-            # vector 전처리
+            # 4. vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
 
-            # 결과물 출력
+            # 5. 결과물 출력
             df = df.to_dict('records')
         
-        # 만약 결과가 없다면?
+        # 결과 df 유효성 확인
         if len(df)<1:
-             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
-            
-            
-        # 세션 정보 받아오기
-        # 로그인 관련 정보 출력
-
-        
-        # 세션정보가 없는경우
-        if email is None:
-            return render(request,"user/login.html") #context html로 넘길것
-        
-        # # 세션 정보가 입력된 경우 데이터 가져오기       
-        user = User.objects.filter(email=email).first()
-        
-        # # 회원 정보가 다르다면?
-        if user is None:
-            return render(request,"user/login.html") #context html로 넘길것 
-        
+             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것        
         
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
         return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것

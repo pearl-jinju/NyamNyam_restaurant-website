@@ -4,6 +4,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=0.7">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <!--static load-->
   {% load static %}   
 
@@ -45,9 +46,9 @@
 .right_body {
     {#background-color: yellow;#}
     padding-top: 25px;
-    width: 300px;
+    width: 30%;
     height: 1000px;
-    left: 72%;
+    left: 68%;
     position: fixed;
     z-index:0; 
 
@@ -345,12 +346,12 @@ function hide_loadingbar(){
     <img class="navbar_brand" style="height: 30px; object-fit: contain;"
          src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FK7tzs%2FbtrVZWnV7X6%2F2aQ3ncwIFzKkjH0559QyF0%2Fimg.png">
     </a>
-<div  style="width: 35%; display:flex; flex-direction:row;">
+<div  style="width: 50%; display:flex; flex-direction:row;">
     <input class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
     <button id="search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
 </div>
     <div style="display:flex;">
-      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;;" href="../main" > home</span></a>
+      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;" href="main" > home</span></a>
       <span id="nav_bar_add_box" class="material-icons-outlined" style="padding:5px 20px 0px 0px;">add_box</span>
 
 
@@ -682,7 +683,7 @@ function getLocation() {
 function showFeeds(position) {
     let latitude =  position.coords.latitude;
     let longitude =  position.coords.longitude;
-    let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"search=default"
+    let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"
     console.log(url)
 
     $.ajax({

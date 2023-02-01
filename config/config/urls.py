@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', Main.as_view()),
     path('mainfeed/', MainFeed.as_view()),
-    # path('content/upload', UploadFeed.as_view())
     path('content/', include('content.urls')),  # api 경로 정의 , 실행할 앱 선택
     path('user/', include('user.urls'))  
     ]
