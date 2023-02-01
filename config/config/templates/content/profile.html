@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <!-- Required meta tags -->
+  {% comment %} <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> {% endcomment %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=0.7">
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
   <!--static load-->
   {% load static %}   
 
@@ -346,7 +347,7 @@
 <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:60px;">
     <!-- 프로필 사진 영역 -->
     <div style="padding:20px 60px;">
-        <div class="profile_box" style=" width:250px; height:250px;">
+        <div class="profile_box" style=" width:200px; height:200px;">
             <!--http 포함시 -->
             {% if "https" in img %}
             <img class="profile_img"
@@ -360,7 +361,7 @@
     </div>
     <div>
         <div style="display:flex; flex-direction:row; margin-bottom:40px;  margin-top:65px;">
-            <div id="user_id" style="font-size:20px; margin-right:40px;">
+            <div id="user_id" style="font-size:20px; margin-right:40px; font-weight:bold;">
                 {{user.nickname}}
             </div>
             <button id="button_profile_upload" type="button" class="label btn btn-primary" style="margin-right:40px;">
@@ -381,6 +382,15 @@
     </div>
 </div>
 
+<div style="border-top: solid 2px rgba(50, 50, 50, 0.1); width:100%;">
+    <div style="display:flex; flex-direction:row; justify-content:center; align-item: center; margin: 20px;">
+        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:gray;"  class="material-icons-outlined">restaurant</span>내 게시물</div>
+        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:red;"  class="material-icons-outlined">favorite</span>좋아요</div>
+        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:blue;"  class="material-icons-outlined">thumb_down_alt</span>싫어요</div>
+        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:orange;" class="material-icons-outlined">bookmark</span>북마크</div>
+        <!--여기에 주요태그별 지도를 추가-->
+    </div>
+</div>
 
 
 <!--1번째 modal-->

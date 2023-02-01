@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from content.models import Feed, UserData, Like, Hate
+from content.models import Feed, UserData, Like, Hate, Bookmark
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -264,6 +264,7 @@ class MainFeed(APIView):
         df['hate']=0
         df['is_like']=False
         df['is_hate']=False
+        df['is_marked']=False
 
         # DB 조회 후, df 내 value 변경
         for restaurant_id in df['restaurant_id'].values:
@@ -281,6 +282,11 @@ class MainFeed(APIView):
             is_hate = Hate.objects.filter(restaurant_id=restaurant_id, email=email ,is_hate=True).exists()
             df.loc[cond,'hate'] = hate_count
             df.loc[cond,'is_hate'] = is_hate
+            
+            # 북마크 가져오기
+            # restaurant_id 기준 유저 개인의 북마크 기록 가져오기
+            is_marked = Bookmark.objects.filter(restaurant_id=restaurant_id, email=email ,is_marked=True).exists()
+            df.loc[cond,'is_marked'] = is_marked
             
 
         # 유저로그 분기 =========================================================================

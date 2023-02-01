@@ -72,7 +72,7 @@
         </div>
 
         <!--캐러셀 내부 이미지 디자인-->
-        <div class="carousel-inner">
+        <div class="carousel-inner" >
             <!--이미지 개수만큼 인덱스 반복 생성--> 
             {% for img in  feed.img_url %}
                 <!-- 기존 이미지(https가 있는 이미지와 신규이미지에 별도 처리)-->
@@ -131,7 +131,7 @@
         </div>
 
         <div>
-            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer;'>{% if feed.is_hate  %}bookmark{% else %}bookmark_border{% endif%}</span>
+            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
         </div>
 
     </div>

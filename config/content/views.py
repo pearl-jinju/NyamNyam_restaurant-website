@@ -154,10 +154,16 @@ class UploadFeed(APIView):
             return Response(status=200)
         
 class Profile(APIView):
+    """_    내 프로필을 볼때
+    Args:
+        APIView (_type_): _description_
+    """
     def get(self, request):
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
         email = request.session.get('email', None)
+        
+        # 내 프로필에 접근하는 경우인지 확인해야함
         
         # 세션정보가 없는경우
         if email is None:
@@ -172,6 +178,32 @@ class Profile(APIView):
         
         return render(request, "content/profile.html", context=dict(user=user))
     
+    
+class UserProfile(APIView):
+    """_    다른사람의 프로필을 볼때
+    Args:
+        APIView (_type_): _description_
+    """
+    def get(self, request):
+        # 세션 정보 받아오기
+        #  로그인 관련 정보 출력
+        email = request.session.get('email', None)
+        
+        # nickname = request.session.get('nickname', None)
+                
+        # 세션정보가 없는경우
+        if email is None:
+             return render(request,"user/login.html") #context html로 넘길것
+        
+        # # 세션 정보가 입력된 경우 데이터 가져오기       
+        user = User.objects.filter(email=email).first()
+        
+        # # 회원 정보가 다르다면?
+        if user is None:
+            return render(request,"user/login.html") #context html로 넘길것 
+        
+        return render(request, "content/profile.html", context=dict(user=user))
+
 
 
 
