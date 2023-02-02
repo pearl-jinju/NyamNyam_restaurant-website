@@ -335,7 +335,7 @@
         </a>
         
         <ul class="dropdown-menu" style="left:-160px;" aria-labelledby="dropdownMenuLink">
-          <li><a class="dropdown-item" href="#">프로필</a></li>
+          <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
           <li><a class="dropdown-item" href="#">정보수정</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
@@ -481,9 +481,9 @@
 <div class="profile_data" id="hate_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
     <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
         {% if "empty" in hate_feed_list%}
-        <div style="margin:auto; margin-top: 50px;">
-            아직 활동 기록이 없습니다!
-        </div>
+            <div style="margin:auto; margin-top: 50px;">
+                아직 활동 기록이 없습니다!
+            </div>
         
         {%else%}
             {%for hate_feed in hate_feed_list %}

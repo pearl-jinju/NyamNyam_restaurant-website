@@ -395,7 +395,6 @@ class MainFeed(APIView):
             # 2. writers 추출
             # writers 리스트를 넘겨줌
             df['writers'] =  df['writers'].apply(lambda x: literal_eval(str(x)))
-            print(df['writers'])
             
             # 3. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))

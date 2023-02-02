@@ -169,7 +169,7 @@
         <div style="display: flex; flex-direction: row;">
         {% for writer in feed.writers %}
             {% if writer %}
-            <button type="button" class="label btn btn-success feed_txt vector_{{writer}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{writer}}</button>
+            <a href="/content/userprofile?username={{writer}}"><button type="button" class="label btn btn-success feed_txt vector_{{writer}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{writer}}</button></a>
             {% endif %}
         {% endfor %}
         </div>
