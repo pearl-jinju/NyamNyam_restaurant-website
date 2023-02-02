@@ -165,7 +165,6 @@ class Profile(APIView):
         email = request.session.get('email', None)
         
         # 내 프로필에 접근하는 경우인지 확인해야함
-        
         # 세션정보가 없는경우
         if email is None:
              return render(request,"user/login.html") #context html로 넘길것
@@ -190,9 +189,16 @@ class Profile(APIView):
         
         # 결과 피드 리스트
         feed_list = feed_list[feed_list['user_id']==user.nickname]
-        # 이미지 리스트형식을 문자열로 변경
-        feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-        feed_list = feed_list.to_dict('records')
+        # 결과 피드가 있다면
+        if len(feed_list)>0:
+            # 이미지 리스트형식을 문자열로 변경
+            feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            feed_list = feed_list.to_dict('records')
+            
+            feed_count = len(feed_list)
+        else:
+            feed_list = "empty"
+            feed_count = 0
 
 
         
@@ -200,39 +206,55 @@ class Profile(APIView):
          
         # 좋아요 목록
         like_list = list(Like.objects.filter(email=email, is_like=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
-        like_feed_list = Feed.objects.filter(restaurant_id__in=like_list)
-        
-        like_feed_list =  pd.DataFrame(list(like_feed_list.values())).reset_index(drop=True)
-        # 이미지 리스트형식을 문자열로 변경
-        like_feed_list['img_url'] =  like_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-        like_feed_list = like_feed_list.to_dict('records')
-
+        # 좋아요 기록이 있다면
+        if len(like_list)>0:
+                
+            like_feed_list = Feed.objects.filter(restaurant_id__in=like_list)
+            
+            like_feed_list =  pd.DataFrame(list(like_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            like_feed_list['img_url'] =  like_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            like_feed_list = like_feed_list.to_dict('records')
+        # 없다면
+        else:
+            like_feed_list="empty"
         
         
         
         # 싫어요 목록
         hate_list = list(Hate.objects.filter(email=email, is_hate=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
-        hate_feed_list = Feed.objects.filter(restaurant_id__in=hate_list)
-                
-        hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
-        # 이미지 리스트형식을 문자열로 변경
-        hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-        hate_feed_list = hate_feed_list.to_dict('records')
+        # 싫어요 기록이 있다면
+        if len(hate_list)>0:
+            hate_feed_list = Feed.objects.filter(restaurant_id__in=hate_list)
+                    
+            hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            hate_feed_list = hate_feed_list.to_dict('records')
+        # 없다면
+        else:
+            hate_feed_list="empty"
         
         
         # 북마크 목록
         bookmark_list = list(Bookmark.objects.filter(email=email, is_marked=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
-        bookmark_feed_list = Feed.objects.filter(restaurant_id__in=bookmark_list)
-        bookmark_feed_list =  pd.DataFrame(list(bookmark_feed_list.values())).reset_index(drop=True)
-        # 이미지 리스트형식을 문자열로 변경
-        bookmark_feed_list['img_url'] =  bookmark_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-        bookmark_feed_list = bookmark_feed_list.to_dict('records')
-         
+        # 북마크 기록이 있다면
+        if len(bookmark_list)>0:    
+            bookmark_feed_list = Feed.objects.filter(restaurant_id__in=bookmark_list)
+            bookmark_feed_list =  pd.DataFrame(list(bookmark_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            bookmark_feed_list['img_url'] =  bookmark_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            bookmark_feed_list = bookmark_feed_list.to_dict('records')
+        # 없다면
+        else:
+            bookmark_feed_list='empty'
+            
         return render(request, "content/profile.html", context=dict(feed_list=feed_list,
                                                                     like_feed_list=like_feed_list,
                                                                     hate_feed_list=hate_feed_list,
                                                                     bookmark_feed_list=bookmark_feed_list,                                                                    
-                                                                    user=user))
+                                                                    user=user,
+                                                                    feed_count=feed_count))
     
 #TODO 다른사람의 프로필을 볼수 있도록 설정할것
 class UserProfile(APIView):
@@ -241,24 +263,103 @@ class UserProfile(APIView):
         APIView (_type_): _description_
     """
     def get(self, request):
+        
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
         email = request.session.get('email', None)
-        
-        # nickname = request.session.get('nickname', None)
-                
+                # 내 프로필에 접근하는 경우인지 확인해야함
         # 세션정보가 없는경우
         if email is None:
              return render(request,"user/login.html") #context html로 넘길것
         
         # # 세션 정보가 입력된 경우 데이터 가져오기       
-        user = User.objects.filter(email=email).first()
+        nowuser = User.objects.filter(email=email).first()
         
         # # 회원 정보가 다르다면?
-        if user is None:
+        if nowuser is None:
             return render(request,"user/login.html") #context html로 넘길것 
         
-        return render(request, "content/profile.html", context=dict(user=user))
+        # 다른 유저의 ID
+        username = request.GET.get('username')
+        
+        # 쿼리에 입력된 다른유저의 닉네임을 받음      
+        username = User.objects.filter(nickname=username).first()
+        
+        
+        # 사용자 ID 기준으로 작성 및 업로드한 피드 리스트 호출 (최종형태 df)
+        user_data =  UserData.objects.all()
+         
+        feed_list =  pd.DataFrame(list(user_data.values())).reset_index(drop=True)
+        # user_id filter 적용이 안됨.. df 변환 및 데이터 전처리 후 df 필터링
+        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\r",'',x))
+        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\n",'',x))
+        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
+        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
+
+        
+        # 결과 피드 리스트
+        feed_list = feed_list[feed_list['user_id']==username.nickname]
+        # 결과 피드가 있다면
+        if  len(feed_list)>0:
+            # 이미지 리스트형식을 문자열로 변경
+            feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            feed_list = feed_list.to_dict('records')
+
+            feed_count = len(feed_list)
+        #없다면
+        else:
+            feed_list="empty"
+            feed_count = 0
+
+        #(최종형태 Queryset)
+         
+        # 좋아요 목록
+        like_list = list(Like.objects.filter(email=username.email, is_like=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
+        # 좋아요 목록이 있다면
+        if  len(like_list)>0:
+            like_feed_list = Feed.objects.filter(restaurant_id__in=like_list)
+            
+            like_feed_list =  pd.DataFrame(list(like_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            like_feed_list['img_url'] =  like_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            like_feed_list = like_feed_list.to_dict('records')
+        # 없다면
+        else:
+            like_feed_list="empty"
+
+        # 싫어요 목록
+        hate_list = list(Hate.objects.filter(email=username.email, is_hate=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
+        # 싫어요 목록이 있다면
+        if len(hate_list)>0:
+            hate_feed_list = Feed.objects.filter(restaurant_id__in=hate_list)
+                    
+            hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            hate_feed_list = hate_feed_list.to_dict('records')
+        # 없다면
+        else:
+            hate_feed_list="empty"
+        
+        # 북마크 목록
+        bookmark_list = list(Bookmark.objects.filter(email=username.email, is_marked=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
+        # 북마크 기록이 있다면
+        if len(bookmark_list)>0:
+            bookmark_feed_list = Feed.objects.filter(restaurant_id__in=bookmark_list)
+            bookmark_feed_list =  pd.DataFrame(list(bookmark_feed_list.values())).reset_index(drop=True)
+            # 이미지 리스트형식을 문자열로 변경
+            bookmark_feed_list['img_url'] =  bookmark_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            bookmark_feed_list = bookmark_feed_list.to_dict('records')
+        else:
+            bookmark_feed_list="empty"
+            
+        return render(request, "content/userprofile.html", context=dict(feed_list=feed_list,
+                                                                    like_feed_list=like_feed_list,
+                                                                    hate_feed_list=hate_feed_list,
+                                                                    bookmark_feed_list=bookmark_feed_list,                                                                    
+                                                                    nowuser=nowuser,
+                                                                    otheruser=username,
+                                                                    feed_count=feed_count))
 
 
 

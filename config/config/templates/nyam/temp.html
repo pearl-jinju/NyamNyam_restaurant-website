@@ -1,0 +1,132 @@
+<!--right_body 보관용 -->
+<div class="right_body">
+    <div class="feed_name" style="justify-content: space-between">
+        <div style="display: flex; align-items: center; ">
+            <div class="big_profile_box">
+                
+                    <!--http 포함시 -->
+                    {% if "https" in img %}
+                    <img class="profile_img"
+                    src="{{user.profile_img}}">
+                    <!--미포함시 -->
+                    {% else %}
+                    <img class="profile_img"
+                    src="{% get_media_prefix %}{{user.profile_img}}">
+                    {% endif %}
+                
+                </div>
+                <div class="name_content" style="text-align: center;">
+                    <span id="user_id" class="user_name_txt">
+                        {{user.nickname}}
+                    </span>
+                    <span class="name_content_txt" style="text-align: center;">
+                        {{user.grade}}</span>
+                </div>
+            </div>
+            <a class="link_txt">
+                전환
+            </a>
+        </div>
+    
+        <div class="recommend_box">
+            <span style="color: gray">회원님을 위한 추천</span>
+            <span style="font-size: 12px">모두 보기</span>
+        </div>
+    
+        <div>
+            <div class="feed_name" style="justify-content: space-between">
+                <div class="profile_box">
+                    <img
+                        class="profile_img"
+                        src="{% get_media_prefix %}{{user.profile_img}}"></div>
+                    <div class="name_content">
+                        <span class="user_name_txt">
+                            추천식당
+                        </span>
+                        <span class="name_content_txt">
+                            주요 태그</span>
+                    </div>
+                    <a class="link_txt">
+                        이동
+                    </a>
+                </div>
+                <div class="feed_name" style="justify-content: space-between">
+                    <div class="profile_box">
+                        <img
+                            class="profile_img"
+                            src="{% get_media_prefix %}{{user.profile_img}}"></div>
+                        <div class="name_content">
+                            <span class="user_name_txt">
+                                추천식당
+                            </span>
+                            <span class="name_content_txt">
+                                주요 태그</span>
+                        </div>
+                        <a class="link_txt">
+                            이동
+                        </a>
+                    </div>
+                    <div class="feed_name" style="justify-content: space-between">
+                        <div class="profile_box">
+                            <img
+                                class="profile_img"
+                                src="{% get_media_prefix %}{{user.profile_img}}"></div>
+                            <div class="name_content">
+                                <span class="user_name_txt">
+                                    추천식당
+                                </span>
+                                <span class="name_content_txt">
+                                    주요 태그</span>
+                            </div>
+                            <a class="link_txt">
+                                이동
+                            </a>
+                        </div>
+                        <div class="feed_name" style="justify-content: space-between">
+                            <div class="profile_box">
+                                <img class="profile_img" src="{% get_media_prefix %}{{user.profile_img}}"></div>
+                                <div class="name_content">
+                                    <span class="user_name_txt">
+                                        추천식당
+                                    </span>
+                                    <span class="name_content_txt">
+                                        주요 태그
+                                    </span>
+                                </div>
+                                <a class="link_txt">
+                                    이동
+                                </a>
+                            </div>
+                            <div class="feed_name" style="justify-content: space-between">
+                                <div class="profile_box">
+                                    <img
+                                        class="profile_img"
+                                        src="{% get_media_prefix %}{{user.profile_img}}"></div>
+                                    <div class="name_content">
+                                        <span class="user_name_txt">
+                                            추천식당
+                                        </span>
+                                        <span class="name_content_txt">
+                                            주요 태그
+                                        </span>
+                                    </div>
+                                    <a class="link_txt">
+                                        이동
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="comment_box">
+                                <span>
+                                    세상의 모든 맛집! 냠냠
+                                </span>
+                                <span>
+                                    y2kwlswn@naver.com
+                                </span>
+                                <br>
+                                    <span>
+                                        @2023 jinju
+                                    </span>
+    
+                                </div>
+                            </div>
+                        </div> 

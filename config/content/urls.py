@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
-from .views import UploadFeed, Profile, UploadProfile, ToggleLike, ToggleHate, ToggleBookmark
+from .views import UploadFeed, Profile, UserProfile, UploadProfile, ToggleLike, ToggleHate, ToggleBookmark
 from config.views import Main
 from config.settings import MEDIA_URL, MEDIA_ROOT
 
@@ -9,6 +9,7 @@ from config.settings import MEDIA_URL, MEDIA_ROOT
 urlpatterns = [
     path('upload', UploadFeed.as_view()),  
     path('profile', Profile.as_view()),
+    path('userprofile', UserProfile.as_view()),
     path('profile/upload', UploadProfile.as_view()),
     path('main', Main.as_view()),
     path('like', ToggleLike.as_view()),

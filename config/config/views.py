@@ -374,18 +374,11 @@ class MainFeed(APIView):
                 new_vectors = list(toVector(new_comment)[0])
                 df.loc[cond,'vectors'] = str(new_vectors)
                 
-                # 작성자 이름 반영
-                user_df['user_id'].values
+                # 작성자 이름 반영                
+                writer_list = list(user_df[user_df['name']==name]['user_id'].values)
+                df.loc[cond,'writers'] = str(writer_list)
                 
-                writer_list = user_df[user_df['name']==name]['user_id'].values
-                
-                result_writer_list = []
-                
-            for writer in writer_list:
-                if writer not in result_writer_list:
-                    result_writer_list.append(writer)
-                
-            df.loc[cond,'writers'] = str(result_writer_list)
+
                 
             # 딕셔너리 점수 반영 로직
             
@@ -401,7 +394,8 @@ class MainFeed(APIView):
             
             # 2. writers 추출
             # writers 리스트를 넘겨줌
-            df['writers'] =  df['writers'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
+            df['writers'] =  df['writers'].apply(lambda x: literal_eval(str(x)))
+            print(df['writers'])
             
             # 3. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))

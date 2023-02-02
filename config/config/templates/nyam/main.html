@@ -347,13 +347,13 @@ function hide_loadingbar(){
     <img class="navbar_brand" style="height: 30px; object-fit: contain;"
          src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FK7tzs%2FbtrVZWnV7X6%2F2aQ3ncwIFzKkjH0559QyF0%2Fimg.png">
     </a>
-<div  style="width: 50%; display:flex; flex-direction:row;">
+<div  style="width: 500px; display:flex; flex-direction:row;">
     <input class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
     <button id="search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
 </div>
     <div style="display:flex;">
       <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;" href="main" > home</span></a>
-      <span id="nav_bar_add_box" class="material-icons-outlined" style="padding:5px 20px 0px 0px;">add_box</span>
+      <span id="nav_bar_add_box" class="material-icons-outlined" style="cursor:pointer; padding:5px 20px 0px 0px;">add_box</span>
 
 
       <div class="dropdown">
@@ -404,137 +404,6 @@ function hide_loadingbar(){
     </div>
 </div>
 
-<div class="right_body">
-<div class="feed_name" style="justify-content: space-between">
-    <div style="display: flex; align-items: center; ">
-        <div class="big_profile_box">
-            
-                <!--http 포함시 -->
-                {% if "https" in img %}
-                <img class="profile_img"
-                src="{{user.profile_img}}">
-                <!--미포함시 -->
-                {% else %}
-                <img class="profile_img"
-                src="{% get_media_prefix %}{{user.profile_img}}">
-                {% endif %}
-            
-            </div>
-            <div class="name_content" style="text-align: center;">
-                <span id="user_id" class="user_name_txt">
-                    {{user.nickname}}
-                </span>
-                <span class="name_content_txt" style="text-align: center;">
-                    {{user.grade}}</span>
-            </div>
-        </div>
-        <a class="link_txt">
-            전환
-        </a>
-    </div>
-
-    <div class="recommend_box">
-        <span style="color: gray">회원님을 위한 추천</span>
-        <span style="font-size: 12px">모두 보기</span>
-    </div>
-
-    <div>
-        <div class="feed_name" style="justify-content: space-between">
-            <div class="profile_box">
-                <img
-                    class="profile_img"
-                    src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                <div class="name_content">
-                    <span class="user_name_txt">
-                        추천식당
-                    </span>
-                    <span class="name_content_txt">
-                        주요 태그</span>
-                </div>
-                <a class="link_txt">
-                    이동
-                </a>
-            </div>
-            <div class="feed_name" style="justify-content: space-between">
-                <div class="profile_box">
-                    <img
-                        class="profile_img"
-                        src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                    <div class="name_content">
-                        <span class="user_name_txt">
-                            추천식당
-                        </span>
-                        <span class="name_content_txt">
-                            주요 태그</span>
-                    </div>
-                    <a class="link_txt">
-                        이동
-                    </a>
-                </div>
-                <div class="feed_name" style="justify-content: space-between">
-                    <div class="profile_box">
-                        <img
-                            class="profile_img"
-                            src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                        <div class="name_content">
-                            <span class="user_name_txt">
-                                추천식당
-                            </span>
-                            <span class="name_content_txt">
-                                주요 태그</span>
-                        </div>
-                        <a class="link_txt">
-                            이동
-                        </a>
-                    </div>
-                    <div class="feed_name" style="justify-content: space-between">
-                        <div class="profile_box">
-                            <img class="profile_img" src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                            <div class="name_content">
-                                <span class="user_name_txt">
-                                    추천식당
-                                </span>
-                                <span class="name_content_txt">
-                                    주요 태그
-                                </span>
-                            </div>
-                            <a class="link_txt">
-                                이동
-                            </a>
-                        </div>
-                        <div class="feed_name" style="justify-content: space-between">
-                            <div class="profile_box">
-                                <img
-                                    class="profile_img"
-                                    src="{% get_media_prefix %}{{user.profile_img}}"></div>
-                                <div class="name_content">
-                                    <span class="user_name_txt">
-                                        추천식당
-                                    </span>
-                                    <span class="name_content_txt">
-                                        주요 태그
-                                    </span>
-                                </div>
-                                <a class="link_txt">
-                                    이동
-                                </a>
-                            </div>
-                        </div>
-                        <div class="comment_box">
-                            <span>
-                                세상의 모든 맛집! 냠냠
-                            </span>
-                            <span>
-                                y2kwlswn@naver.com
-                            </span>
-                            <br>
-                                <span>
-                                    @2023 jinju
-                                </span>
-
-                            </div>
-                        </div>
-                    </div> 
 
 <!--1번째 modal-->
 <div id="first_modal" class="modal_overlay">
