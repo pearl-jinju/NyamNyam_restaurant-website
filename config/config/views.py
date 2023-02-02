@@ -315,8 +315,9 @@ class MainFeed(APIView):
             
             # 피드를 작성한 유저의 아이디 가져오기
             user_id_list = list(user_df['user_id'].values)
-            user_id_list = [re.sub(r"\r\n                    ",'',user_id) for user_id in user_id_list]
-            user_id_list = [re.sub(r"\r\n                ",'',user_id) for user_id in user_id_list]
+            user_id_list = [re.sub(r"\n",'',user_id) for user_id in user_id_list]
+            user_id_list = [re.sub(r"\r",'',user_id) for user_id in user_id_list]
+            user_id_list = [re.sub(" ",'',user_id) for user_id in user_id_list]
             # 현재 active 상태인지 확인후, active 상태의 유저만 추출
             user_data = User.objects.filter(nickname__in=user_id_list, is_active="active")
             
@@ -331,8 +332,9 @@ class MainFeed(APIView):
             valid_user_list = [str(user_id) for user_id in user_data]
             
             # 데이터 전처리
-            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r\n                    ",'',x))
-            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r\n                ",'',x))
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r",'',x))
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\n",'',x))
+            user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(" ",'',x))
             user_df['user_id'] = user_df['user_id'].apply(lambda x : str(x))
             
             # 활성유저 피드데이터만 필터링

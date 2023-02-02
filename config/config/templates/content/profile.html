@@ -384,13 +384,140 @@
 
 <div style="border-top: solid 2px rgba(50, 50, 50, 0.1); width:100%;">
     <div style="display:flex; flex-direction:row; justify-content:center; align-item: center; margin: 20px;">
-        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:gray;"  class="material-icons-outlined">restaurant</span>내 게시물</div>
-        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:red;"  class="material-icons-outlined">favorite</span>좋아요</div>
-        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:blue;"  class="material-icons-outlined">thumb_down_alt</span>싫어요</div>
-        <div style="margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:orange;" class="material-icons-outlined">bookmark</span>북마크</div>
+        <div id="button_feed_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:gray;"  class="material-icons-outlined">restaurant</span>내 게시물</div>
+        <div id="button_feed_like_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:red;"  class="material-icons-outlined">favorite</span>내가 좋아하는 맛집</div>
+        <div id="button_feed_hate_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:blue;"  class="material-icons-outlined">thumb_down_alt</span>내가 싫어하는 맛집</div>
+        <div id="button_feed_bookmark_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span style="color:orange;" class="material-icons-outlined">bookmark</span>북마크</div>
         <!--여기에 주요태그별 지도를 추가-->
     </div>
 </div>
+
+
+
+<div id="feed_list" style="width: 100%; min-width:1000px; display:flex; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+        {%for feed in feed_list %}
+            <div>
+                <div >
+                {% if "https" in feed.img_url %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{{feed.img_url}}">
+                    <!--미포함시 -->
+                {% else %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{% get_media_prefix %}{{feed.img_url}}">
+                {% endif %}
+                </div>
+                <div style="font-weight:bold; text-align:center; ">
+                    {{feed.name}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                    {{feed.road_address}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                    {{feed.phone_number}}
+                </div>
+            </div>
+        {% endfor %}
+    </div> 
+</div> 
+
+<div id="like_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+        {%for like_feed in like_feed_list %}
+            <div>
+                <div >
+                {% if "https" in like_feed.img_url %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{{like_feed.img_url}}">
+                    <!--미포함시 -->
+                {% else %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{% get_media_prefix %}{{like_feed.img_url}}">
+                {% endif %}
+                </div>
+                <div style="font-weight:bold; text-align:center; ">
+                    {{like_feed.name}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="https://www.google.co.kr/maps/dir/{{like_feed.curr_place}}/{{like_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                    {{like_feed.road_address}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="tel:{{like_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                    {{like_feed.phone_number}}
+                </div>
+            </div>
+        {% endfor %}
+    </div> 
+</div> 
+
+<div id="hate_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+        {%for hate_feed in hate_feed_list %}
+            <div>
+                <div >
+                {% if "https" in hate_feed.img_url %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{{hate_feed.img_url}}">
+                    <!--미포함시 -->
+                {% else %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{% get_media_prefix %}{{hate_feed.img_url}}">
+                {% endif %}
+                </div>
+                <div style="font-weight:bold; text-align:center; ">
+                    {{hate_feed.name}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="https://www.google.co.kr/maps/dir/{{hate_feed.curr_place}}/{{hate_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                    {{hate_feed.road_address}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="tel:{{hate_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                    {{hate_feed.phone_number}}
+                </div>
+            </div>
+        {% endfor %}
+    </div> 
+</div> 
+
+<div id="bookmark_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+        {%for bookmark_feed in bookmark_feed_list %}
+            <div>
+                <div >
+                {% if "https" in bookmark_feed.img_url %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{{bookmark_feed.img_url}}">
+                    <!--미포함시 -->
+                {% else %}
+                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    src="{% get_media_prefix %}{{bookmark_feed.img_url}}">
+                {% endif %}
+                </div>
+                <div style="font-weight:bold; text-align:center; ">
+                    {{bookmark_feed.name}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="https://www.google.co.kr/maps/dir/{{bookmark_feed.curr_place}}/{{bookmark_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                    {{bookmark_feed.road_address}}
+                </div>
+                <div style="margin: 10px 10px 0px 10px;">
+                    <a href="tel:{{bookmark_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                    {{bookmark_feed.phone_number}}
+                </div>
+            </div>
+        {% endfor %}
+    </div> 
+</div> 
+
+
+
+
+
 
 
 <!--1번째 modal-->
@@ -527,6 +654,78 @@
 
 <!-- Optional JavaScript; choose one of the two! -->
 <script>
+
+
+//게시물 클릭시 함수
+$('#button_feed_list').click(function(){
+    $('#feed_list').css({
+        display:"flex",
+    });
+    $('#like_feed_list').css({
+        display:"none",
+    });
+    $('#hate_feed_list').css({
+        display:"none",
+    });
+    $('#bookmark_feed_list').css({
+        display:"none",
+    });
+});
+
+//좋아요 클릭시 함수 
+//게시물 클릭시 함수
+$('#button_feed_like_list').click(function(){
+    $('#feed_list').css({
+        display:"none",
+    });
+    $('#like_feed_list').css({
+        display:"flex",
+    });
+    $('#hate_feed_list').css({
+        display:"none",
+    });
+    $('#bookmark_feed_list').css({
+        display:"none",
+    });
+});
+
+//싫어요 클릭시 함수 
+$('#button_feed_hate_list').click(function(){
+    $('#feed_list').css({
+        display:"none",
+    });
+    $('#like_feed_list').css({
+        display:"none",
+    });
+    $('#hate_feed_list').css({
+        display:"flex",
+    });
+    $('#bookmark_feed_list').css({
+        display:"none",
+    });
+});
+
+//북마크 클릭시 함수 
+$('#button_feed_bookmark_list').click(function(){
+    $('#feed_list').css({
+        display:"none",
+    });
+    $('#like_feed_list').css({
+        display:"none",
+    });
+    $('#hate_feed_list').css({
+        display:"none",
+    });
+    $('#bookmark_feed_list').css({
+        display:"flex",
+    });
+});
+
+
+
+
+
+
 // 전역변수 설정
 let files; // 파일명
 // + 버튼 modal 띄우기
@@ -706,33 +905,35 @@ $('#button_profile_upload').click(function (){
     $('#input_fileupload').click();
 });
 
-    function profile_upload(){
-        let file = $('#input_fileupload')[0].files[0];
-        let email = "{{user.email}}";
-        
-        // form data 변환하기
-        let fd = new FormData();
-        fd.append('file', file);
-        fd.append('email', email);
+function profile_upload(){
+    let file = $('#input_fileupload')[0].files[0];
+    let email = "{{user.email}}";
+    
+    // form data 변환하기
+    let fd = new FormData();
+    fd.append('file', file);
+    fd.append('email', email);
 
-        $.ajax({
-            url: "/content/profile/upload",
-            data: fd,
-            method: "POST",
-            processData: false,
-            contentType: false,
-            success: function (data) {
-            alert("프로필 이미지가 성공적으로 변경되었습니다.");
-            },
-            error: function (request, status, error) {
-                alert("업로드 오류입니다.");
-            },
-            complete: function () {
-                location.replace('/content/profile')
-            }
-        })    
+    $.ajax({
+        url: "/content/profile/upload",
+        data: fd,
+        method: "POST",
+        processData: false,
+        contentType: false,
+        success: function (data) {
+        alert("프로필 이미지가 성공적으로 변경되었습니다.");
+        },
+        error: function (request, status, error) {
+            alert("업로드 오류입니다.");
+        },
+        complete: function () {
+            location.replace('/content/profile')
+        }
+    })    
 
-    };
+};
+
+
 
 
 

@@ -80,26 +80,26 @@
                     <!--1번째 이미지라면-->
                     {% if forloop.first %}
                         <div class="carousel-item active" data-bs-interval="100000">
-                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">  
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="object-fit:fill;">  
                         </div>
                     <!--2번째 이미지라면-->
                     {% else %}
                         <div class="carousel-item" data-bs-interval="100000">
-                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">
+                        <img src={{img}} class="d-block w-100 h-100" alt="Max-height: 12vh" style="object-fit:fill;">
                         </div>
-                    {% endif %}
+                    {% endif %} 
                 
                 <!-- 이미지 주소 prefix 추가-->
                 {% else %}
                     <!--1번째 이미지라면-->
                     {% if forloop.first %}
                         <div class="carousel-item active" data-bs-interval="100000">
-                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">  
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="object-fit:fill;">  
                         </div>
                     <!--2번째 이미지라면-->
                     {% else %}
                         <div class="carousel-item" data-bs-interval="100000">
-                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="background-size: cover;">
+                        <img src="{% get_media_prefix %}{{img}}" class="d-block w-100 h-100" alt="Max-height: 12vh" style="object-fit:fill;">
                         </div>
                     {% endif%} 
                 {% endif%}
