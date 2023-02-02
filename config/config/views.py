@@ -155,6 +155,10 @@ class Main(APIView):
             # vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
+            
+            # 간소화 주소 
+            df['road_address_short'] = df['road_address'].apply(lambda x: " ".join(x.split(" ")[:3])) 
+        
 
             # 결과물 출력
             df = df.to_dict('records')
@@ -234,6 +238,7 @@ class MainFeed(APIView):
         
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='km')),axis=1 ) 
+        # df['distance'] = df['distance']
         
         # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
         # df = df[df['distance']<15]
@@ -265,6 +270,9 @@ class MainFeed(APIView):
         df['is_like']=False
         df['is_hate']=False
         df['is_marked']=False
+        
+        # 간소화 주소 
+        df['road_address_short'] = df['road_address'].apply(lambda x: " ".join(x.split(" ")[:3])) 
 
         # DB 조회 후, df 내 value 변경
         for restaurant_id in df['restaurant_id'].values:

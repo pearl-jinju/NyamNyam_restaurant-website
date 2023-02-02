@@ -47,12 +47,20 @@
 <!--feed data 출력시작-->
 {% for feed in mainfeeds %}
     <div class="border feed_box" data-wow-delay="3s" id="main_content">
-    <div class="feed_name">
-        <div class="profile_box">
-        <img class="profile_img" src="{% get_media_prefix %}img_default.jpg">
+        <div class="feed_name" style="display:flex; flex-direction:row; text-align:center; justify-content:center;">
+            
+            <div class="profile_box">
+            <img class="profile_img" src="{% get_media_prefix %}default_round_image.png">
+            </div>
+
+            <span  class="feed_name_txt"> {{feed.name}} </span>
+
+            <div style=" font-size:14px; margin-left:80px; background-color:orange; color:white; border-radius:10px; font-align:center; padding:5px 15px 5px 15px;">
+                <b> {{feed.road_address_short}}</b>
+            </div>
+
+
         </div>
-        <span  class="feed_name_txt"> {{feed.name}} </span>
-    </div>
 
 
     <!--캐러셀 디자인-->
@@ -120,31 +128,48 @@
 
     <!-- 콘텐츠 내용-->                        
     <div class="feed_icon">
-        <div>
-        <span id ="favorite_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="favorite material-icons-outlined" style='color:red; cursor:pointer;'>{% if feed.is_like  %}favorite{% else %}favorite_border{% endif%}</span>
-        <span id ="hate_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="hate material-icons"  style='color:blue; cursor:pointer;'>{% if feed.is_hate  %}thumb_down_alt{% else %}thumb_down_off_alt{% endif%}</span>
-        <span id ="comment_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="comment material-icons-outlined">mode_comment</span>
-        <span class="material-icons-outlined">send</span>
-        <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
-        <a href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+        <div style="display:flex; flex-direction:row; text-align:center; justify-content:center;">
+            <span id ="favorite_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="favorite material-icons-outlined" style='margin-left:5px; color:red; cursor:pointer; font-size:30px;'>{% if feed.is_like  %}favorite{% else %}favorite_border{% endif%}</span>
+            <span style="font-size:12px;">&nbsp</span>
+            <span style="font-size:16px;"><b>{{feed.like}}</b></span>
+            <span id ="hate_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="hate material-icons"  style='margin-left:15px; color:blue; cursor:pointer; font-size:30px;'>{% if feed.is_hate  %}thumb_down_alt{% else %}thumb_down_off_alt{% endif%}</span>
+            <span style="font-size:12px;">&nbsp</span>
+            <span style="font-size:16px;"><b>{{feed.hate}}</b></span>     
+            <span style="font-size:12px;">&nbsp</span> 
+
+            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
+                <a  href="tel:{{feed.phone_number}}"><button type="button" class="btn btn-success" style="padding:2px 15px 0px 15px;" > <span class="material-icons-outlined">call</span></button> </a>
+            </div> 
+            <span style="font-size:12px;">&nbsp</span>  
+            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
+                <a  href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><button type="button" class="btn btn-success"  style="padding:2px 15px 0px 15px;"> <span class="material-icons-outlined">fork_left</span></button> </a>
+            </div> 
+            
+         
+                <div  style=" font-size:18px; margin:0px 0px 0px 20px;">
+                    {% if feed.distance < 3 %}
+                        <p ><button type="button" class="btn btn-success" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                    {% elif feed.distance < 6 %}
+                        <p ><button type="button" class="btn btn-primary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                    {% elif feed.distance < 9 %}
+                        <p ><button type="button" class="btn btn-secondary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                    {% else %}
+                        <p ><button type="button" class="btn btn-danger" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                    {% endif %}
+                </div>
+
+
+    </div>
         
-        </div>
-
         <div>
-            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
+            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
         </div>
 
     </div>
 
-    <div class="feed_like">
-        <p class="feed_txt"> <b>좋아요 {{feed.like}}  싫어요 {{feed.hate}}</b></p>
-        <p class="feed_txt"><b>현재 위치로부터 거리 : {{feed.distance}}KM</b></p>
-    </div>
 
     <div class="feed_content">
            
-        
-
         <hr>
         <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 주요 키워드 </b> </p>
         
