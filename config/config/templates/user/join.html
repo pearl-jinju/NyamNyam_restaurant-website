@@ -77,8 +77,8 @@
             alert("회원가입에 성공했습니다! 냠냠에 오신것을 환영합니다!");
             location.replace('login')
             },
-            error: function (request, status, error) {
-                alert(error);
+            error: function (data) {
+                alert(data.responseJSON.error);
             },
             complete: function () {
                 

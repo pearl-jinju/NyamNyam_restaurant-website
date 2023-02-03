@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from content.models import Feed, UserData, Reply, Like, Hate, Bookmark
+from django.http import HttpResponseBadRequest, JsonResponse
 from user.models import User
 from uuid import uuid4
 import pandas as pd
@@ -39,21 +40,33 @@ class UploadFeed(APIView):
         like = 0
         hate = 0
         
+        if name=="":
+            return JsonResponse({"error": "맛집명을 입력하세요."}, status=400)
+        if road_address=="":
+            return JsonResponse({"error": "주소를 입력하세요."}, status=400)
+        if phone_number=="":
+            return JsonResponse({"error": "전화번호를 입력하세요."}, status=400)
+        if comment=="":
+            return JsonResponse({"error": "한줄평을 입력하세요."}, status=400)
+        
         #TODO 데이터 적합성 테스트 (주소 유효성 확인(완료), 이미지가 음식사진인지 테스트, 불건전한 문구 또는 텍스트가 있는경우 제외 알고리즘)  모든 조건이 양호한경우에 1차 유저정보에 반영 
         
         # 1. image 적합성 테스트(음식 이미지 확인 관련 코드) 
         
         # 2. 주소 유효성 테스트(임시)
         crd = getLocationFromAddress(road_address)
-        # 대한민국 경도/ 위도 범위  동경 124°∼132°, 북위 33°∼43°        
+        # 대한민국 경도/ 위도 범위  동경 124°∼132°, 북위 33°∼43°  
         if (crd['latitude'] <= 32)or(44 <= crd['latitude']) or (crd['longitude']<=123) or (133 <= crd['longitude']):
-            return Response(status=400)
-        # 3. 전화번호 적합성 테스트
-        if len((phone_number).split("-"))<3:
-            return Response(status=400)
+            return JsonResponse({"error": "주소가 올바르지 않습니다."}, status=400)
         
-        # 4. name 내 특수문자 제거
+        
+        # 3. 전화번호 적합성 테스트        
+        if len((phone_number).split("-"))<3:
+            return JsonResponse({"error": "전화번호 양식이 올바르지 않습니다 '-'를 포함해주세요. "}, status=400)
+        
+        # 4. name 검증 및 내 특수문자 제거
         name = name.translate(str.maketrans('', '', string.punctuation))
+
  
         # [동일 데이터 유무확인] 값이 있다면 기존값을 가져올것 맛집명과 주소가 같은경우로 인식
         db_test =  Feed.objects.filter(name=name, phone_number=phone_number)

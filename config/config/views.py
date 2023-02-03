@@ -385,9 +385,7 @@ class MainFeed(APIView):
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)
-                
 
-                
             # 딕셔너리 점수 반영 로직
             
             
