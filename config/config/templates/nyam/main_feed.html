@@ -41,7 +41,13 @@
     text-align: center;
     }
 </style>
+<body>
+<div class="loading" id="loading_image" style="display:flex;" >
+    <span></span>
+    <span></span>
+    <span></span>
 
+</div>
 
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
@@ -177,13 +183,13 @@
         <!--버튼 디자인-->
         <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_1row %}
-                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
+                <button tag_id="{{vector}}" type="button" class="tagsearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
             {% endfor %}
         </div>
 
         <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_2row %}
-                <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
+                <button tag_id="{{vector}}" type="button" class="tagsearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
             {% endfor %}
         </div>
 
@@ -209,8 +215,53 @@
     -->
 </div>
 {% endfor %}
-
+</body>
 <script>
+//태그 클릭시 이벤트
+$(".tagsearch").click(function (event){
+    let tag = event.target.attributes.getNamedItem("tag_id").value;
+
+    $('#append_body').empty()
+    function getLocationTag() {
+        if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showFeedsTag);
+        } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+    
+    function showFeedsTag(position) {
+        let latitude_name =  position.coords.latitude;
+        let longitude_name =  position.coords.longitude;
+        let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag="+tag+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
+        console.log(url_name)
+    
+        $.ajax({
+            url: url_name,
+            data: {},
+            method: "GET",
+            success: function (response) {
+                let temp_html_name = response
+    
+            $('#append_body').append(temp_html_name);
+    
+            },
+            error: function (data) {    
+                alert(data.responseJSON.error);
+            },
+            complete: function () {
+                hide_loadingbar();
+                
+            }
+        });
+    
+    }
+    window.scrollTo(0,0)
+    getLocationTag()
+    
+    
+});
+
 // 좋아요 버튼 클릭시
 $(".favorite").click(function (event){
     // event.target의 restaurant_id 내부 value를 가져오기

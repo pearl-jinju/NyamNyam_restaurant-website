@@ -545,9 +545,9 @@ function show_loadingbar(){
 
     </div>
 </div>
-<!-- feed를 가져오기 위한 위치함수 선언-->
-<script>
 
+<script>
+// feed를 가져오기 위한 위치함수 선언
 function getLocation() {
     if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showFeeds);
@@ -577,6 +577,7 @@ function showFeeds(position) {
         complete: function () {
             hide_loadingbar();
             
+            
         }
     });
 
@@ -600,6 +601,7 @@ $(function searchkeyword(){
 
 //검색 알고리즘
 $('#run_search').click(function(){
+    javascript:window.scrollTo(0,0)
     show_loadingbar()
     let serch_keyword = $('#search').val();
 
