@@ -559,7 +559,7 @@ function getLocation() {
 function showFeeds(position) {
     let latitude =  position.coords.latitude;
     let longitude =  position.coords.longitude;
-    let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"
+    let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
 
     $.ajax({
         url: url,
@@ -598,49 +598,171 @@ $(function searchkeyword(){
 
 
 
-
 //검색 알고리즘
 $('#run_search').click(function(){
+    show_loadingbar()
     let serch_keyword = $('#search').val();
 
     // 검색정보가 없을때는 아무 동작하지 않기
     if (serch_keyword==""){
-        console.log("검색어없음")
+        alert("검색어를 입력해주세요!")
     }else{
     
         //!맛집명 / #태그 / @주소
         let search_tag = serch_keyword.slice(0,1)
         let final_serch_keyword =  serch_keyword.slice(1)
-        console.log(search_tag)
-        console.log(final_serch_keyword)
 
         if (search_tag=="!"){
-            console.log("맛집명검색")
-            $('#append_body').remove()
-            show_loadingbar()
+            $('#append_body').empty()
+            function getLocationName() {
+                if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showFeedsName);
+                } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+            
+            function showFeedsName(position) {
+                let latitude_name =  position.coords.latitude;
+                let longitude_name =  position.coords.longitude;
+                console.log(final_serch_keyword)
+                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag=default"+"&"+"address=default"+"&"+"name="+final_serch_keyword+"&"+"error=correct"
+                console.log(url_name)
+            
+                $.ajax({
+                    url: url_name,
+                    data: {},
+                    method: "GET",
+                    success: function (response) {
+                        let temp_html_name = response
+            
+                    $('#append_body').append(temp_html_name);
+            
+                    },
+                    error: function (data) {    
+                        alert(data.responseJSON.error);
+                    },
+                    complete: function () {
+                        hide_loadingbar();
+                        
+                    }
+                });
+            
+            }
+            
+            getLocationName()
         }
         else if(search_tag=="#"){
-            console.log("맛집태그검색")
-            $('#append_body').remove()
-            show_loadingbar()
+            $('#append_body').empty()
+            function getLocationTag() {
+                if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showFeedsTag);
+                } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+            
+            function showFeedsTag(position) {
+                let latitude_name =  position.coords.latitude;
+                let longitude_name =  position.coords.longitude;
+                console.log(final_serch_keyword)
+                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag="+final_serch_keyword+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
+                console.log(url_name)
+            
+                $.ajax({
+                    url: url_name,
+                    data: {},
+                    method: "GET",
+                    success: function (response) {
+                        let temp_html_name = response
+            
+                    $('#append_body').append(temp_html_name);
+            
+                    },
+                    error: function (data) {    
+                        alert(data.responseJSON.error);
+                    },
+                    complete: function () {
+                        hide_loadingbar();
+                        
+                    }
+                });
+            
+            }
+            
+            getLocationTag()
+            
         }
         else if(search_tag=="@"){
-            console.log("주소검색")
-            $('#append_body').remove()
-            show_loadingbar()
+            $('#append_body').empty()
+            function getLocationAddress() {
+                if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showFeedsAddress);
+                } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+                }
+            }
+            
+            function showFeedsAddress(position) {
+                let latitude_name =  position.coords.latitude;
+                let longitude_name =  position.coords.longitude;
+                console.log(final_serch_keyword)
+                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag=default"+"&"+"address="+final_serch_keyword+"&"+"name=default"+"&"+"error=correct"
+                console.log(url_name)
+            
+                $.ajax({
+                    url: url_name,
+                    data: {},
+                    method: "GET",
+                    success: function (response) {
+                        let temp_html_name = response
+            
+                    $('#append_body').append(temp_html_name);
+            
+                    },
+                    error: function (data) {    
+                        alert(data.responseJSON.error);
+                    },
+                    complete: function () {
+                        hide_loadingbar();
+                    }
+                });
+            
+            }
+            
+            getLocationAddress()
+            
         }
         else{
-            console.log("오류")
+            $('#append_body').empty()
+            show_loadingbar()
+            function searchError() {
+                let url_name = "/mainfeed?" + "latitude=error"+"&"+"longitude=error"+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=error"
+                console.log(url_name)
+                $.ajax({
+                    url: url_name,
+                    data: {},
+                    method: "GET",
+                    success: function (response) {
+                        let temp_html_name = response
+            
+                    $('#append_body').append(temp_html_name);
+            
+                    },
+                    error: function (data) {    
+                        alert(data.responseJSON.error);
+                    },
+                    complete: function () {
+                        hide_loadingbar();
+                    }
+                });
+            }
+            searchError()
         }
+   
 
-
-    }
-    hide_loadingbar()
-
-
-    
-
-});
+        }
+    });
 
     
 

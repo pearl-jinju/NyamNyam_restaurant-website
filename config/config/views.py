@@ -89,8 +89,6 @@ class Main(APIView):
     def get(self, request): 
         # DB 내 queryset 호출 
 
-                
-
         # 세션 정보 받아오기
         # 로그인 관련 정보 출력
         email = request.session.get('email', None)
@@ -126,6 +124,7 @@ class MainFeed(APIView):
         # error 확인 error는 error, correct로 나뉨
         if error =="error":
              return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
+         
         # 세션 받아오기
         email = request.session.get('email', None)
         
@@ -179,12 +178,20 @@ class MainFeed(APIView):
         
         # 맛집명 검색기능 ======================== ======================== ========================
         if name != "default":
-            df = df[df['name'].str.contains(name)] 
+            df = df[df['name'].str.contains(name)]
+        
+        # 맛집명 검색결과가 없다면?
+        if len(df)==0:
+            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+            
         
         # 태그명 검색기능 ========================= ======================== ========================
         if tag != "default":     
             # tag cond
             df = df[df['vectors'].str.contains(tag)]
+        # 태그 검색결과가 없다면?
+        if len(df)==0:
+            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
         # =============================.
 
         # 50개 이내로 추출
