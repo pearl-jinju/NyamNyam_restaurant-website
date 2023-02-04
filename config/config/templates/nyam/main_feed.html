@@ -128,7 +128,7 @@
 
     <!-- 콘텐츠 내용-->                        
     <div class="feed_icon">
-        <div style="display:flex; flex-direction:row; text-align:center; justify-content:center;">
+        <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; margin-top:7px;">
             <span id ="favorite_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="favorite material-icons-outlined" style='margin-left:5px; color:red; cursor:pointer; font-size:30px;'>{% if feed.is_like  %}favorite{% else %}favorite_border{% endif%}</span>
             <span style="font-size:12px;">&nbsp</span>
             <span style="font-size:16px;"><b>{{feed.like}}</b></span>
@@ -138,23 +138,23 @@
             <span style="font-size:12px;">&nbsp</span> 
 
             <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
-                <a  href="tel:{{feed.phone_number}}"><button type="button" class="btn btn-success" style="padding:2px 15px 0px 15px;" > <span class="material-icons-outlined">call</span></button> </a>
+                <a  href="tel:{{feed.phone_number}}"><button type="button" class="btn btn-success disabled" style="padding:2px 15px 0px 15px;" > <span class="material-icons-outlined">call</span></button> </a>
             </div> 
             <span style="font-size:12px;">&nbsp</span>  
             <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
-                <a  href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><button type="button" class="btn btn-success"  style="padding:2px 15px 0px 15px;"> <span class="material-icons-outlined">fork_left</span></button> </a>
+                <a  href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><button type="button" class="btn btn-primary disabled"  style="padding:2px 15px 0px 15px;"> <span class="material-icons-outlined">location_on</span></button> </a>
             </div> 
             
          
-                <div  style=" font-size:18px; margin:0px 0px 0px 20px;">
+                <div  style=" font-size:18px; margin:0px 0px 0px 20px; padding:0px 15px 0px 15px;">
                     {% if feed.distance < 3 %}
-                        <p ><button type="button" class="btn btn-success" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                        <button type="button" class="btn btn-success" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM 이내</b></button>
                     {% elif feed.distance < 6 %}
-                        <p ><button type="button" class="btn btn-primary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                        <button type="button" class="btn btn-primary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM 이내</b></button>
                     {% elif feed.distance < 9 %}
-                        <p ><button type="button" class="btn btn-secondary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                        <button type="button" class="btn btn-secondary" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM 이내</b></button>
                     {% else %}
-                        <p ><button type="button" class="btn btn-danger" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM</b></button></p>
+                        <button type="button" class="btn btn-danger" style="padding:2px 15px 0px 15px;"><b> {{feed.distance}}KM 이내</b></button>
                     {% endif %}
                 </div>
 
@@ -162,7 +162,7 @@
     </div>
         
         <div>
-            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
+            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px; margin-top:7px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
         </div>
 
     </div>
@@ -170,28 +170,29 @@
 
     <div class="feed_content">
            
-        <hr>
+        <div style="border-bottom:solid 1px gray; margin-top:3px;"></div>
+            
         <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 주요 키워드 </b> </p>
         
         <!--버튼 디자인-->
-        <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+        <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_1row %}
                 <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
             {% endfor %}
         </div>
 
-        <div style="width:100%; display: flex; flex-direction: row; justify-content: left;">
+        <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_2row %}
                 <button type="button" class="label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
             {% endfor %}
         </div>
 
         
-        <hr>
+        <div style="border-bottom:solid 1px gray; margin-top:3px;"></div>
         
         <!--  등급별로 색깔 다르게 할것 -->
         <p class="feed_txt" style="margin: 0px 2px 2px 0px;"> <b> 작성자 </b> </p>
-        <div style="display: flex; flex-direction: row;">
+        <div style="display: flex; flex-direction: row; justify-content:center;">
         {% for writer in feed.writers %}
             {% if writer %}
             <a href="/content/userprofile?username={{writer}}"><button type="button" class="label btn btn-success feed_txt vector_{{writer}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{writer}}</button></a>

@@ -7,7 +7,7 @@ from user.models import User
 from uuid import uuid4
 import pandas as pd
 from ast import literal_eval
-from konlpy.tag import Hannanum
+from konlpy.tag import Hannanum, Okt
 import os
 from config.settings import MEDIA_ROOT
 import re
@@ -19,7 +19,7 @@ from geopy.geocoders import Nominatim
 geo_local = Nominatim(user_agent='South Korea')
 
 
-han = Hannanum()
+konlp = Okt()
 
 # 불용어 리스트
 file_path = "config/stopwords.txt"
@@ -44,7 +44,7 @@ def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditi
     new_phrase = re.sub(r"_", "", new_phrase)
     new_phrase = re.sub(r"─", "", new_phrase)
     # 명사만 추출
-    noun_list = han.nouns(new_phrase)
+    noun_list = konlp.nouns(new_phrase)
    
     # 불용어/불건전한 단어 제거
     noun_list = [word for word in noun_list if not word in stopwords]
@@ -88,80 +88,7 @@ def getLocationFromAddress(address,now_latitude,now_longitude):
 class Main(APIView):
     def get(self, request): 
         # DB 내 queryset 호출 
-        # 원본 데이터
-        feed_list = Feed.objects.all()  #select * from content_feed;
-        feed_list = feed_list[:] #임시
-        
-        #데이터프레임으로 변환
-        df =  pd.DataFrame(list(feed_list.values()))
-        # 출력된 맛집 id만 출력
-        feed_restaurant_id_list =  df['restaurant_id'].values
-        
-        # 유저 반영 데이터 가져오기
-        user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
 
-        # 유저로그가 없는 경우
-        if len(user_data_list)==0:
-            
-            # img_url 추출
-            # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
-            df['img_url'] =  df['img_url'].apply(lambda x: literal_eval(x)) 
-            
-            # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
-            df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
-            # vector 전처리
-            df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
-            df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10])
-            # 결과물 출력
-            df = df.to_dict('records')
-
-        # 유저 로그가 있는 경우
-        else:
-            # 필터링 된 유저로그를 데이터프레임으로 변환
-            user_df =  pd.DataFrame(list(user_data_list.values())).reset_index(drop=True)
-            
-            # 필터링 된 유저 정보를 원본 데이터에 반영
-            for idx_user_df in range(len(user_df)):
-                # 식당명 추출
-                name = user_df.loc[idx_user_df,'name']
-                cond = df['name']==name
-                # 이미지 리스트 변경
-                # 이미지 리스트 불러오기
-                user_img = literal_eval(user_df.loc[idx_user_df,'img_url'])[0]
-             
-                # 출력값 리스트화 후 값 추출
-                new_img_list = literal_eval(df.loc[cond,'img_url'].values[0])
-                new_img_list.append(user_img)
-                # 중복값 제거
-                new_img_list = list(set(new_img_list))
-
-                df.loc[cond,'img_url'] = str(new_img_list)
-                # vector 변경
-                user_comment = user_df.loc[idx_user_df,'comment']
-                
-                new_comment =  df.loc[cond,'comment'].values[0] +" " + user_comment
-                new_vectors = list(toVector(new_comment)[0])
-                df.loc[cond,'vectors'] = str(new_vectors)
-            # 딕셔너리 점수 반영
-            
-            
-            
-            # img_url 추출
-            # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
-            df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
-            
-            # 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
-            df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
-            # vector 전처리
-            df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
-            df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
-            
-            # 간소화 주소 
-            df['road_address_short'] = df['road_address'].apply(lambda x: " ".join(x.split(" ")[:3])) 
-        
-
-            # 결과물 출력
-            df = df.to_dict('records')
                 
 
         # 세션 정보 받아오기
@@ -180,7 +107,7 @@ class Main(APIView):
             return render(request,"user/login.html") #context html로 넘길것 
         
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
-        return render(request,"nyam\main.html", context=dict(feeds=df, user=user)) #context html로 넘길것
+        return render(request,"nyam\main.html", context=dict( user=user)) #context html로 넘길것
 
     def post(self, request):
         return render(request,"nyam\main.html")
@@ -194,6 +121,11 @@ class MainFeed(APIView):
         tag = request.GET.get('tag')
         address = request.GET.get('address')
         name = request.GET.get('name')
+        error= request.GET.get('error')
+        
+        # error 확인 error는 error, correct로 나뉨
+        if error =="error":
+             return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
         # 세션 받아오기
         email = request.session.get('email', None)
         

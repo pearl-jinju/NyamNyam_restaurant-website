@@ -270,9 +270,18 @@
 
 <script>
 function hide_loadingbar(){
-    const loading_bar = document.getElementById('loading_image');
-    loading_bar.remove();
+
+    $('#loading_image').css({
+        display:"none",
+    });
   };
+
+function show_loadingbar(){
+
+    $('#loading_image').css({
+        display:"flex",
+    });
+};
 
 </script>
 
@@ -281,7 +290,6 @@ function hide_loadingbar(){
 <script>
     function loadAddressWindow() {
 
-        console.log("클릭됨")
         new daum.Postcode({
             oncomplete: function(data) {
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -348,8 +356,8 @@ function hide_loadingbar(){
          src="{% get_media_prefix %}home_image.png">
     </a>
 <div  style="width: 500px; display:flex; flex-direction:row;">
-    <input class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
-    <button id="search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
+    <input id="search" class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" >
+    <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
 </div>
     <div style="display:flex;">
       <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;" href="main" > home</span></a>
@@ -396,7 +404,7 @@ function hide_loadingbar(){
   <div class="left_body" > 
     <div id="append_body">
     </div>
-    <div class="loading" id="loading_image" >
+    <div class="loading" id="loading_image" style="display:flex;" >
         <span></span>
         <span></span>
         <span></span>
@@ -548,13 +556,10 @@ function getLocation() {
     }
 }
 
-
-
 function showFeeds(position) {
     let latitude =  position.coords.latitude;
     let longitude =  position.coords.longitude;
     let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"
-    console.log(url)
 
     $.ajax({
         url: url,
@@ -562,7 +567,6 @@ function showFeeds(position) {
         method: "GET",
         success: function (response) {
             let temp_html = response
-
 
         $('#append_body').append(temp_html);
 
@@ -591,6 +595,53 @@ $(function searchkeyword(){
 
     }
 })
+
+
+
+
+//검색 알고리즘
+$('#run_search').click(function(){
+    let serch_keyword = $('#search').val();
+
+    // 검색정보가 없을때는 아무 동작하지 않기
+    if (serch_keyword==""){
+        console.log("검색어없음")
+    }else{
+    
+        //!맛집명 / #태그 / @주소
+        let search_tag = serch_keyword.slice(0,1)
+        let final_serch_keyword =  serch_keyword.slice(1)
+        console.log(search_tag)
+        console.log(final_serch_keyword)
+
+        if (search_tag=="!"){
+            console.log("맛집명검색")
+            $('#append_body').remove()
+            show_loadingbar()
+        }
+        else if(search_tag=="#"){
+            console.log("맛집태그검색")
+            $('#append_body').remove()
+            show_loadingbar()
+        }
+        else if(search_tag=="@"){
+            console.log("주소검색")
+            $('#append_body').remove()
+            show_loadingbar()
+        }
+        else{
+            console.log("오류")
+        }
+
+
+    }
+    hide_loadingbar()
+
+
+    
+
+});
+
     
 
 </script>
