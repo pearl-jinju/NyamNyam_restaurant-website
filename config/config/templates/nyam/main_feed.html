@@ -45,6 +45,9 @@
 
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
+{% if search_keyword != "" %}
+<div style="font-weight:bold; background-color:orange; padding:5px 5px 5px 5px; text-align:center; color:white; border-radius:15px; margin-top:5px;">{{search_keyword}} 검색결과</div>
+{% endif %}
 {% for feed in mainfeeds %}
     <div class="border feed_box" data-wow-delay="3s" id="main_content">
         <div class="feed_name" style="display:flex; flex-direction:row; text-align:center; justify-content:space-between;">

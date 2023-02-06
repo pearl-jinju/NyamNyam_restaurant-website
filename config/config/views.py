@@ -121,6 +121,17 @@ class MainFeed(APIView):
         name = request.GET.get('name')
         error= request.GET.get('error')
         
+        # 검색어 체크
+        search_keyword = ""
+        if address!= "default":
+            search_keyword = address
+        if tag!= "default":
+            search_keyword = tag
+        if name!= "default":
+            search_keyword = name
+            
+        print(search_keyword)
+        
         # error 확인 error는 error, correct로 나뉨
         if error =="error":
              return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
@@ -349,13 +360,14 @@ class MainFeed(APIView):
 
             # 5. 결과물 출력
             df = df.to_dict('records')
+            
         
         # 결과 df 유효성 확인
         if len(df)<1:
-             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것        
+             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df, search_keyword=search_keyword),status=200) #context html로 넘길것        
         
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
-        return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+        return render(request,'nyam/main_feed.html',context=dict(mainfeeds=df,search_keyword=search_keyword),status=200) #context html로 넘길것
         
         
     
