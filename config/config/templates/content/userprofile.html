@@ -376,13 +376,27 @@
 
         </div>
         
-        <div style="margin-bottom: 25px;">
-            <b>게시물</b> {{feed_count}}  <b>등급</b> {{otheruser.grade}}
+        <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
+            <div style="margin-right:80px;">
+                <b>게시물 </b> {{feed_count}}
+            </div>
+
+            <div>
+              <b>냠냠 Tier </b> {{user.grade}}
+            </div>
         </div>
-        <div style="display:flex; flex-direction:row; justify-content:center;">
-            <span class="material-icons-outlined">
-                help_outline
-                </span>
+        <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
+            <div style="margin-right:80px;">
+                <b> 좋아요 </b> {{like_sum}}
+            </div>
+
+            <div style="margin-right:80px;">
+                <b> 싫어요 </b> {{hate_sum}}
+            </div>
+
+            <div>
+                <b> 찜 </b> {{bookmark_sum}}
+            </div>
         </div>
     </div>
 </div>
@@ -411,12 +425,26 @@
             <div>
                 <div >
                 {% if "https" in feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
+                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
                     src="{{feed.img_url}}">
+                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                        </figcaption>
+                </figure>
                     <!--미포함시 -->
                 {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
+                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
                     src="{% get_media_prefix %}{{feed.img_url}}">
+                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                        </figcaption>
+                </figure>
                 {% endif %}
                 </div>
                 <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
@@ -1015,7 +1043,19 @@ $('#run_search').click(function(){
     }
 });
 
-
+//개인 업로드 데이터 이미지 hover 시 효과
+$(".user_contents").hover(function(event){
+    //요소에 마우스를 올렸을 때 기능
+    let feed_id = event.target.attributes.getNamedItem("feed_id").value;
+    let target_name= "feed_data_"+feed_id;
+    $("."+target_name).css('display','flex');
+        },function(){
+    let feed_id = event.target.attributes.getNamedItem("feed_id").value;
+    let target_name= "feed_data_"+feed_id;
+    //요소에 마우스를 올린뒤 떨어졌을때 기능
+    //this == 요소의 글자 색을 block으로 바꿔라    
+    $("."+target_name).css('display','none');
+        });
 
 </script>
 <!-- Option 1: Bootstrap Bundle with Popper -->

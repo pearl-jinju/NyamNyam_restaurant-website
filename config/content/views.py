@@ -217,8 +217,11 @@ class Profile(APIView):
                 
         # 왜 값을 넣을 때  int()가 안먹히는 걸까
         feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
+        like_sum = feed_list['like_count'].sum()
         feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
+        hate_sum = feed_list['hate_count'].sum()
         feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
+        bookmark_sum = feed_list['bookmark_count'].sum()
 
         # 결과 피드가 있다면
         if len(feed_list)>0:
@@ -286,7 +289,11 @@ class Profile(APIView):
                                                                     hate_feed_list=hate_feed_list,
                                                                     bookmark_feed_list=bookmark_feed_list,                                                                    
                                                                     user=user,
-                                                                    feed_count=feed_count))
+                                                                    feed_count=feed_count,                                                                    
+                                                                    like_sum=like_sum,
+                                                                    hate_sum=hate_sum,
+                                                                    bookmark_sum=bookmark_sum
+                                                                    ))
     
 #TODO 다른사람의 프로필을 볼수 있도록 설정할것
 class UserProfile(APIView):
@@ -331,6 +338,27 @@ class UserProfile(APIView):
         
         # 결과 피드 리스트
         feed_list = feed_list[feed_list['user_id']==username.nickname]
+        
+        feed_list_restaurant_ids = feed_list['restaurant_id'].values
+        
+        for feed_list_restaurant_id in feed_list_restaurant_ids:
+            like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            cond = feed_list['restaurant_id']==feed_list_restaurant_id
+            feed_list.loc[cond,'like_count'] = like_count
+            feed_list.loc[cond,'hate_count'] = hate_count
+            feed_list.loc[cond,'bookmark_count'] = bookmark_count
+                
+        # 왜 값을 넣을 때  int()가 안먹히는 걸까
+        feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
+        like_sum = feed_list['like_count'].sum()
+        feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
+        hate_sum = feed_list['hate_count'].sum()
+        feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
+        bookmark_sum = feed_list['bookmark_count'].sum()
+        
+        
         # 결과 피드가 있다면
         if  len(feed_list)>0:
             # 이미지 리스트형식을 문자열로 변경
@@ -391,7 +419,11 @@ class UserProfile(APIView):
                                                                     bookmark_feed_list=bookmark_feed_list,                                                                    
                                                                     nowuser=nowuser,
                                                                     otheruser=username,
-                                                                    feed_count=feed_count))
+                                                                    feed_count=feed_count,
+                                                                    like_sum=like_sum,
+                                                                    hate_sum=hate_sum,
+                                                                    bookmark_sum=bookmark_sum
+                                                                    ))
 
 
 
