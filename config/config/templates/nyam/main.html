@@ -586,14 +586,16 @@ function showFeeds(position) {
 
 // 메인화면 자동실행 코드
 $(function searchkeyword(){
-    const search = document.getElementById('search').innerText
-    //만약 검색창이 비워져 있다면?
+    const search = document.getElementById('search').value
+    console.log(search)
+    //만약 검색창이 비워져 있다면?(메인 검색)
     if (search==""){
         getLocation()
+
     }
-    //만약 검색이 됐다면?
-    else{     
-        getLocation()     
+    //만약 검색이 됐다면 실행하지 않음(프로필에서 검색)
+    else{      
+
     }
 })
 
@@ -950,8 +952,16 @@ $('#feed_ceate_button').click(function () {
 
 
 
+const receivedData = location.href.split('?')[1];
+document.getElementById('search').value = receivedData;
+if (document.getElementById('search').value=="undefined"){
+    document.getElementById('search').value=""
+}else{
+    document.getElementById('run_search').click();
 
-    
+}
+
+
 
 
 </script>
