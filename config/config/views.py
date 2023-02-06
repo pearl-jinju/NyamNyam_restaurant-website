@@ -129,8 +129,7 @@ class MainFeed(APIView):
             search_keyword = tag
         if name!= "default":
             search_keyword = name
-            
-        print(search_keyword)
+
         
         # error 확인 error는 error, correct로 나뉨
         if error =="error":

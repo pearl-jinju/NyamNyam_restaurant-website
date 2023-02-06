@@ -200,6 +200,9 @@ class Profile(APIView):
         feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
         feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
         
+        cond = feed_list['user_id']==user.nickname
+        feed_list = feed_list[cond]
+        
         # 결과 피드 리스트
         feed_list_restaurant_ids= feed_list['restaurant_id'].values
         
@@ -227,7 +230,7 @@ class Profile(APIView):
         else:
             feed_list = "empty"
             feed_count = 0
-
+            
 
         
         #(최종형태 Queryset)

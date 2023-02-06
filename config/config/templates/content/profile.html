@@ -429,10 +429,10 @@
             <div>
                 <div >
                 {% if "https" in feed.img_url %}
-                <figure id="feed_img_{{feed.restaurant_id}}" feed_name="{{feed.restaurant_id}}" class="feed_img feed_img_{{feed.name}}" style="position:relative;">
+                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
                     <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
                     src="{{feed.img_url}}">
-                        <figcaption id="feed_data_{{feed.restaurant_id}}" class="feed_data_{{feed.restaurant_id}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
@@ -440,10 +440,10 @@
                 </figure>
                     <!--미포함시 -->
                 {% else %}
-                <figure id="feed_img_{{feed.restaurant_id}}" feed_name="{{feed.restaurant_id}}" class="feed_img feed_img_{{feed.name}}" style="position:relative;">
+                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
                     <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
                     src="{% get_media_prefix %}{{feed.img_url}}">
-                        <figcaption id="feed_data_{{feed.restaurant_id}}" class="feed_data_{{feed.restaurant_id}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
@@ -1080,16 +1080,15 @@ $('#run_search').click(function(){
     }
 });
     
-
-$(".feed_img").hover(function(){
+//개인 업로드 데이터 이미지 hover 시 효과
+$(".user_contents").hover(function(event){
     //요소에 마우스를 올렸을 때 기능
-    //this == 요소의 글자 색을 red로 바꿔라
-    let feed_name = event.target.attributes.getNamedItem("feed_name").value;
-    let target_name= "feed_data_"+feed_name;
+    let feed_id = event.target.attributes.getNamedItem("feed_id").value;
+    let target_name= "feed_data_"+feed_id;
     $("."+target_name).css('display','flex');
         },function(){
-    let feed_name = event.target.attributes.getNamedItem("feed_name").value;
-    let target_name= "feed_data_"+feed_name;
+    let feed_id = event.target.attributes.getNamedItem("feed_id").value;
+    let target_name= "feed_data_"+feed_id;
     //요소에 마우스를 올린뒤 떨어졌을때 기능
     //this == 요소의 글자 색을 block으로 바꿔라    
     $("."+target_name).css('display','none');
