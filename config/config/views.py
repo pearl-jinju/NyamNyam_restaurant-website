@@ -217,6 +217,7 @@ class MainFeed(APIView):
         #좋아요 싫어요 초기화
         df['like']=0
         df['hate']=0
+        df['bookmark']=0
         df['is_like']=False
         df['is_hate']=False
         df['is_marked']=False
@@ -243,7 +244,9 @@ class MainFeed(APIView):
             
             # 북마크 가져오기
             # restaurant_id 기준 유저 개인의 북마크 기록 가져오기
+            bookmark_count = Bookmark.objects.filter(restaurant_id=restaurant_id, is_marked=True).count()
             is_marked = Bookmark.objects.filter(restaurant_id=restaurant_id, email=email ,is_marked=True).exists()
+            df.loc[cond,'bookmark'] = bookmark_count
             df.loc[cond,'is_marked'] = is_marked
             
 

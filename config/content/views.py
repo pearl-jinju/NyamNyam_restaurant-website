@@ -201,7 +201,22 @@ class Profile(APIView):
         feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
         
         # 결과 피드 리스트
-        feed_list = feed_list[feed_list['user_id']==user.nickname]
+        feed_list_restaurant_ids= feed_list['restaurant_id'].values
+        
+        for feed_list_restaurant_id in feed_list_restaurant_ids:
+            like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+            cond = feed_list['restaurant_id']==feed_list_restaurant_id
+            feed_list.loc[cond,'like_count'] = like_count
+            feed_list.loc[cond,'hate_count'] = hate_count
+            feed_list.loc[cond,'bookmark_count'] = bookmark_count
+                
+        # 왜 값을 넣을 때  int()가 안먹히는 걸까
+        feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
+        feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
+        feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
+
         # 결과 피드가 있다면
         if len(feed_list)>0:
             # 이미지 리스트형식을 문자열로 변경
@@ -219,6 +234,7 @@ class Profile(APIView):
          
         # 좋아요 목록
         like_list = list(Like.objects.filter(email=email, is_like=True).values_list('restaurant_id', flat=True))  #쿼리셋을 리스트로 만드는 방법
+        
         # 좋아요 기록이 있다면
         if len(like_list)>0:
                 

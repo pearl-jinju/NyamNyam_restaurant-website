@@ -141,35 +141,34 @@
             <span style="font-size:16px;"><b>{{feed.hate}}</b></span>     
             <span style="font-size:12px;">&nbsp</span> 
 
-            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
+            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 18px;">
                 <a  href="tel:{{feed.phone_number}}"><button type="button" class="btn btn-success disabled" style="padding:2px 15px 0px 15px;" > <span class="material-icons-outlined">call</span></button> </a>
             </div> 
             <span style="font-size:12px;">&nbsp</span>  
-            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 20px;">
+            <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 18px;">
                 <a  href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><button type="button" class="btn btn-primary disabled"  style="padding:2px 15px 0px 15px;"> <span class="material-icons-outlined">location_on</span></button> </a>
             </div> 
             
          
                 <div  style="margin:0px 0px 0px 20px; padding:0px 15px 0px 15px;">
                     {% if feed.distance < 1 %}
-                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 17px 5px 17px;"><b> {{feed.distance}}km </b></button>
                     {% elif feed.distance < 3 %}
-                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 17px 5px 17px;"><b> {{feed.distance}}km </b></button>
                     {% elif feed.distance < 6 %}
-                        <button type="button" class="btn btn-primary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                        <button type="button" class="btn btn-primary" style="font-size:14px; padding:5px 17px 5px 17px;"><b> {{feed.distance}}km </b></button>
                     {% elif feed.distance < 9 %}
-                        <button type="button" class="btn btn-secondary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                        <button type="button" class="btn btn-secondary" style="font-size:14px; padding:5px 17px 5px 17px;"><b> {{feed.distance}}km </b></button>
                     {% else %}
-                        <button type="button" class="btn btn-danger" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                        <button type="button" class="btn btn-danger" style="font-size:14px; padding:5px 17px 5px 17px;"><b> {{feed.distance}}km </b></button>
                     {% endif %}
                 </div>
+                <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px; margin-left:25px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
+                <span style="font-size:16px;"><b>{{feed.bookmark}}</b></span>   
 
 
     </div>
         
-        <div>
-            <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px; margin-top:7px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
-        </div>
 
     </div>
 

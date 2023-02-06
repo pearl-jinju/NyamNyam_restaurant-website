@@ -240,13 +240,16 @@
     font-size: 14px;
   }
 
+  .jb-a:hover .jb-c {
+    display: block;
+  }
+
 </style>
 <!-- 주소 관련 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     function loadAddressWindow() {
 
-        console.log("클릭됨")
         new daum.Postcode({
             oncomplete: function(data) {
                 // 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -426,12 +429,26 @@
             <div>
                 <div >
                 {% if "https" in feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                <figure id="feed_img_{{feed.restaurant_id}}" feed_name="{{feed.restaurant_id}}" class="feed_img feed_img_{{feed.name}}" style="position:relative;">
+                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
                     src="{{feed.img_url}}">
+                        <figcaption id="feed_data_{{feed.restaurant_id}}" class="feed_data_{{feed.restaurant_id}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                        </figcaption>
+                </figure>
                     <!--미포함시 -->
                 {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                <figure id="feed_img_{{feed.restaurant_id}}" feed_name="{{feed.restaurant_id}}" class="feed_img feed_img_{{feed.name}}" style="position:relative;">
+                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
                     src="{% get_media_prefix %}{{feed.img_url}}">
+                        <figcaption id="feed_data_{{feed.restaurant_id}}" class="feed_data_{{feed.restaurant_id}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                        </figcaption>
+                </figure>
                 {% endif %}
                 </div>
                 <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
@@ -948,7 +965,6 @@ $('#button_upload').click(function (){
 function upload(){
 
     files = $('#input_feed_fileupload')[0].files;
-    console.log()
 
     if (files[0].type.match(/image.*/)) {
         <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
@@ -1065,7 +1081,19 @@ $('#run_search').click(function(){
 });
     
 
-
+$(".feed_img").hover(function(){
+    //요소에 마우스를 올렸을 때 기능
+    //this == 요소의 글자 색을 red로 바꿔라
+    let feed_name = event.target.attributes.getNamedItem("feed_name").value;
+    let target_name= "feed_data_"+feed_name;
+    $("."+target_name).css('display','flex');
+        },function(){
+    let feed_name = event.target.attributes.getNamedItem("feed_name").value;
+    let target_name= "feed_data_"+feed_name;
+    //요소에 마우스를 올린뒤 떨어졌을때 기능
+    //this == 요소의 글자 색을 block으로 바꿔라    
+    $("."+target_name).css('display','none');
+        });
 
 
 
