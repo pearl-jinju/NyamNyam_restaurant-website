@@ -42,27 +42,22 @@
     }
 </style>
 <body>
-<div class="loading" id="loading_image" style="display:flex;" >
-    <span></span>
-    <span></span>
-    <span></span>
-
-</div>
 
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
 {% for feed in mainfeeds %}
     <div class="border feed_box" data-wow-delay="3s" id="main_content">
-        <div class="feed_name" style="display:flex; flex-direction:row; text-align:center; justify-content:center;">
-            
-            <div class="profile_box">
-            <img class="profile_img" src="{% get_media_prefix %}default_round_image.png">
+        <div class="feed_name" style="display:flex; flex-direction:row; text-align:center; justify-content:space-between;">
+            <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; align-items:center; margin-left:15px;">
+                <div class="profile_box">
+                <img class="profile_img" src="{% get_media_prefix %}default_round_image.png">
+                </div>
+
+                <span  class="feed_name_txt" style=" font-size: 18px;"> {{feed.name}} </span>
             </div>
 
-            <span  class="feed_name_txt"> {{feed.name}} </span>
-
-            <div style=" font-size:14px; margin-left:80px; background-color:orange; color:white; border-radius:10px; font-align:center; padding:5px 15px 5px 15px;">
-                <b> {{feed.road_address_short}}</b>
+            <div >
+                <button address_id="{{feed.road_address_short}}" type="button" class="addressSearch label btn btn-primary feed_txt vector_{{feed.road_address_short}}" style="font-size:12px; font-weight:bold; text-align:center;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{feed.road_address_short}}</button>
             </div>
 
 
@@ -153,14 +148,16 @@
             
          
                 <div  style="margin:0px 0px 0px 20px; padding:0px 15px 0px 15px;">
-                    {% if feed.distance < 3 %}
-                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}KM 이내</b></button>
+                    {% if feed.distance < 1 %}
+                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
+                    {% elif feed.distance < 3 %}
+                        <button type="button" class="btn btn-success" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
                     {% elif feed.distance < 6 %}
-                        <button type="button" class="btn btn-primary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}KM 이내</b></button>
+                        <button type="button" class="btn btn-primary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
                     {% elif feed.distance < 9 %}
-                        <button type="button" class="btn btn-secondary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}KM 이내</b></button>
+                        <button type="button" class="btn btn-secondary" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
                     {% else %}
-                        <button type="button" class="btn btn-danger" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}KM 이내</b></button>
+                        <button type="button" class="btn btn-danger" style="font-size:14px; padding:5px 15px 5px 15px;"><b> {{feed.distance}}km </b></button>
                     {% endif %}
                 </div>
 
@@ -183,13 +180,13 @@
         <!--버튼 디자인-->
         <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_1row %}
-                <button tag_id="{{vector}}" type="button" class="tagsearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
+                <button tag_id="{{vector}}" type="button" class="tagSearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold; text-align:center; overflow:hidden;  white-space: nowrap; flex-direction:row;  margin:0px 10px 0px 0px; padding: 2px 15px 2px 10px; ">{{vector}}</button>
             {% endfor %}
         </div>
 
         <div style="width:100%; display: flex; flex-direction: row; justify-content: center;">
             {% for vector in feed.vectors_2row %}
-                <button tag_id="{{vector}}" type="button" class="tagsearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
+                <button tag_id="{{vector}}" type="button" class="tagSearch label btn btn-primary feed_txt vector_{{vector}}" style="font-size:12px; font-weight:bold;  text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:5px 5px 5px 0px;  padding: 2px 15px 2px 10px;">{{vector}}</button>
             {% endfor %}
         </div>
 
@@ -217,8 +214,9 @@
 {% endfor %}
 </body>
 <script>
+
 //태그 클릭시 이벤트
-$(".tagsearch").click(function (event){
+$(".tagSearch").click(function (event){
     let tag = event.target.attributes.getNamedItem("tag_id").value;
 
     $('#append_body').empty()
@@ -258,6 +256,51 @@ $(".tagsearch").click(function (event){
     }
     window.scrollTo(0,0)
     getLocationTag()
+    
+    
+});
+
+//주소 클릭시 이벤트
+$(".addressSearch").click(function (event){
+    let address = event.target.attributes.getNamedItem("address_id").value;
+
+    $('#append_body').empty()
+    function getLocationAddress() {
+        if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showFeedsAddress);
+        } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+    
+    function showFeedsAddress(position) {
+        let latitude_address =  position.coords.latitude;
+        let longitude_address =  position.coords.longitude;
+        let url_address = "/mainfeed?" + "latitude="+latitude_address+"&"+"longitude="+longitude_address+"&"+"tag=default"+"&"+"address="+address+"&"+"name=default"+"&"+"error=correct"
+        console.log(url_address)
+    
+        $.ajax({
+            url: url_address,
+            data: {},
+            method: "GET",
+            success: function (response) {
+                let temp_html_name = response
+    
+            $('#append_body').append(temp_html_name);
+    
+            },
+            error: function (data) {    
+                alert(data.responseJSON.error);
+            },
+            complete: function () {
+                hide_loadingbar();
+                
+            }
+        });
+    
+    }
+    window.scrollTo(0,0)
+    getLocationAddress()
     
     
 });

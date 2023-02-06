@@ -168,8 +168,8 @@ class MainFeed(APIView):
         df = df[cond]
         
         # 현재 위치기준 거리별 정렬 
-        df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='km')),axis=1 ) 
-        # df['distance'] = df['distance']
+        df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
+        df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
         
         # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
         # df = df[df['distance']<15]

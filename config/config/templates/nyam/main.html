@@ -382,7 +382,7 @@ function show_loadingbar(){
       
         <ul class="dropdown-menu" style="left:-160px;" aria-labelledby="dropdownMenuLink">
           <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
-          <li><a class="dropdown-item" href="#">정보수정</a></li>
+          <li><a class="dropdown-item" href="">정보수정</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
  
@@ -601,7 +601,7 @@ $(function searchkeyword(){
 
 //검색 알고리즘
 $('#run_search').click(function(){
-    javascript:window.scrollTo(0,0)
+    window.scrollTo(0,0)
     show_loadingbar()
     let serch_keyword = $('#search').val();
 
@@ -665,10 +665,10 @@ $('#run_search').click(function(){
             }
             
             function showFeedsTag(position) {
-                let latitude_name =  position.coords.latitude;
-                let longitude_name =  position.coords.longitude;
+                let latitude_tag =  position.coords.latitude;
+                let longitude_tag =  position.coords.longitude;
                 console.log(final_serch_keyword)
-                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag="+final_serch_keyword+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
+                let url_name = "/mainfeed?" + "latitude="+latitude_tag+"&"+"longitude="+longitude_tag+"&"+"tag="+final_serch_keyword+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
                 console.log(url_name)
             
                 $.ajax({
@@ -706,10 +706,10 @@ $('#run_search').click(function(){
             }
             
             function showFeedsAddress(position) {
-                let latitude_name =  position.coords.latitude;
-                let longitude_name =  position.coords.longitude;
+                let latitude_address =  position.coords.latitude;
+                let longitude_address =  position.coords.longitude;
                 console.log(final_serch_keyword)
-                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag=default"+"&"+"address="+final_serch_keyword+"&"+"name=default"+"&"+"error=correct"
+                let url_name = "/mainfeed?" + "latitude="+latitude_address+"&"+"longitude="+longitude_address+"&"+"tag=default"+"&"+"address="+final_serch_keyword+"&"+"name=default"+"&"+"error=correct"
                 console.log(url_name)
             
                 $.ajax({

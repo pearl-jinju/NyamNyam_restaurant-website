@@ -311,8 +311,8 @@
          src="{% get_media_prefix %}home_image.png">
     </a>
     <div  style="width: 500px; display:flex; flex-direction:row;">
-        <input class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
-        <button id="search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
+        <input  id="search" class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
+        <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
       <a href="main"> <span class="material-icons" style="padding:5px 20px 0px 0px;">home </span></a>
@@ -1048,6 +1048,22 @@ function profile_upload(){
     })    
 
 };
+
+//검색 알고리즘
+$('#run_search').click(function(){
+    window.scrollTo(0,0)
+    //show_loadingbar()
+    let serch_keyword = $('#search').val();
+
+    // 검색정보가 없을때는 아무 동작하지 않기
+    if (serch_keyword==""){
+        alert("검색어를 입력해주세요!")
+    }else{
+       window.location.href="main"
+       //$('search').html("aaa");
+    }
+});
+    
 
 
 
