@@ -27,13 +27,18 @@ SECRET_KEY = 'django-insecure-b3l5#8_-qq9jiclvsc&hf7r6=h$witvg5r!ec6&h2v^-t4(_w*
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "969e-2001-2d8-6983-37d2-9910-5ac1-2ef9-bfa0.jp.ngrok.io",'127.0.0.1'
+    "969e-2001-2d8-6983-37d2-9910-5ac1-2ef9-bfa0.jp.ngrok.io",
+    '127.0.0.1',
+    "13.125.237.66",
+    "nyamnyam.shop",    
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
+    'sslserver',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +52,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -141,3 +148,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 커스텀 유저모델 사용
 AUTH_USER_MODEL = 'user.User'
+
+#CORS 에러
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = (
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000"
+)

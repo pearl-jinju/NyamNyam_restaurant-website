@@ -105,10 +105,10 @@ class Main(APIView):
             return render(request,"user/login.html") #context html로 넘길것 
         
         # # 세션정보가 있는 상태에서만 main 창을 보여줄것
-        return render(request,"nyam\main.html", context=dict( user=user)) #context html로 넘길것
+        return render(request,"nyam/main.html", context=dict( user=user)) #context html로 넘길것
 
     def post(self, request):
-        return render(request,"nyam\main.html")
+        return render(request,"nyam/main.html")
     
     
 class MainFeed(APIView):
