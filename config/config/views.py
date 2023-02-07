@@ -130,7 +130,7 @@ class MainFeed(APIView):
             search_keyword = name
 
         
-        # error 확인 error는 error, correct로 나뉨
+        # 검색어 적정성 확인 error는 error, correct로 나뉨
         if error =="error":
              return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
          
@@ -169,9 +169,13 @@ class MainFeed(APIView):
         # DB 내 모든 queryset 호출 
         feed_list = Feed.objects.all()  #select * from content_feed;
         
+        
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
-
+        
+        #메모리 간소화
+        del feed_list
+        
         # 한국 데이터 필터링
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
         df = df[cond]
@@ -181,7 +185,7 @@ class MainFeed(APIView):
         df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
         
         # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
-        # df = df[df['distance']<15]
+        df = df[df['distance']<50]
         df = df.sort_values(by='distance')
         
         
@@ -289,6 +293,8 @@ class MainFeed(APIView):
             
             # 활성유저 리스트 추출
             valid_user_list = [str(user_id) for user_id in user_data]
+            #메모리 간소화
+            del user_data
             
             # 데이터 전처리
             user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\r",'',x))
@@ -298,6 +304,8 @@ class MainFeed(APIView):
             
             # 활성유저 피드데이터만 필터링
             cond = user_df['user_id'].isin(valid_user_list) 
+            #메모리 간소화
+            del valid_user_list
             user_df = user_df[cond]
             
             
@@ -326,12 +334,17 @@ class MainFeed(APIView):
                 new_img_list = list(set(new_img_list))
 
                 df.loc[cond,'img_url'] = str(new_img_list)
+                #메모리 간소화
+                del new_img_list
                 # vector 변경
                 user_comment = user_df.loc[idx_user_df,'comment']
                 
                 new_comment =  df.loc[cond,'comment'].values[0] +" " + user_comment
                 new_vectors = list(toVector(new_comment)[0])
                 df.loc[cond,'vectors'] = str(new_vectors)
+                #메모리 간소화
+                del new_comment
+                del new_vectors
                 
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)

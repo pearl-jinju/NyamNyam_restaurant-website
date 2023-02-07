@@ -281,15 +281,31 @@
 
 <script>
 function hide_loadingbar(){
+    
+    $('#show_loadingbar').css({
+        display:"none",
+    });
 
     $('#loading_image').css({
         display:"none",
     });
+
+    $('#loading_text').css({
+        display:"none",
+    });
   };
+  
 
 function show_loadingbar(){
 
+    $('#show_loadingbar').css({
+        display:"flex",
+    });
+
     $('#loading_image').css({
+        display:"flex",
+    });
+    $('#loading_text').css({
         display:"flex",
     });
 };
@@ -371,7 +387,7 @@ function show_loadingbar(){
         <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
-      <a href=""> <span class="material-icons" style="padding:5px 10px 0px 0px;" href="main" > home</span></a>
+      <a id="home_icon" > <span class="material-icons" style="padding:5px 10px 0px 0px;" > home</span></a>
       <span id="nav_bar_add_box" class="material-icons-outlined" style="cursor:pointer; padding:5px 20px 0px 0px;">add_box</span>
 
 
@@ -415,12 +431,16 @@ function show_loadingbar(){
   <div class="left_body" > 
     <div id="append_body">
     </div>
+
     <div class="loading" id="loading_image" style="display:flex;" >
         <span></span>
         <span></span>
         <span></span>
-
+        
     </div>
+    <br>
+    <img id="loading_image" src="{% get_media_prefix %}loadinganimation.gif" style="border-radius:60px; ">
+    <div id="loading_text" style="text-align:center; margin-top:50px; font-weight:bold;">맛집을 준비중입니다 잠시만 기다려주세요! </div>
 </div>
 
 
@@ -962,7 +982,7 @@ $('#feed_ceate_button').click(function () {
 });
 
 
-
+//프로필에서 넘어온 쿼리데이터 처리 함수
 const receivedData = location.href.split('?')[1];
 document.getElementById('search').value = receivedData;
 if (document.getElementById('search').value=="undefined"){
@@ -972,6 +992,12 @@ if (document.getElementById('search').value=="undefined"){
 
 }
 
+// 홈버튼 클릭시
+$('#home_icon').click(function () {
+    document.getElementById('search').value=""
+    location.replace('/main')
+
+});
 
 
 

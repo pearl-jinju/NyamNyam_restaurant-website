@@ -222,6 +222,7 @@ $(".tagSearch").click(function (event){
     let tag = event.target.attributes.getNamedItem("tag_id").value;
 
     $('#append_body').empty()
+    show_loadingbar()
     function getLocationTag() {
         if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showFeedsTag);
@@ -267,6 +268,7 @@ $(".addressSearch").click(function (event){
     let address = event.target.attributes.getNamedItem("address_id").value;
 
     $('#append_body').empty()
+    show_loadingbar()
     function getLocationAddress() {
         if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showFeedsAddress);

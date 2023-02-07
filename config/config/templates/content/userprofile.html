@@ -315,7 +315,7 @@
         <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
-      <a href="main"> <span class="material-icons" style="padding:5px 20px 0px 0px;">home </span></a>
+      <a id="home_icon"> <span class="material-icons" style="padding:5px 20px 0px 0px;">home </span></a>
       <span id="nav_bar_add_box" class="material-icons-outlined" style="padding:5px 20px 0px 0px;">add_box</span>
 
 
@@ -1052,6 +1052,13 @@ $(".user_contents").hover(function(event){
     //this == 요소의 글자 색을 block으로 바꿔라    
     $("."+target_name).css('display','none');
         });
+
+// 홈버튼 클릭시
+$('#home_icon').click(function () {
+    document.getElementById('search').value=""
+    location.replace('/main')
+
+});
 
 </script>
 <!-- Option 1: Bootstrap Bundle with Popper -->
