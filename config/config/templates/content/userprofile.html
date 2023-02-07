@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="width:100%; ">
+<body style="width:100%; ">
 <head>
   <!-- Required meta tags -->
   {% comment %} <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> {% endcomment %}
@@ -301,17 +302,16 @@
     };
 </script>
 
-<body >
 
 <!-- 상단 내비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 50px;position: fixed;" >
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 100px;position: fixed;" >
   <div class="container-fluid">
     <a href="../main">
     <img class="navbar_brand" style="height: 30px; object-fit: contain;" 
          src="{% get_media_prefix %}home_image.png">
     </a>
-    <div  style="width: 500px; display:flex; flex-direction:row;">
-        <input id="search"class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
+    <div  style="width: 300px; display:flex; flex-direction:row;">
+        <input  id="search" class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소" aria-label="Search" id="search">
         <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
@@ -353,8 +353,8 @@
 <!-- 바디 영역 -->
 <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:60px;">
     <!-- 프로필 사진 영역 -->
-    <div style="padding:20px 60px;">
-        <div class="profile_box" style=" width:200px; height:200px;">
+    <div style="padding:20px 25px;">
+        <div class="profile_box" style=" width:150px; height:150px; margin-top:50px;">
             <!--http 포함시 -->
             {% if "https" in otheruser.img %}
             <img class="profile_img"
@@ -366,18 +366,16 @@
             {% endif %}
         </div>
     </div>
-    <div>
+    <div >
         <div style="display:flex; flex-direction:row; margin-bottom:40px;  margin-top:65px;">
-            <div id="user_id" style="font-size:20px; margin-right:40px; font-weight:bold;">
+            <div id="user_id" style="font-size:20px;  font-weight:bold; margin-left:60px;">
                 {{otheruser.nickname}}
             </div>
-
-            <input type="file" id="input_fileupload" onchange="profile_upload();" style="display:none;"/>
 
         </div>
         
         <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
-            <div style="margin-right:80px;">
+            <div style="margin-right:20px;">
                 <b>게시물 </b> {{feed_count}}
             </div>
 
@@ -386,11 +384,11 @@
             </div>
         </div>
         <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
-            <div style="margin-right:80px;">
+            <div style="margin-right:20px;">
                 <b> 좋아요 </b> {{like_sum}}
             </div>
 
-            <div style="margin-right:80px;">
+            <div style="margin-right:20px;">
                 <b> 싫어요 </b> {{hate_sum}}
             </div>
 
@@ -400,21 +398,20 @@
         </div>
     </div>
 </div>
-
 <div style="border-top: solid 2px rgba(50, 50, 50, 0.1); width:100%;">
     <div style="display:flex; flex-direction:row; justify-content:center; align-item: center; margin: 20px;">
-        <div id="button_feed_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span id="button_feed_list_icon" style="color:orange;"  class="material-icons-outlined">restaurant</span>게시물 </div>
-        <div id="button_feed_like_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_like_icon"  style="color:gray;"  class="material-icons-outlined">favorite</span>좋아하는 맛집</div>
-        <div id="button_feed_hate_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_hate_icon"  style="color:gray;"  class="material-icons"> thumb_down </span>싫어하는 곳</div>
-        <div id="button_feed_bookmark_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_bookmark_icon"  style="color:gray;" class="material-icons-outlined">bookmark</span>찜 목록</div>
+        <div id="button_feed_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span id="button_feed_list_icon" style="color:orange;"  class="material-icons-outlined">restaurant</span>게시물</div>
+        <div id="button_feed_like_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_like_icon"  style="color:gray;"  class="material-icons-outlined">favorite</span>좋아요</div>
+        <div id="button_feed_hate_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_hate_icon"  style="color:gray;"  class="material-icons"> thumb_down </span>싫어요</div>
+        <div id="button_feed_bookmark_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_bookmark_icon"  style="color:gray;" class="material-icons-outlined">bookmark</span>찜</div>
         <!--여기에 주요태그별 지도를 추가-->
     </div>
 </div>
 
 
 
-<div class="profile_data" id="feed_list" style="width: 100%; min-width:1000px; display:flex; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+<div class="profile_data" id="feed_list" style="width: 100%; min-width:580px; display:flex; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
         {% if "empty" in feed_list%}
         <div style="margin:auto; margin-top: 50px;">
             아직 기록이 없습니다!
@@ -426,9 +423,9 @@
                 <div >
                 {% if "https" in feed.img_url %}
                 <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
-                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
+                    <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
                     src="{{feed.img_url}}">
-                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
@@ -437,9 +434,9 @@
                     <!--미포함시 -->
                 {% else %}
                 <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
-                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
+                    <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
                     src="{% get_media_prefix %}{{feed.img_url}}">
-                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
@@ -464,8 +461,8 @@
     </div> 
 </div> 
 
-<div class="profile_data" id="like_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+<div class="profile_data" id="like_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
         {% if "empty" in like_feed_list%}
         <div style="margin:auto; margin-top: 50px;">
             아직 기록이 없습니다!
@@ -476,11 +473,11 @@
             <div>
                 <div >
                 {% if "https" in like_feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{{like_feed.img_url}}">
                     <!--미포함시 -->
                 {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{% get_media_prefix %}{{like_feed.img_url}}">
                 {% endif %}
                 </div>
@@ -501,7 +498,7 @@
     </div> 
 </div> 
 
-<div class="profile_data" id="hate_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
+<div class="profile_data" id="hate_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
     <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
         {% if "empty" in hate_feed_list%}
         <div style="margin:auto; margin-top: 50px;">
@@ -513,11 +510,11 @@
             <div>
                 <div >
                 {% if "https" in hate_feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{{hate_feed.img_url}}">
                     <!--미포함시 -->
                 {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{% get_media_prefix %}{{hate_feed.img_url}}">
                 {% endif %}
                 </div>
@@ -538,8 +535,8 @@
     </div> 
 </div> 
 
-<div class="profile_data" id="bookmark_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
+<div class="profile_data" id="bookmark_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
+    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
         {% if "empty" in bookmark_feed_list%}
         <div style="margin:auto; margin-top: 50px;">
             아직 기록이 없습니다!
@@ -550,11 +547,11 @@
             <div>
                 <div >
                 {% if "https" in bookmark_feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{{bookmark_feed.img_url}}">
                     <!--미포함시 -->
                 {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                    <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
                     src="{% get_media_prefix %}{{bookmark_feed.img_url}}">
                 {% endif %}
                 </div>
@@ -580,7 +577,6 @@
 
 
 
-
 <!--1번째 modal-->
 <div id="first_modal" class="modal_overlay">
     <div class="modal_window">
@@ -590,15 +586,17 @@
                 &nbsp;
             </div>
 
-            <div>
+            <div style="margin-left:250px;">
             <b>새 이미지 업로드</b>
             </div>
 
             <div>
-                <span id="close_modal1" class="material-icons-outlined">close</span>
+                <span id="close_modal1" class="material-icons-outlined" style="margin-right:250px;">close</span>
             </div>
 
+
         </div>
+        
 
         <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
         
@@ -607,8 +605,6 @@
                 </button>
                 <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
         </div>
-
-    </div>
 </div>
 <!--2번째 modal-->
 <div id="second_modal" class="modal_overlay">

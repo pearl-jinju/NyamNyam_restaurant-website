@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="width:100%; ">
+<body style="width:100%; ">
 <head>
   <!-- Required meta tags -->
   {% comment %} <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> {% endcomment %}
@@ -304,17 +305,17 @@
     };
 </script>
 
-<body >
+
 
 <!-- 상단 내비게이션 바 -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%;height: 50px;position: fixed;" >
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom" style="width: 100%; height: 100px;position: fixed;" >
   <div class="container-fluid">
     <a href="../main">
     <img class="navbar_brand" style="height: 30px; object-fit: contain;" 
          src="{% get_media_prefix %}home_image.png">
     </a>
-    <div  style="width: 500px; display:flex; flex-direction:row;">
-        <input  id="search" class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소 로 검색" aria-label="Search" id="search">
+    <div  style="width: 300px; display:flex; flex-direction:row;">
+        <input  id="search" class="form-control"  type="search" placeholder="!맛집명 / #태그 / @주소" aria-label="Search" id="search">
         <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
@@ -354,348 +355,281 @@
 
 
 <!-- 바디 영역 -->
-<div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:60px;">
-    <!-- 프로필 사진 영역 -->
-    <div style="padding:20px 60px;">
-        <div class="profile_box" style=" width:200px; height:200px;">
-            <!--http 포함시 -->
-            {% if "https" in user.img %}
-            <img class="profile_img"
-            src="{{user.profile_img}}">
-            <!--미포함시 -->
-            {% else %}
-            <img class="profile_img"
-            src="{% get_media_prefix %}{{user.profile_img}}">
-            {% endif %}
-        </div>
-    </div>
-    <div>
-        <div style="display:flex; flex-direction:row; margin-bottom:40px;  margin-top:65px;">
-            <div id="user_id" style="font-size:20px; margin-right:40px; font-weight:bold;">
-                {{user.nickname}}
-            </div>
-            <button id="button_profile_upload" type="button" class="label btn btn-primary" style="margin-right:40px;">
-                프로필 사진 변경
-            </button>
-
-            <input type="file" id="input_fileupload" onchange="profile_upload();" style="display:none;"/>
-
-        </div>
-        
-        <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
-            <div style="margin-right:80px;">
-                <b>게시물 </b> {{feed_count}}
-            </div>
-
-            <div>
-              <b>냠냠 Tier </b> {{user.grade}}
-            </div>
-        </div>
-        <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
-            <div style="margin-right:80px;">
-                <b> 좋아요 </b> {{like_sum}}
-            </div>
-
-            <div style="margin-right:80px;">
-                <b> 싫어요 </b> {{hate_sum}}
-            </div>
-
-            <div>
-                <b> 찜 </b> {{bookmark_sum}}
-            </div>
-        </div>
-        <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom:30px;">
-                <div style="margin-right:15px;">
-                    <b>냠냠포인트  </b> 
-                </div>
-                <div style="display:flex; flex-direction:row; justify-content:center;">
-                    {{user.point}} &nbsp<b> Point</b>  
-                    <span style="margin-left:10px;" class="material-icons-outlined">
-                        help_outline
-                    </span>
-                </div>
-        </div>
-    </div>
-</div>
-
-<div style="border-top: solid 2px rgba(50, 50, 50, 0.1); width:100%;">
-    <div style="display:flex; flex-direction:row; justify-content:center; align-item: center; margin: 20px;">
-        <div id="button_feed_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span id="button_feed_list_icon" style="color:orange;"  class="material-icons-outlined">restaurant</span>게시물 </div>
-        <div id="button_feed_like_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_like_icon"  style="color:gray;"  class="material-icons-outlined">favorite</span>좋아하는 맛집</div>
-        <div id="button_feed_hate_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_hate_icon"  style="color:gray;"  class="material-icons"> thumb_down </span>싫어하는 곳</div>
-        <div id="button_feed_bookmark_list" style="cursor:pointer; margin: 0px 30px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_bookmark_icon"  style="color:gray;" class="material-icons-outlined">bookmark</span>찜 목록</div>
-        <!--여기에 주요태그별 지도를 추가-->
-    </div>
-</div>
-
-
-
-<div class="profile_data" id="feed_list" style="width: 100%; min-width:1000px; display:flex; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
-        {% if "empty" in feed_list%}
-        <div style="margin:auto; margin-top: 50px;">
-            아직 기록이 없습니다!
-        </div>
-        
-        {%else%}
-        {%for feed in feed_list %}
-            <div>
-                <div >
-                {% if "https" in feed.img_url %}
-                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
-                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
-                    src="{{feed.img_url}}">
-                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
-                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
-                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
-                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
-                        </figcaption>
-                </figure>
-                    <!--미포함시 -->
+<div>
+    <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:100px; width:100%;">
+        <!-- 프로필 사진 영역 -->
+        <div style="padding:20px 25px;">
+            <div class="profile_box" style=" width:150px; height:150px; margin-top:50px;">
+                <!--http 포함시 -->
+                {% if "https" in user.img %}
+                <img class="profile_img"
+                src="{{user.profile_img}}">
+                <!--미포함시 -->
                 {% else %}
-                <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
-                    <img  style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
-                    src="{% get_media_prefix %}{{feed.img_url}}">
-                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:300px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
-                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
-                            <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
-                            <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
-                        </figcaption>
-                </figure>
+                <img class="profile_img"
+                src="{% get_media_prefix %}{{user.profile_img}}">
                 {% endif %}
-                </div>
-                <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
-                    {{feed.name}}
-                </div>
-                <div style="margin:2px 0px 0px 10px;">
-                    <a href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
-                    {{feed.road_address}}
-                </div>
-                <div style="margin:2px 0px 0px 10px;">
-                    <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
-                    {{feed.phone_number}}
-                </div>
             </div>
-        {% endfor %}
-        {% endif %}
-    </div> 
-</div> 
-
-<div class="profile_data" id="like_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
-        {% if "empty" in like_feed_list%}
-        <div style="margin:auto; margin-top: 50px;">
-            아직 기록이 없습니다!
         </div>
-        
-        {%else%}
-        {%for like_feed in like_feed_list %}
-            <div>
-                <div >
-                {% if "https" in like_feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                    src="{{like_feed.img_url}}">
-                    <!--미포함시 -->
-                {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                    src="{% get_media_prefix %}{{like_feed.img_url}}">
-                {% endif %}
+        <div>
+            <div style="display:flex; flex-direction:row; margin-bottom:25px;  margin-top:65px;">
+                <div id="user_id" style="font-size:20px; margin-right:35px; font-weight:bold;">
+                    {{user.nickname}}
                 </div>
-                <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
-                    {{like_feed.name}}
+                <button id="button_profile_upload" type="button" class="label btn btn-primary" style="margin-right:10px;">
+                    프로필 사진 변경
+                </button>
+
+                <input type="file" id="input_fileupload" onchange="profile_upload();" style="display:none;"/>
+
+            </div>
+            
+            <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
+                <div style="margin-right:20px;">
+                    <b>게시물 </b> {{feed_count}}
                 </div>
-                <div style="margin:2px 0px 0px 10px;">
-                    <a href="https://www.google.co.kr/maps/dir/{{like_feed.curr_place}}/{{like_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
-                    {{like_feed.road_address}}
-                </div>
-                <div style="margin:2px 0px 0px 10px;">
-                    <a href="tel:{{like_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
-                    {{like_feed.phone_number}}
+
+                <div>
+                <b>냠냠 Tier </b> {{user.grade}}
                 </div>
             </div>
-        {% endfor %}
-        {% endif %}
-    </div> 
-</div> 
+            <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom: 25px; ">
+                <div style="margin-right:20px;">
+                    <b> 좋아요 </b> {{like_sum}}
+                </div>
 
-<div class="profile_data" id="hate_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
-        {% if "empty" in hate_feed_list%}
+                <div style="margin-right:20px;">
+                    <b> 싫어요 </b> {{hate_sum}}
+                </div>
+
+                <div>
+                    <b> 찜 </b> {{bookmark_sum}}
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:row; justify-content:center; margin-bottom:30px;">
+                    <div style="margin-right:15px;">
+                        <b>냠냠포인트  </b> 
+                    </div>
+                    <div style="display:flex; flex-direction:row; justify-content:center;">
+                        {{user.point}} &nbsp<b> Point</b>  
+                        <span style="margin-left:10px;" class="material-icons-outlined">
+                            help_outline
+                        </span>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="border-top: solid 2px rgba(50, 50, 50, 0.1); width:100%;">
+        <div style="display:flex; flex-direction:row; justify-content:center; align-item: center; margin: 20px;">
+            <div id="button_feed_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span id="button_feed_list_icon" style="color:orange;"  class="material-icons-outlined">restaurant</span>게시물</div>
+            <div id="button_feed_like_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_like_icon"  style="color:gray;"  class="material-icons-outlined">favorite</span>좋아요</div>
+            <div id="button_feed_hate_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_hate_icon"  style="color:gray;"  class="material-icons"> thumb_down </span>싫어요</div>
+            <div id="button_feed_bookmark_list" style="cursor:pointer; margin: 0px 14px; display:flex; flex-direction:row; align-item:center; font-weight:bold;"><span  id="button_feed_bookmark_icon"  style="color:gray;" class="material-icons-outlined">bookmark</span>찜</div>
+            <!--여기에 주요태그별 지도를 추가-->
+        </div>
+    </div>
+
+
+
+    <div class="profile_data" id="feed_list" style="width: 100%; min-width:580px; display:flex; justify-content:center; ">
+        <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
+            {% if "empty" in feed_list%}
             <div style="margin:auto; margin-top: 50px;">
                 아직 기록이 없습니다!
             </div>
-        
-        {%else%}
-            {%for hate_feed in hate_feed_list %}
+            
+            {%else%}
+            {%for feed in feed_list %}
                 <div>
                     <div >
-                    {% if "https" in hate_feed.img_url %}
-                        <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                        src="{{hate_feed.img_url}}">
+                    {% if "https" in feed.img_url %}
+                    <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
+                        <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
+                        src="{{feed.img_url}}">
+                            <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                                <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                                <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                                <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                            </figcaption>
+                    </figure>
                         <!--미포함시 -->
                     {% else %}
-                        <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                        src="{% get_media_prefix %}{{hate_feed.img_url}}">
+                    <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
+                        <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
+                        src="{% get_media_prefix %}{{feed.img_url}}">
+                            <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                                <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
+                                <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
+                                <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
+                            </figcaption>
+                    </figure>
                     {% endif %}
                     </div>
                     <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
-                        {{hate_feed.name}}
+                        {{feed.name}}
                     </div>
                     <div style="margin:2px 0px 0px 10px;">
-                        <a href="https://www.google.co.kr/maps/dir/{{hate_feed.curr_place}}/{{hate_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
-                        {{hate_feed.road_address}}
+                        <a href="https://www.google.co.kr/maps/dir/{{feed.curr_place}}/{{feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                        {{feed.road_address}}
                     </div>
-                    <div  style="margin:2px 0px 0px 10px;">
-                        <a href="tel:{{hate_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
-                        {{hate_feed.phone_number}}
+                    <div style="margin:2px 0px 0px 10px;">
+                        <a href="tel:{{feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                        {{feed.phone_number}}
                     </div>
                 </div>
             {% endfor %}
-        {% endif %}
+            {% endif %}
+        </div> 
     </div> 
-</div> 
 
-<div class="profile_data" id="bookmark_feed_list" style="width: 100%; min-width:1000px; display:none; justify-content:center; ">
-    <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:1000px;">
-        {% if "empty" in bookmark_feed_list%}
-        <div style="margin:auto; margin-top: 50px;">
-            아직 기록이 없습니다!
-        </div>
-        
-        {%else%}
-        {%for bookmark_feed in bookmark_feed_list %}
-            <div>
-                <div >
-                {% if "https" in bookmark_feed.img_url %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                    src="{{bookmark_feed.img_url}}">
-                    <!--미포함시 -->
-                {% else %}
-                    <img style="width:300px; height:300px; object-fit:cover; margin: 10px 10px 0px 10px;"
-                    src="{% get_media_prefix %}{{bookmark_feed.img_url}}">
-                {% endif %}
-                </div>
-                <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
-                    {{bookmark_feed.name}}
-                </div>
-                <div style="margin: 2px 10px 0px 10px;">
-                    <a href="https://www.google.co.kr/maps/dir/{{bookmark_feed.curr_place}}/{{bookmark_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
-                    {{bookmark_feed.road_address}}
-                </div>
-                <div style="margin: 2px 10px 0px 10px;">
-                    <a href="tel:{{bookmark_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
-                    {{bookmark_feed.phone_number}}
-                </div>
+    <div class="profile_data" id="like_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
+        <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
+            {% if "empty" in like_feed_list%}
+            <div style="margin:auto; margin-top: 50px;">
+                아직 기록이 없습니다!
             </div>
-        {% endfor %}
-        {% endif %}
+            
+            {%else%}
+            {%for like_feed in like_feed_list %}
+                <div>
+                    <div >
+                    {% if "https" in like_feed.img_url %}
+                        <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                        src="{{like_feed.img_url}}">
+                        <!--미포함시 -->
+                    {% else %}
+                        <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                        src="{% get_media_prefix %}{{like_feed.img_url}}">
+                    {% endif %}
+                    </div>
+                    <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
+                        {{like_feed.name}}
+                    </div>
+                    <div style="margin:2px 0px 0px 10px;">
+                        <a href="https://www.google.co.kr/maps/dir/{{like_feed.curr_place}}/{{like_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                        {{like_feed.road_address}}
+                    </div>
+                    <div style="margin:2px 0px 0px 10px;">
+                        <a href="tel:{{like_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                        {{like_feed.phone_number}}
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div> 
     </div> 
-</div> 
 
-
-
-
-
-
-
-<!--1번째 modal-->
-<div id="first_modal" class="modal_overlay">
-    <div class="modal_window">
-        <div
-            style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
-            <div>
-                &nbsp;
-            </div>
-
-            <div>
-            <b>새 이미지 업로드</b>
-            </div>
-
-            <div>
-                <span id="close_modal1" class="material-icons-outlined">close</span>
-            </div>
-
-        </div>
-
-        <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
-        
-                <button id="button_upload" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:25%; position: relative; left: 35%; bottom:50%; margin-right:40px;">
-                맛집 사진 업로드
-                </button>
-                <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
-        </div>
-
-    </div>
-</div>
-<!--2번째 modal-->
-<div id="second_modal" class="modal_overlay">
-<div class="modal_window">
-    <div
-        style="display: flex; flex-direction: row; justify-content: space-between;">
-        <div>
-            &nbsp;
-        </div>
-
-        <div>
-            <b>새 이미지 업로드</b>
-        </div>
-
-        <div>
-            <span id="close_modal2" class="material-icons-outlined">close</span>
-        </div>
-
-    </div>
-    <div style="display:flex; flex-direction:row; margin-top:10px;">
-        <div class="img_upload_space" style=" width:415px; height:540px; "></div>
-        <div style ="margin-left:20px;" >
-        <div>
-            <p style="text-align:center; color:gray;  margin-bottom:10px;">냠냠에게 새로운 맛집을 알려주세요!</p>
-            <p style="text-align:center;"><b> 맛집명 </b></p>
-            <textarea id ="input_name" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+    <div class="profile_data" id="hate_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
+        <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
+            {% if "empty" in hate_feed_list%}
+                <div style="margin:auto; margin-top: 50px;">
+                    아직 기록이 없습니다!
+                </div>
             
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명주소로 기입됩니다.</span> </p>
-            <textarea id ="input_address" onclick=loadAddressWindow()  class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+            {%else%}
+                {%for hate_feed in hate_feed_list %}
+                    <div>
+                        <div >
+                        {% if "https" in hate_feed.img_url %}
+                            <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                            src="{{hate_feed.img_url}}">
+                            <!--미포함시 -->
+                        {% else %}
+                            <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                            src="{% get_media_prefix %}{{hate_feed.img_url}}">
+                        {% endif %}
+                        </div>
+                        <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
+                            {{hate_feed.name}}
+                        </div>
+                        <div style="margin:2px 0px 0px 10px;">
+                            <a href="https://www.google.co.kr/maps/dir/{{hate_feed.curr_place}}/{{hate_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                            {{hate_feed.road_address}}
+                        </div>
+                        <div  style="margin:2px 0px 0px 10px;">
+                            <a href="tel:{{hate_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                            {{hate_feed.phone_number}}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div> 
+    </div> 
+
+    <div class="profile_data" id="bookmark_feed_list" style="width: 100%; min-width:580px; display:none; justify-content:center; ">
+        <div style="display:flex; flex-direction:row; flex-wrap: wrap;  width:100%;">
+            {% if "empty" in bookmark_feed_list%}
+            <div style="margin:auto; margin-top: 50px;">
+                아직 기록이 없습니다!
+            </div>
             
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 전화번호 </b> <br> <span style="color:gray; font-size:13px;">000-0000-0000 형식으로 작성해주세요.</span> </p>
-            <textarea id ="input_phone" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+            {%else%}
+            {%for bookmark_feed in bookmark_feed_list %}
+                <div>
+                    <div >
+                    {% if "https" in bookmark_feed.img_url %}
+                        <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                        src="{{bookmark_feed.img_url}}">
+                        <!--미포함시 -->
+                    {% else %}
+                        <img style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px;"
+                        src="{% get_media_prefix %}{{bookmark_feed.img_url}}">
+                    {% endif %}
+                    </div>
+                    <div style="font-weight:bold; text-align:center; margin:5px; font-size:16px;">
+                        {{bookmark_feed.name}}
+                    </div>
+                    <div style="margin: 2px 10px 0px 10px;">
+                        <a href="https://www.google.co.kr/maps/dir/{{bookmark_feed.curr_place}}/{{bookmark_feed.road_address}}"><span class="material-icons-outlined"> moving </span></a> 
+                        {{bookmark_feed.road_address}}
+                    </div>
+                    <div style="margin: 2px 10px 0px 10px;">
+                        <a href="tel:{{bookmark_feed.phone_number}}"> <span class="material-icons-outlined">call</span></a>
+                        {{bookmark_feed.phone_number}}
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div> 
+    </div> 
+
+
+
+
+
+
+    <!--1번째 modal-->
+    <div id="first_modal" class="modal_overlay">
+        <div class="modal_window">
+            <div
+                style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    &nbsp;
+                </div>
+
+                <div style="margin-left:250px;">
+                <b>새 이미지 업로드</b>
+                </div>
+
+                <div>
+                    <span id="close_modal1" class="material-icons-outlined" style="margin-right:250px;">close</span>
+                </div>
+
+
+            </div>
             
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
-            <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:125px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
 
-            <button id="feed_ceate_button" type="button" class="btn btn-primary" style="width:385px; margin-top:5px;">공유하기</button>
-        </div>
-        </div>
-
+            <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
+            
+                    <button id="button_upload" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:25%; position: relative; left: 35%; bottom:50%; margin-right:40px;">
+                    맛집 사진 업로드
+                    </button>
+                    <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
+            </div>
     </div>
-    
-
-</div>
-</div>
-<!--1번째 modal-->
-<div id="first_modal" class="modal_overlay">
-    <div class="modal_window">
-        <div
-            style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
-            <div>
-                &nbsp;
-            </div>
-
-            <div>
-            <b>새 이미지 업로드</b>
-            </div>
-
-            <div>
-                <span class="material-icons-outlined">close</span>
-            </div>
-
-        </div>
-
-        <div class="img_upload_space" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center; background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
-
-    </div>
-</div>
-<!--2번째 modal-->
-<div id="second_modal" class="modal_overlay">
+    <!--2번째 modal-->
+    <div id="second_modal" class="modal_overlay">
     <div class="modal_window">
         <div
             style="display: flex; flex-direction: row; justify-content: space-between;">
@@ -708,17 +642,28 @@
             </div>
 
             <div>
-                <span class="material-icons-outlined">close</span>
+                <span id="close_modal2" class="material-icons-outlined">close</span>
             </div>
 
         </div>
         <div style="display:flex; flex-direction:row; margin-top:10px;">
-            <div class="img_upload_space" style=" width:500px; height:540px; "></div>
-            <div style ="border-left: solid 1px gray">
+            <div class="img_upload_space" style=" width:415px; height:540px; "></div>
+            <div style ="margin-left:20px;" >
             <div>
-                <p style="text-align:center"><b> 리뷰 </b></p>
-                <textarea class="form-control" style="width:276px; height:400px;"  id="exampleFormControlTextarea1" rows="5"></textarea>
-                <button type="button" class="btn btn-primary" style="width:100%;">공유하기</button>
+                <p style="text-align:center; color:gray;  margin-bottom:10px;">냠냠에게 새로운 맛집을 알려주세요!</p>
+                <p style="text-align:center;"><b> 맛집명 </b></p>
+                <textarea id ="input_name" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명주소로 기입됩니다.</span> </p>
+                <textarea id ="input_address" onclick=loadAddressWindow()  class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 전화번호 </b> <br> <span style="color:gray; font-size:13px;">000-0000-0000 형식으로 작성해주세요.</span> </p>
+                <textarea id ="input_phone" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
+                <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:125px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
+
+                <button id="feed_ceate_button" type="button" class="btn btn-primary" style="width:385px; margin-top:5px;">공유하기</button>
             </div>
             </div>
 
@@ -726,10 +671,68 @@
         
 
     </div>
+    </div>
+    <!--1번째 modal-->
+    <div id="first_modal" class="modal_overlay">
+        <div class="modal_window">
+            <div
+                style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    &nbsp;
+                </div>
+
+                <div>
+                <b>새 이미지 업로드</b>
+                </div>
+
+                <div>
+                    <span class="material-icons-outlined">close</span>
+                </div>
+
+            </div>
+
+            <div class="img_upload_space" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center; background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
+
+        </div>
+    </div>
+    <!--2번째 modal-->
+    <div id="second_modal" class="modal_overlay">
+        <div class="modal_window">
+            <div
+                style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    &nbsp;
+                </div>
+
+                <div>
+                    <b>새 이미지 업로드</b>
+                </div>
+
+                <div>
+                    <span class="material-icons-outlined">close</span>
+                </div>
+
+            </div>
+            <div style="display:flex; flex-direction:row; margin-top:10px;">
+                <div class="img_upload_space" style=" width:500px; height:540px; "></div>
+                <div style ="border-left: solid 1px gray">
+                <div>
+                    <p style="text-align:center"><b> 리뷰 </b></p>
+                    <textarea class="form-control" style="width:276px; height:400px;"  id="exampleFormControlTextarea1" rows="5"></textarea>
+                    <button type="button" class="btn btn-primary" style="width:100%;">공유하기</button>
+                </div>
+                </div>
+
+            </div>
+            
+
+        </div>
+    </div>
 </div>
 
+</body>
 
-
+</html>
 <!-- Optional JavaScript; choose one of the two! -->
 <script>
 
@@ -1121,6 +1124,3 @@ $(".user_contents").hover(function(event){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
 -->
 
-</body>
-
-</html>

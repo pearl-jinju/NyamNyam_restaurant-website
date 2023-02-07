@@ -40,7 +40,6 @@ def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditi
     new_phrase = re.sub("([0-9])", "", new_phrase)
     # 일부 특수문자 제거
     new_phrase = re.sub(r"/.", "", new_phrase)
-    # new_phrase = re.sub(r",", "", new_phrase)
     new_phrase = re.sub(r"_", "", new_phrase)
     new_phrase = re.sub(r"─", "", new_phrase)
     # 명사만 추출
@@ -53,7 +52,7 @@ def toVector(phrase, minmum_frequency=2, length_conditions=2, max_length_conditi
     noun_list_count = Counter(noun_list)
 
     # 빈도순 정렬
-    main_noun_list_count = noun_list_count.most_common(200)
+    main_noun_list_count = noun_list_count.most_common(10)
     # 길이가 2자 이상인 명사, 빈도수가 2회 이상인 단어만
     main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>=length_conditions) and (n[1]>=minmum_frequency) and (len(n[0])<=max_length_conditions)][:10]
     
@@ -205,7 +204,7 @@ class MainFeed(APIView):
         # =============================.
 
         # 50개 이내로 추출
-        df = df.iloc[:50,:]
+        df = df.iloc[:15,:]
 
         # 출력된 맛집 id만 출력
         feed_restaurant_id_list =  df['restaurant_id'].values
