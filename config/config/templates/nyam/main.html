@@ -282,11 +282,11 @@
 <script>
 function hide_loadingbar(){
     
-    $('#show_loadingbar').css({
+    $('#loading_image').css({
         display:"none",
     });
 
-    $('#loading_image').css({
+    $('#loading_animation').css({
         display:"none",
     });
 
@@ -302,7 +302,7 @@ function show_loadingbar(){
         display:"flex",
     });
 
-    $('#loading_image').css({
+    $('#loading_animation').css({
         display:"flex",
     });
     $('#loading_text').css({
@@ -439,7 +439,7 @@ function show_loadingbar(){
         
     </div>
     <br>
-    <img id="loading_image" src="{% get_media_prefix %}loadinganimation.gif" style="border-radius:60px; ">
+    <img id="loading_animation" src="{% get_media_prefix %}loadinganimation.gif" style="border-radius:60px; ">
     <div id="loading_text" style="text-align:center; margin-top:50px; font-weight:bold;">맛집을 준비중입니다 잠시만 기다려주세요! </div>
 </div>
 

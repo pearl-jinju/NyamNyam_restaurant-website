@@ -203,17 +203,25 @@ class Profile(APIView):
         cond = feed_list['user_id']==user.nickname
         feed_list = feed_list[cond]
         
-        # 결과 피드 리스트
-        feed_list_restaurant_ids= feed_list['restaurant_id'].values
+        # 결과 피드 리스트가 있다면,
+        if feed_list['restaurant_id'].values:
+            
+            feed_list_restaurant_ids= feed_list['restaurant_id'].values
         
-        for feed_list_restaurant_id in feed_list_restaurant_ids:
-            like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            cond = feed_list['restaurant_id']==feed_list_restaurant_id
-            feed_list.loc[cond,'like_count'] = like_count
-            feed_list.loc[cond,'hate_count'] = hate_count
-            feed_list.loc[cond,'bookmark_count'] = bookmark_count
+            for feed_list_restaurant_id in feed_list_restaurant_ids:
+                like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                cond = feed_list['restaurant_id']==feed_list_restaurant_id
+                feed_list.loc[cond,'like_count'] = like_count
+                feed_list.loc[cond,'hate_count'] = hate_count
+                feed_list.loc[cond,'bookmark_count'] = bookmark_count
+        else:
+            # 없다면, 0으로
+            feed_list['like_count'] = 0
+            feed_list['hate_count'] = 0
+            feed_list['bookmark_count'] = 0
+        
                 
         # 왜 값을 넣을 때  int()가 안먹히는 걸까
         feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
