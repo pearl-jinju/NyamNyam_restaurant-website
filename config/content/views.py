@@ -175,6 +175,13 @@ class Profile(APIView):
     def get(self, request):
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
+        delatable_objects = UserData.objects.filter(user_id="")
+        
+        for i in delatable_objects:
+            i.user_id="je_en"
+            i.save()
+        for i in delatable_objects:
+            print(i.user_id)
         email = request.session.get('email', None)
         
         # 내 프로필에 접근하는 경우인지 확인해야함
@@ -310,6 +317,8 @@ class UserProfile(APIView):
         APIView (_type_): _description_
     """
     def get(self, request):
+        
+
         
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
