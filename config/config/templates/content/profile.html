@@ -448,6 +448,10 @@
                                 <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                                 <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
                             </figcaption> {% endcomment %}
+                            <div style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center;  left:0; right:0; bottom:0;">
+                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit__id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
+                                <a><span id="feed_delete_{{feed.user_data_seq}}" feed_delete__id="{{feed.user_data_seq}}" class="feed_delete material-icons-outlined" style="margin-left:75px; cursor:pointer;">delete</span></a>
+                            </div>
                     </figure>
                         <!--미포함시 -->
                     {% else %}
@@ -459,6 +463,10 @@
                                 <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                                 <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
                             </figcaption> {% endcomment %}
+                            <div style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center;  left:0; right:0; bottom:0;">
+                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit__id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
+                                <a><span id="feed_delete_{{feed.user_data_seq}}" feed_delete_id="{{feed.user_data_seq}}" class="feed_delete material-icons-outlined" style="margin-left:75px; cursor:pointer;">delete</span></a>
+                            </div>
                     </figure>
                     {% endif %}
                     </div>
@@ -1137,6 +1145,40 @@ $('#home_icon').click(function () {
     location.replace('/main')
 
 });
+
+//삭제버튼 클릭시 이벤트
+$(".feed_delete").click(function(){
+    //해당하는 피드의 id값을 가져옴
+    let feed_id = event.target.attributes.getNamedItem("feed_delete_id").value;
+    console.log(feed_id)
+    if (window.confirm("삭제하면 복구할 수 없습니다. 정말 삭제하시겠습니까?")) {
+        if (window.confirm("피드를 삭제합니다.")) {
+            $.ajax({
+                url: "/content/delete",
+                data: {
+                    feed_id:feed_id
+                },
+                method: "DELETE",
+                success: function (data) {
+                alert("삭제가 완료되었습니다.");
+                },
+                error: function (data) {
+                    alert("삭제 오류 발생");
+                },
+                complete: function () {
+                    window.location.replace("")
+                }
+            })  
+    
+        } 
+        } 
+        });
+
+
+       
+    
+
+
 
 </script>
 <!-- Option 1: Bootstrap Bundle with Popper -->

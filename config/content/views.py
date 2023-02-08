@@ -230,6 +230,7 @@ class DeleteFeed(APIView):
         feed_id = request.data.get('feed_id')
 
         email = request.session.get('email', None)
+        
         # 비정상 접근 체크
         if email is None:
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
