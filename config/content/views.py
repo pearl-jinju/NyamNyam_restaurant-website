@@ -13,9 +13,63 @@ import os
 from config.settings import MEDIA_ROOT
 import string
 import re
+from konlpy.tag import Okt
+from collections import Counter
 
 
-from .tools import getLocationFromAddress, toVector
+# 주소 불러오는 함수
+from geopy.geocoders import Nominatim
+geo_local = Nominatim(user_agent='South Korea')
+
+
+konlp = Okt()
+
+# 불용어 리스트
+file_path = "config/stopwords.txt"
+
+with open(file_path, encoding='utf-8') as f:
+    stopwords = f.read().splitlines()
+
+# 위치 옮길것
+def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditions=10):
+    """
+        빈도순으로 10개의 명사를 추출하는 함수
+    """
+    # 한글만 남기기
+    new_phrase = re.sub("^[가-힣]", "", phrase)
+    new_phrase = re.sub("([ㄱ-ㅎㅏ-ㅣ]+)", "", new_phrase)
+    new_phrase = re.sub("([0-9])", "", new_phrase)
+    # 일부 특수문자 제거
+    new_phrase = re.sub("/.", "", new_phrase)
+    new_phrase = re.sub("_", "", new_phrase)
+    new_phrase = re.sub("─", "", new_phrase)
+    # 명사만 추출
+    noun_list = konlp.nouns(new_phrase)
+   
+    # 불용어/불건전한 단어 제거
+    noun_list = [word for word in noun_list if not word in stopwords]
+    
+    # 명사 빈도수 
+    noun_list_count = Counter(noun_list)
+
+    # 빈도순 정렬
+    main_noun_list_count = noun_list_count.most_common(10)
+    # 길이가 2자 이상인 명사, 빈도수가 2회 이상인 단어만
+    main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>=length_conditions) and (n[1]>=minmum_frequency) and (len(n[0])<=max_length_conditions)][:10]
+    
+    # # 명사 빈도수 딕셔너리 
+    noun_dict_count = dict(noun_list_count)
+    return [main_noun_list_count,noun_dict_count]
+
+def getLocationFromAddress(address):
+    try:
+        geo = geo_local.geocode(address)
+        crd = {"latitude": geo.latitude, "longitude": geo.longitude}
+    except:
+        return None
+    return crd
+
+
     
 class UploadFeed(APIView):
     def post(self, request):
@@ -54,7 +108,12 @@ class UploadFeed(APIView):
         # 1. image 적합성 테스트(음식 이미지 확인 관련 코드) 
         
         # 2. 주소 유효성 테스트(임시)
+        print(road_address)
         crd = getLocationFromAddress(road_address)
+
+        if crd is None:
+            return JsonResponse({"error": "현재 위도 경도를 확인할 수 없습니다."}, status=400)
+            
         # 대한민국 경도/ 위도 범위  동경 124°∼132°, 북위 33°∼43°  
         if (crd['latitude'] <= 32)or(44 <= crd['latitude']) or (crd['longitude']<=123) or (133 <= crd['longitude']):
             return JsonResponse({"error": "주소가 올바르지 않습니다."}, status=400)
@@ -175,13 +234,6 @@ class Profile(APIView):
     def get(self, request):
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
-        delatable_objects = UserData.objects.filter(user_id="")
-        
-        for i in delatable_objects:
-            i.user_id="je_en"
-            i.save()
-        for i in delatable_objects:
-            print(i.user_id)
         email = request.session.get('email', None)
         
         # 내 프로필에 접근하는 경우인지 확인해야함

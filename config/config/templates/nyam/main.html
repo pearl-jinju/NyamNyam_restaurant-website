@@ -298,7 +298,7 @@ function hide_loadingbar(){
 
 function show_loadingbar(){
 
-    $('#show_loadingbar').css({
+    $('#loading_image').css({
         display:"flex",
     });
 
@@ -520,9 +520,10 @@ function show_loadingbar(){
             <textarea id ="input_phone" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
             
             <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
-            <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:125px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
+            <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:80px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
 
-            <button id="feed_ceate_button" type="button" class="btn btn-primary" style="width:385px; margin-top:5px;">공유하기</button>
+            <button id="feed_create_button" type="button" class="btn btn-primary" style="visibility:visible; width:385px; margin-top:5px; text-align:center;">  공유하기</button>
+            <button id="feed_create_wait_button" type="button" class="btn btn-primary" style="visibility:hidden; width:385px; margin-top:5px;"> 업로드 중...</button>
         </div>
         </div>
 
@@ -952,7 +953,7 @@ function upload(){
 
 
 // 공유하기 버튼 클릭시
-$('#feed_ceate_button').click(function () {
+$('#feed_create_button').click(function () {
     let image = files[0].name;
     file = files[0];
 
@@ -971,7 +972,14 @@ $('#feed_ceate_button').click(function () {
     fd.append('road_address', road_address);
     fd.append('phone_number', phone_number);
     fd.append('comment', comment);
-    alert("업로드 중입니다. 잠시만 기다려주세요.")
+   
+        //버튼 바꾸기
+    $('#feed_create_button').css({
+        visibility:"hidden"
+    })
+    $('#feed_create_wait_button').css({
+        visibility:"visible"
+    })
 
     $.ajax({
         url: "/content/upload",
@@ -980,13 +988,22 @@ $('#feed_ceate_button').click(function () {
         processData: false,
         contentType: false,
         success: function (data) {
-           location.replace('')
+
            alert("성공적으로 업로드 되었습니다.");
+           location.replace('')
         },
         error: function (data) {
             alert(data.responseJSON.error);
         },
         complete: function () {
+            //버튼 바꾸기
+            $('#feed_create_button').css({
+                visibility:"visible"
+            })
+            $('#feed_create_wait_button').css({
+                visibility:"hidden"
+            })
+            
 
         }
     })
