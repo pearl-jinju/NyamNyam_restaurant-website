@@ -447,15 +447,15 @@ $('#run_search').click(function(){
 
         if (search_tag=="!"){
             $('#append_body').empty()
-            function getLocationName() {
+            function getLocationNameGuest() {
                 if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showFeedsName);
+                navigator.geolocation.getCurrentPosition(showFeedsNameGuest);
                 } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
                 }
             }
             
-            function showFeedsName(position) {
+            function showFeedsNameGuest(position) {
                 let latitude_name =  position.coords.latitude;
                 let longitude_name =  position.coords.longitude;
                 console.log(final_serch_keyword)
@@ -483,19 +483,19 @@ $('#run_search').click(function(){
             
             }
             
-            getLocationName()
+            getLocationNameGuest()
         }
         else if(search_tag=="#"){
             $('#append_body').empty()
-            function getLocationTag() {
+            function getLocationTagGuest() {
                 if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showFeedsTag);
+                navigator.geolocation.getCurrentPosition(showFeedsTagGuest);
                 } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
                 }
             }
             
-            function showFeedsTag(position) {
+            function showFeedsTagGuest(position) {
                 let latitude_tag =  position.coords.latitude;
                 let longitude_tag =  position.coords.longitude;
                 console.log(final_serch_keyword)
@@ -523,20 +523,20 @@ $('#run_search').click(function(){
             
             }
             
-            getLocationTag()
+            getLocationTagGuest()
             
         }
         else if(search_tag=="@"){
             $('#append_body').empty()
-            function getLocationAddress() {
+            function getLocationAddressGuest() {
                 if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showFeedsAddress);
+                navigator.geolocation.getCurrentPosition(showFeedsAddressGuest);
                 } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
                 }
             }
             
-            function showFeedsAddress(position) {
+            function showFeedsAddressGuest(position) {
                 let latitude_address =  position.coords.latitude;
                 let longitude_address =  position.coords.longitude;
                 console.log(final_serch_keyword)
@@ -563,7 +563,7 @@ $('#run_search').click(function(){
             
             }
             
-            getLocationAddress()
+            getLocationAddressGuest()
             
         }
         else{
