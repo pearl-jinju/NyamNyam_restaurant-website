@@ -204,7 +204,7 @@ class Profile(APIView):
         feed_list = feed_list[cond]
         
         # 결과 피드 리스트가 있다면,
-        if feed_list['restaurant_id'].values:
+        if len(feed_list['restaurant_id'].values)>0:
             
             feed_list_restaurant_ids= feed_list['restaurant_id'].values
         

@@ -168,51 +168,6 @@
     display: flex;
     flex-direction: column;
 }
-.modal_overlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
-  z-index:999;
-}
-.modal_window {
-  background: white;
-  backdrop-filter: blur(13.5px);
-  -webkit-backdrop-filter: blur(13.5px);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  width: 800px;
-  height: 600px;
-  position: relative;
-  padding: 10px;
-  z-index:999;
-}
-.modal_title{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-weight: bold;
-  font-size: 20px;
-}
-.modal_title_side{
-  flex: 0 0 40px;
-  text-align: center;
-}
-.img_upload_space{
-  outline-offset:-10px;
-  text-align: center;
-  transition: all .15s ease-in-out;
-  width:780px;
-  height: 548px;
-}
 .carousel-item{
     max-height: 100vh;
     height:100%;
@@ -387,34 +342,8 @@ function show_loadingbar(){
         <button id="run_search" type="button" class="label btn btn-primary" style=" font-weight:bold; text-align:center; overflow:hidden; white-space: nowrap; flex-direction:row; margin:0px 0px 0px 0px; padding: 2px 15px 2px 10px; ">검색</button>
     </div>
     <div style="display:flex;">
-      <a id="home_icon" > <span class="material-icons" style="padding:5px 10px 0px 0px;" > home</span></a>
-      <span id="nav_bar_add_box" class="material-icons-outlined" style="cursor:pointer; padding:5px 20px 0px 0px;">add_box</span>
+      <a id="home_icon" > <span  style=" padding:5px 10px 0px 0px;" > <button  style="font-weight:bold;" class="btn btn-primary">로그인</button></span></a>
 
-
-      <div class="dropdown">
-        <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="profile_box" style=" width:30px; height:30px;">
-                <!--http 포함시 -->
-                {% if "https" in img %}
-                <img class="profile_img"
-                src="{{user.profile_img}}">
-                <!--미포함시 -->
-                {% else %}
-                <img class="profile_img"
-                src="{% get_media_prefix %}{{user.profile_img}}">
-                {% endif %}
-                </div>
-        </a>
-        
-      
-        <ul class="dropdown-menu" style="left:-160px;" aria-labelledby="dropdownMenuLink">
-          <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
-          <li><a class="dropdown-item" href="">정보수정</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
- 
-        </ul>
-      </div>
 
 
     </div>
@@ -444,138 +373,7 @@ function show_loadingbar(){
 </div>
 
 
-<!--1번째 modal-->
-<div id="first_modal" class="modal_overlay">
-    <div class="modal_window">
-        <div
-            style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
-            <div>
-                &nbsp;
-            </div>
 
-            <div style="margin-left:250px;">
-            <b>새 이미지 업로드</b>
-            </div>
-
-            <div>
-                <span id="close_modal1" class="material-icons-outlined" style="margin-right:250px;">close</span>
-            </div>
-
-
-        </div>
-        
-
-        <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
-        
-                <button id="button_upload" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:25%; position: relative; left: 35%; bottom:50%; margin-right:40px;">
-                맛집 사진 업로드
-                </button>
-                <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
-        </div>
-</div>
-
-
-<!--2번째 modal-->
-<div id="second_modal" class="modal_overlay">
-<div class="modal_window">
-    <div
-        style="display: flex; flex-direction: row; justify-content: space-between;">
-        <div>
-            &nbsp;
-        </div>
-
-        <div>
-            <b>새 이미지 업로드</b>
-        </div>
-
-        <div>
-            <span id="close_modal2" class="material-icons-outlined"  style="margin-right:250px;">close</span>
-        </div>
-
-    </div>
-    <div style="display:flex; flex-direction:row; margin-top:10px;">
-        <div class="img_upload_space" style=" width:415px; height:540px; "></div>
-        <div style ="margin-left:20px;" >
-        <div>
-            <p style="text-align:center; color:gray;  margin-bottom:10px;">냠냠에게 새로운 맛집을 알려주세요!</p>
-            <p style="text-align:center;"><b> 맛집명 </b></p>
-            <textarea id ="input_name" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-            
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명주소로 기입됩니다.</span> </p>
-            <textarea id ="input_address"  onclick=loadAddressWindow()  class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-            
-            
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 전화번호 </b> <br> <span style="color:gray; font-size:13px;">000-0000-0000 형식으로 작성해주세요.</span> </p>
-            <textarea id ="input_phone" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1" rows="1"></textarea>
-            
-            <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
-            <textarea id ="input_comment" class="form-control" style="position:center; width:385px; height:125px;"  id="exampleFormControlTextarea1" rows="2"></textarea>
-
-            <button id="feed_ceate_button" type="button" class="btn btn-primary" style="width:385px; margin-top:5px;">공유하기</button>
-        </div>
-        </div>
-
-    </div>
-    
-
-</div>
-</div>
-<!--1번째 modal-->
-<div id="first_modal" class="modal_overlay">
-    <div class="modal_window">
-        <div
-            style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
-            <div>
-                &nbsp;
-            </div>
-
-            <div>
-            <b>새 이미지 업로드</b>
-            </div>
-
-            <div>
-                <span class="material-icons-outlined"  style="margin-right:250px;">close</span>
-            </div>
-
-        </div>
-
-        <div class="img_upload_space" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center; background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
-
-    </div>
-</div>
-<!--2번째 modal-->
-<div id="second_modal" class="modal_overlay">
-    <div class="modal_window">
-        <div
-            style="display: flex; flex-direction: row; justify-content: space-between;">
-            <div>
-                &nbsp;
-            </div>
-
-            <div>
-                <b>새 이미지 업로드</b>
-            </div>
-
-            <div>
-                <span class="material-icons-outlined"  style="margin-right:250px;">close</span>
-            </div>
-
-        </div>
-        <div style="display:flex; flex-direction:row; margin-top:10px;">
-            <div class="img_upload_space" style=" width:500px; height:540px; "></div>
-            <div style ="border-left: solid 1px gray">
-            <div>
-                <p style="text-align:center"><b> 리뷰 </b></p>
-                <textarea class="form-control" style="width:276px; height:400px;"  id="exampleFormControlTextarea1" rows="5"></textarea>
-                <button type="button" class="btn btn-primary" style="width:100%;">공유하기</button>
-            </div>
-            </div>
-
-        </div>
-        
-
-    </div>
-</div>
 
 <script>
 // feed를 가져오기 위한 위치함수 선언
@@ -590,7 +388,7 @@ function getLocation() {
 function showFeeds(position) {
     let latitude =  position.coords.latitude;
     let longitude =  position.coords.longitude;
-    let url = "/mainfeed?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
+    let url = "/mainfeedguest?" + "latitude="+latitude+"&"+"longitude="+longitude+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
 
     $.ajax({
         url: url,
@@ -661,7 +459,7 @@ $('#run_search').click(function(){
                 let latitude_name =  position.coords.latitude;
                 let longitude_name =  position.coords.longitude;
                 console.log(final_serch_keyword)
-                let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag=default"+"&"+"address=default"+"&"+"name="+final_serch_keyword+"&"+"error=correct"
+                let url_name = "/mainfeedguest?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag=default"+"&"+"address=default"+"&"+"name="+final_serch_keyword+"&"+"error=correct"
                 console.log(url_name)
             
                 $.ajax({
@@ -701,7 +499,7 @@ $('#run_search').click(function(){
                 let latitude_tag =  position.coords.latitude;
                 let longitude_tag =  position.coords.longitude;
                 console.log(final_serch_keyword)
-                let url_name = "/mainfeed?" + "latitude="+latitude_tag+"&"+"longitude="+longitude_tag+"&"+"tag="+final_serch_keyword+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
+                let url_name = "/mainfeedguest?" + "latitude="+latitude_tag+"&"+"longitude="+longitude_tag+"&"+"tag="+final_serch_keyword+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
                 console.log(url_name)
             
                 $.ajax({
@@ -742,7 +540,7 @@ $('#run_search').click(function(){
                 let latitude_address =  position.coords.latitude;
                 let longitude_address =  position.coords.longitude;
                 console.log(final_serch_keyword)
-                let url_name = "/mainfeed?" + "latitude="+latitude_address+"&"+"longitude="+longitude_address+"&"+"tag=default"+"&"+"address="+final_serch_keyword+"&"+"name=default"+"&"+"error=correct"
+                let url_name = "/mainfeedguest?" + "latitude="+latitude_address+"&"+"longitude="+longitude_address+"&"+"tag=default"+"&"+"address="+final_serch_keyword+"&"+"name=default"+"&"+"error=correct"
                 console.log(url_name)
             
                 $.ajax({
@@ -772,7 +570,7 @@ $('#run_search').click(function(){
             $('#append_body').empty()
             show_loadingbar()
             function searchError() {
-                let url_name = "/mainfeed?" + "latitude=error"+"&"+"longitude=error"+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=error"
+                let url_name = "/mainfeedguest?" + "latitude=error"+"&"+"longitude=error"+"&"+"tag=default"+"&"+"address=default"+"&"+"name=default"+"&"+"error=error"
                 console.log(url_name)
                 $.ajax({
                     url: url_name,
@@ -808,195 +606,11 @@ $('#run_search').click(function(){
 
 <!-- Optional JavaScript; choose one of the two! -->
 <script>
-// 전역변수 설정
-let files; // 파일명
-// + 버튼 modal 띄우기
-const modal = document.getElementById("first_modal");
-const buttonAddFeed = document.getElementById("nav_bar_add_box");
-buttonAddFeed.addEventListener("click", e => {
-    modal.style.top = window.pageYOffset + 'px'; // top을 이용해 시작 y위치를 바꿔줌 
-    modal.style.display = "flex";
-    document.body.style.overflowY = "hidden"; // 스크롤 없애기
-});
-// x버튼 modal 닫기 코드 -1단계 닫기
-const buttonCloseModal1 = document.getElementById("close_modal1");
-const buttonCloseModal2 = document.getElementById("close_modal2");
-const modal1 = document.getElementById("first_modal");
-const modal2 = document.getElementById("second_modal");
-buttonCloseModal1.addEventListener("click", e => {
-    modal1.style.display = "none";
-    document.body.style.overflowY = "visible";
-    $('.img_upload_space').css({
-        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
-        "opacity":"100%",
-        "outline": "none",
-        "background-size": "65%",
-        "background-repeat" : "no-repeat",
-        "background-position" : "center",
-        "background-color" : "white",
-    });
-});
-//-2단계 닫기
-buttonCloseModal2.addEventListener("click", e => {
-    modal2.style.display ="none";
-    document.body.style.overflowY = "visible";
-    $('.img_upload_space').css({
-        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
-        "opacity":"100%",
-        "outline": "none",
-        "background-size": "65%",
-        "background-repeat" : "no-repeat",
-        "background-position" : "center",
-        "background-color" : "white",
-    });
-});
 
-
-$('.img_upload_space')
-    .on("dragover", dragOver)
-    .on("dragleave", dragOver)
-    .on("drop", uploadFiles);
-//console.log(e) e는 마우스 이벤트를 나타냄
-function dragOver(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (e.type == "dragover") {
-        $(e.target).css({"background-color": "black", "outline-offset": "-20px"});
-    } else {
-        $(e.target).css({"background-color": "white", "outline-offset": "-10px"});
-    }
-};
-
-function uploadFiles(e){
-    e.stopPropagation();
-    e.preventDefault();
-
-    e.dataTransfer = e.originalEvent.dataTransfer; //2
-    files = e.target.files || e.dataTransfer.files;
-
-    if (files.length > 1) {
-        alert('파일을 1개씩 올려주십시오');
-        return;
-    }
-
-    if (files[0].type.match(/image.*/)) {
-      <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
-      $('#first_modal').css({
-        display:'none'
-      })
-      
-      $('#second_modal').css({
-        display:'flex',
-        // 현재위치에 띄우기
-        top:window.scrollY+'px',
-      })
-      $('.img_upload_space').css({
-          "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
-          "outline": "none",
-          "background-size": "100%",
-          "background-repeat" : "no-repeat",
-          "background-position" : "center",
-        
-      });
-    }else{
-    alert('이미지파일이 아닙니다. 파일형식을 확인해주세요 아닙니다.');
-    return;
-    }
-
-};
-
-//파일 업로드 버튼
-$('#button_upload').click(function (){
-    $('#input_feed_fileupload').click();
-    });
-
-function upload(){
-
-    files = $('#input_feed_fileupload')[0].files;
-
-    if (files[0].type.match(/image.*/)) {
-        <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
-        $('#first_modal').css({
-        display:'none'
-        })
-        
-        $('#second_modal').css({
-        display:'flex',
-        // 현재위치에 띄우기
-        top:window.scrollY+'px',
-        })
-        $('.img_upload_space').css({
-            "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
-            "outline": "none",
-            "background-size": "100%",
-            "background-repeat" : "no-repeat",
-            "background-position" : "center",
-        
-        });
-    }else{
-    alert('이미지파일이 아닙니다. 파일형식을 확인해주세요 아닙니다.');
-    return;
-    }
-};
-
-
-// 공유하기 버튼 클릭시
-$('#feed_ceate_button').click(function () {
-    let image = files[0].name;
-    file = files[0];
-
-    // 입력된 값 가져오기
-    let name = $('#input_name').val();
-    let road_address = $('#input_address').val();
-    let phone_number = $('#input_phone').val();
-    let comment = $('#input_comment').val();
-    let user_id = $('#user_id').text(); // 유저 id
-    // form data 변환하기
-    let fd = new FormData();
-    fd.append('user_id', user_id);
-    fd.append('file', file);
-    fd.append('image', image);
-    fd.append('name', name);
-    fd.append('road_address', road_address);
-    fd.append('phone_number', phone_number);
-    fd.append('comment', comment);
-    alert("업로드 중입니다. 잠시만 기다려주세요.")
-
-    $.ajax({
-        url: "/content/upload",
-        data: fd,
-        method: "POST",
-        processData: false,
-        contentType: false,
-        success: function (data) {
-           location.replace('')
-           alert("성공적으로 업로드 되었습니다.");
-        },
-        error: function (data) {
-            alert(data.responseJSON.error);
-        },
-        complete: function () {
-
-        }
-    })
-});
-
-
-//프로필에서 넘어온 쿼리데이터 처리 함수
-const receivedData = location.href.split('?')[1];
-document.getElementById('search').value = receivedData;
-if (document.getElementById('search').value=="undefined"){
-    document.getElementById('search').value=""
-}else{
-    document.getElementById('run_search').click();
-
-}
 
 // 홈버튼 클릭시
 $('#home_icon').click(function () {
-    document.getElementById('search').value=""
     location.replace('/main')
-
 });
 
 
