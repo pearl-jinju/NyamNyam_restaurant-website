@@ -8,6 +8,7 @@ from config.settings import MEDIA_URL, MEDIA_ROOT
 urlpatterns = [
     path('join', Join.as_view()),
     path('main/join', Join.as_view()),
+    path('main/login', LogIn.as_view()),
     path('login', LogIn.as_view()),
     path('logout', LogOut.as_view())
     
