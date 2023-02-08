@@ -174,7 +174,6 @@ class MainFeedGuest(APIView):
         # df = df[df['distance']<150]
         df = df.sort_values(by='distance')
         
-        
         # 맛집명 검색기능 ======================== ======================== ========================
         if name != "default":
             df = df[df['name'].str.contains(name)]
@@ -243,8 +242,6 @@ class MainFeedGuest(APIView):
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10])
             
-            # 4.결과물 출력
-            df = df.to_dict('records')
 
         # 유저 로그가 있는 경우
         else:            
@@ -339,10 +336,9 @@ class MainFeedGuest(APIView):
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
 
-            # 5. 결과물 출력
-            df = df.to_dict('records')
+        # 결과물 출력
+        df = df.to_dict('records')
             
-        
         # 결과 df 유효성 확인
         if len(df)<1:
              return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df, search_keyword=search_keyword),status=200) #context html로 넘길것        
@@ -470,6 +466,7 @@ class MainFeed(APIView):
         if tag != "default":     
             # tag cond
             df = df[df['vectors'].str.contains(tag)]
+            
         # 태그 검색결과가 없다면?
         if len(df)==0:
             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
@@ -535,9 +532,6 @@ class MainFeed(APIView):
             # 3. vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10])
-            
-            # 4.결과물 출력
-            df = df.to_dict('records')
 
         # 유저 로그가 있는 경우
         else:            
@@ -631,9 +625,8 @@ class MainFeed(APIView):
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
 
-            # 5. 결과물 출력
-            df = df.to_dict('records')
-            
+        # 결과물 출력
+        df = df.to_dict('records')
         
         # 결과 df 유효성 확인
         if len(df)<1:
