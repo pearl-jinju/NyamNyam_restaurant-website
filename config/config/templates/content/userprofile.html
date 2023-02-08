@@ -351,6 +351,7 @@
 
 
 <!-- 바디 영역 -->
+<div id="user_id" style="display:none">{{nowuser.nickname}}</div>
 <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; padding-top:60px;">
     <!-- 프로필 사진 영역 -->
     <div style="padding:20px 25px;">
@@ -368,7 +369,8 @@
     </div>
     <div >
         <div style="display:flex; flex-direction:row; margin-bottom:40px;  margin-top:65px;">
-            <div id="user_id" style="font-size:20px;  font-weight:bold; margin-left:60px;">
+            <div id="user_id"> </div>
+            <div  style="font-size:20px;  font-weight:bold; margin-left:60px;">
                 {{otheruser.nickname}}
             </div>
 
@@ -425,22 +427,22 @@
                 <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
                     <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block; "
                     src="{{feed.img_url}}">
-                        <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        {% comment %} <figcaption class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
-                        </figcaption>
+                        </figcaption> {% endcomment %}
                 </figure>
                     <!--미포함시 -->
                 {% else %}
                 <figure id="feed_{{feed.user_data_seq}}" feed_id="{{feed.user_data_seq}}" class="user_contents feed_{{feed.user_data_seq}}" style="position:relative;">
                     <img  style="width:250px; height:250px; object-fit:cover; margin: 10px 10px 0px 10px; display:block;"
                     src="{% get_media_prefix %}{{feed.img_url}}">
-                        <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
+                        {% comment %} <figcaption  class="feed_data_{{feed.user_data_seq}}" style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:none; flex-direction:row; justify-content:center; top:0.2; left:0; right:0; bottom:0;">
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:red;">favorite</span>{{feed.like_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons" style="color:blue;">thumb_down</span>{{feed.hate_count}}</div>
                             <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
-                        </figcaption>
+                        </figcaption> {% endcomment %}
                 </figure>
                 {% endif %}
                 </div>
@@ -1040,7 +1042,7 @@ $('#run_search').click(function(){
 });
 
 //개인 업로드 데이터 이미지 hover 시 효과
-$(".user_contents").hover(function(event){
+{% comment %} $(".user_contents").hover(function(event){
     //요소에 마우스를 올렸을 때 기능
     let feed_id = event.target.attributes.getNamedItem("feed_id").value;
     let target_name= "feed_data_"+feed_id;
@@ -1051,7 +1053,7 @@ $(".user_contents").hover(function(event){
     //요소에 마우스를 올린뒤 떨어졌을때 기능
     //this == 요소의 글자 색을 block으로 바꿔라    
     $("."+target_name).css('display','none');
-        });
+        }); {% endcomment %}
 
 // 홈버튼 클릭시
 $('#home_icon').click(function () {
