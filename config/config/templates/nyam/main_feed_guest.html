@@ -43,12 +43,44 @@
 </style>
 <body>
 
+<div style="display:flex; flex-direction:row; justify-content:center;">
+    <ins class="kakao_ad_area" style="display:none;"
+    data-ad-unit = "DAN-h4OIk8W3NZnIS9qY"
+    data-ad-width = "320"
+    data-ad-height = "100"></ins>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+</div>
+
+
 <!-- 현재는 view를 통해 출력되지만, (키워드, 거리순)을 입력값으로 하는 함수를 가지고 있는 api를 생성하여 ajax 통신으로 feed data를 가져오도록 설계한다.-->
 <!--feed data 출력시작-->
 {% if search_keyword != "" %}
 <div style="font-weight:bold; background-color:orange; padding:5px 5px 5px 5px; text-align:center; color:white; border-radius:15px; margin-top:5px;">{{search_keyword}} 검색결과</div>
 {% endif %}
 {% for feed in mainfeeds %}
+    <!-- 광고 추가 -->
+    {% if forloop.counter0 == 3%}
+        <div style="display:flex; flex-direction:row; justify-content:center;">
+            <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit = "DAN-5wEvAymztEQvBXlu"
+            data-ad-width = "320"
+            data-ad-height = "100"></ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+        </div>
+    {% endif %}
+
+
+    <!-- 광고 추가 -->
+    {% if forloop.counter0 == 6%}
+        <div style="display:flex; flex-direction:row; justify-content:center;">
+            <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit = "DAN-WS7IR2Z1upEC2GJy"
+            data-ad-width = "320"
+            data-ad-height = "100"></ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+        </div>
+    {% endif %}
+
     <div class="border feed_box" data-wow-delay="3s" id="main_content" style="margin-bottom:40px;">
         <div class="feed_name" style="display:flex; flex-direction:row; text-align:center; justify-content:space-between;">
             <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; align-items:center; margin-left:15px;">
@@ -214,6 +246,15 @@
     -->
 </div>
 {% endfor %}
+
+<!--하단 광고 -->
+<div style="display:flex; flex-direction:row; justify-content:center;">
+    <ins class="kakao_ad_area" style="display:none;"
+    data-ad-unit = "DAN-LTVZ2BYB82HpIiFD"
+    data-ad-width = "300"
+    data-ad-height = "250"></ins>
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+</div>
 </body>
 <script>
 

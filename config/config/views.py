@@ -134,7 +134,7 @@ class MainFeedGuest(APIView):
         # 검색어 적정성 확인 error는 error, correct로 나뉨
         if error =="error":
              return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
-        
+                 
         
         # 데이터 조회 시작
         
