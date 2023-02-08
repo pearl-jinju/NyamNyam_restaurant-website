@@ -108,7 +108,6 @@ class UploadFeed(APIView):
         # 1. image 적합성 테스트(음식 이미지 확인 관련 코드) 
         
         # 2. 주소 유효성 테스트(임시)
-        print(road_address)
         crd = getLocationFromAddress(road_address)
 
         if crd is None:
@@ -225,6 +224,29 @@ class UploadFeed(APIView):
                 )
         
             return Response(status=200)
+
+class DeleteFeed(APIView):
+    def delete(self, request):
+        feed_id = request.data.get('feed_id')
+
+        email = request.session.get('email', None)
+        # 비정상 접근 체크
+        if email is None:
+            return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+        
+        # 현재 session의 이메일에 해당하는 유저 닉네임 확인
+
+        # 삭제 대상 feed data확인
+        delete_target_data = UserData.objects.filter(user_data_seq=feed_id).first()
+        
+        # 만약 현재유저 닉네임 매치되는게 없다면?
+        if not delete_target_data:
+            return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+        
+        delete_target_data.delete()
+
+        return Response(status=200)
+        
         
 class Profile(APIView):
     """_    내 프로필을 볼때
@@ -494,10 +516,6 @@ class UserProfile(APIView):
                                                                     bookmark_sum=bookmark_sum
                                                                     ))
 
-
-
-
-
 class UploadProfile(APIView):
     def post(self, request):
         
@@ -521,6 +539,8 @@ class UploadProfile(APIView):
         user.save()
         
         return Response(status=200)
+
+
 
 # class UploadReply(APIView):
 #     def post(self, request):
