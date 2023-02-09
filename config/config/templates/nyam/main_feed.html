@@ -339,11 +339,17 @@ $(".favorite").click(function (event){
         $("#"+favorite_id).html("favorite_border")
         $("#"+"like_count_"+restaurant_id).html(parseInt(like_count_now)-1)
 
-    }else{
+
+    }else{     
 
         $("#"+favorite_id).html("favorite")
         $("#"+"like_count_"+restaurant_id).html(parseInt(like_count_now)+1)
-        
+        //만약 싫어요 버튼이 활성화 되어있다면?
+        if($("#"+"hate_"+restaurant_id).html()=="thumb_down_alt"){
+            let hate_count_now =  $("#"+"hate_count_"+restaurant_id).html() 
+            $("#"+"hate_"+restaurant_id).html("thumb_down_off_alt")
+            $("#"+"hate_count_"+restaurant_id).html(parseInt(hate_count_now)-1)
+        }
     }
 
     $.ajax({
@@ -386,6 +392,13 @@ $(".hate").click(function (event){
 
         $("#"+hate_id).html("thumb_down_alt")
         $("#"+"hate_count_"+restaurant_id).html(parseInt(hate_count_now)+1)
+        //만약 좋아요 버튼이 활성화 되어있다면?
+        if($("#"+"favorite_"+restaurant_id).html()=="favorite"){
+            let like_count_now =  $("#"+"like_count_"+restaurant_id).html() 
+            $("#"+"favorite_"+restaurant_id).html("favorite_border")
+            $("#"+"like_count_"+restaurant_id).html(parseInt(like_count_now)-1)
+        }
+        
     }
 
     $.ajax({
