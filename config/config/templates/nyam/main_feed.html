@@ -142,10 +142,10 @@
         <div style="display:flex; flex-direction:row; text-align:center; justify-content:center; margin-top:7px;">
             <span id ="favorite_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="favorite material-icons-outlined" style='margin-left:5px; color:red; cursor:pointer; font-size:30px;'>{% if feed.is_like  %}favorite{% else %}favorite_border{% endif%}</span>
             <span style="font-size:12px;">&nbsp</span>
-            <span style="font-size:16px;"><b>{{feed.like}}</b></span>
+            <span style="font-size:16px;"><b id="like_count_{{feed.restaurant_id}}" class="like_count">{{feed.like}}</b></span>
             <span id ="hate_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="hate material-icons"  style='margin-left:15px; color:blue; cursor:pointer; font-size:30px;'>{% if feed.is_hate  %}thumb_down_alt{% else %}thumb_down_off_alt{% endif%}</span>
             <span style="font-size:12px;">&nbsp</span>
-            <span style="font-size:16px;"><b>{{feed.hate}}</b></span>     
+            <span style="font-size:16px;"><b id="hate_count_{{feed.restaurant_id}}" class="hate_count">{{feed.hate}}</b></span>     
             <span style="font-size:12px;">&nbsp</span> 
 
             <div style="font-size:12px; text-decoration:none; color:white; font-size:16px; margin:0px 0px 0px 18px;">
@@ -171,7 +171,7 @@
                     {% endif %}
                 </div>
                 <span id ="bookmark_{{feed.restaurant_id}}" restaurant_id="{{feed.restaurant_id}}" class="bookmark material-icons"  style='color:orange; cursor:pointer; font-size:30px; margin-left:25px;'>{% if feed.is_marked  %}bookmark{% else %}bookmark_border{% endif%}</span>
-                <span style="font-size:16px;"><b>{{feed.bookmark}}</b></span>   
+                <span style="font-size:16px;"><b id="bookmark_count_{{feed.restaurant_id}}" class="bookmark_count">{{feed.bookmark}}</b></span>   
 
 
     </div>
@@ -332,14 +332,18 @@ $(".favorite").click(function (event){
     // 변경할 id 값 위치 확인 및 변경사항 적용
     let favorite_id = event.target.id;
     let favorite_text = $("#"+favorite_id).html()
+    let like_count_now =  $("#"+"like_count_"+restaurant_id).html()    
 
     // 아이콘 토글 기능 구현
     if (favorite_text=="favorite"){
         $("#"+favorite_id).html("favorite_border")
+        $("#"+"like_count_"+restaurant_id).html(parseInt(like_count_now)-1)
 
     }else{
 
         $("#"+favorite_id).html("favorite")
+        $("#"+"like_count_"+restaurant_id).html(parseInt(like_count_now)+1)
+        
     }
 
     $.ajax({
@@ -371,14 +375,17 @@ $(".hate").click(function (event){
     // 변경할 id 값 위치 확인 및 변경사항 적용
     let hate_id = event.target.id;
     let hate_text = $("#"+hate_id).html()
+    let hate_count_now =  $("#"+"hate_count_"+restaurant_id).html() 
 
     // 아이콘 토글 기능 구현
     if (hate_text=="thumb_down_alt"){
         $("#"+hate_id).html("thumb_down_off_alt")
+        $("#"+"hate_count_"+restaurant_id).html(parseInt(hate_count_now)-1)
 
     }else{
 
         $("#"+hate_id).html("thumb_down_alt")
+        $("#"+"hate_count_"+restaurant_id).html(parseInt(hate_count_now)+1)
     }
 
     $.ajax({
@@ -407,18 +414,21 @@ $(".hate").click(function (event){
 $(".bookmark").click(function (event){
     // event.target의 restaurant_id 내부 value를 가져오기
     let restaurant_id = event.target.attributes.getNamedItem("restaurant_id").value;
+    
 
     // 변경할 id 값 위치 확인 및 변경사항 적용
     let bookmark_id = event.target.id;
     let bookmark_text = $("#"+bookmark_id).html()
+    let bookmark_count_now =  $("#"+"bookmark_count_"+restaurant_id).html() 
 
     // 아이콘 토글 기능 구현
     if (bookmark_text=="bookmark"){
         $("#"+bookmark_id).html("bookmark_border")
+        $("#"+"bookmark_count_"+restaurant_id).html(parseInt(bookmark_count_now)-1)
 
     }else{
-
         $("#"+bookmark_id).html("bookmark")
+        $("#"+"bookmark_count_"+restaurant_id).html(parseInt(bookmark_count_now)+1)
     }
 
     $.ajax({
