@@ -449,8 +449,8 @@
                                 <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
                             </figcaption> {% endcomment %}
                             <div style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center;  left:0; right:0; bottom:0;">
-                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit__id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
-                                <a><span id="feed_delete_{{feed.user_data_seq}}" feed_delete__id="{{feed.user_data_seq}}" class="feed_delete material-icons-outlined" style="margin-left:75px; cursor:pointer;">delete</span></a>
+                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit_id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
+                                <a><span id="feed_delete_{{feed.user_data_seq}}" feed_delete_id="{{feed.user_data_seq}}" class="feed_delete material-icons-outlined" style="margin-left:75px; cursor:pointer;">delete</span></a>
                             </div>
                     </figure>
                         <!--미포함시 -->
@@ -464,7 +464,7 @@
                                 <div style="margin-left:15px;"><span class="material-icons-outlined" style="color:orange;">bookmark</span>  {{feed.bookmark_count}}</div>
                             </figcaption> {% endcomment %}
                             <div style="width:250px; margin-left:10px; background: rgba(55,55,55,0.5); color:white; padding:1em; position:absolute;  display:flex; flex-direction:row; justify-content:center;  left:0; right:0; bottom:0;">
-                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit__id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
+                                <a><span id="feed_edit_{{feed.user_data_seq}}" feed_edit_id="{{feed.user_data_seq}}" class="feed_edit material-icons-outlined" style="margin-left:15px; cursor:pointer;">edit</span></a>
                                 <a><span id="feed_delete_{{feed.user_data_seq}}" feed_delete_id="{{feed.user_data_seq}}" class="feed_delete material-icons-outlined" style="margin-left:75px; cursor:pointer;">delete</span></a>
                             </div>
                     </figure>
@@ -627,7 +627,7 @@
             <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
             
                     <button id="button_upload" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:25%; position: relative; left: 35%; bottom:50%; margin-right:40px;">
-                    맛집 사진 업로드
+                    맛집 이미지 업로드 <br>or<br>Drag & Drop
                     </button>
                     <input type="file" id="input_feed_fileupload" onchange="upload();" style="display:none; ">       
             </div>
@@ -677,8 +677,10 @@
 
     </div>
     </div>
-    <!--1번째 modal-->
-    <div id="first_modal" class="modal_overlay">
+
+<!--  수정 업로드 구간  -->
+     <!--1번째 modal-->
+     <div id="first_modal_edit" class="modal_overlay">
         <div class="modal_window">
             <div
                 style="border-bottom:solid 2px gray; display: flex; flex-direction: row; justify-content: space-between;">
@@ -686,54 +688,78 @@
                     &nbsp;
                 </div>
 
-                <div>
+                <div style="margin-left:250px;">
                 <b>새 이미지 업로드</b>
                 </div>
 
                 <div>
-                    <span class="material-icons-outlined"  style="margin-right:250px;">close</span>
+                    <span id="close_modal1_edit" class="material-icons-outlined" style="margin-right:250px;">close</span>
                 </div>
 
-            </div>
-
-            <div class="img_upload_space" style="opacity:75%; background-size: 50%; background-repeat: no-repeat; background-position: center; background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
-
-        </div>
-    </div>
-    <!--2번째 modal-->
-    <div id="second_modal" class="modal_overlay">
-        <div class="modal_window">
-            <div
-                style="display: flex; flex-direction: row; justify-content: space-between;">
-                <div>
-                    &nbsp;
-                </div>
-
-                <div>
-                    <b>새 이미지 업로드</b>
-                </div>
-
-                <div>
-                    <span class="material-icons-outlined"  style="margin-right:250px;">close</span>
-                </div>
-
-            </div>
-            <div style="display:flex; flex-direction:row; margin-top:10px;">
-                <div class="img_upload_space" style=" width:500px; height:540px; "></div>
-                <div style ="border-left: solid 1px gray">
-                <div>
-                    <p style="text-align:center"><b> 리뷰 </b></p>
-                    <textarea class="form-control" style="width:276px; height:400px;"  id="exampleFormControlTextarea1" rows="5"></textarea>
-                    <button type="button" class="btn btn-primary" style="width:100%;">공유하기</button>
-                </div>
-                </div>
 
             </div>
             
 
-        </div>
+            <div class="img_upload_space" style="opacity:75%; background-color:white; background-size: 65%; position:absolute; background-repeat: no-repeat; background-position: center;background-image:url(https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png); width:778px; height:540px; margin-top:10px;"></div>
+                <div style="display:flex; flex-direction:column; justify-content:center;  position:relative;">   
+                    <button id="button_upload_used" type="button" class="label btn btn-secondary" style="font-size:20px; font-weight:bold; width:30%; height:50%; position: relative; left: 35%; bottom:50%; margin:250px 40px 0px 0px; padding:30px; 10px;">
+                    기존 이미지
+                    </button>
+            
+
+                    <button id="button_upload_edit" type="button" class="label btn btn-primary" style="font-size:20px; font-weight:bold; width:30%; height:50%; position: relative; left: 35%; bottom:50%; margin:15px 40px 0px 0px; padding:30px; 10px;">
+                    새로운 이미지
+                    </button>
+                    <input type="file" id="input_feed_fileupload_edit" onchange="upload_edit();" style="display:none; ">   
+                </div>    
+            </div>
     </div>
-</div>
+
+    <!--2번째 modal-->
+    <div id="second_modal_edit" class="modal_overlay">
+    <div class="modal_window">
+        <div
+            style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div>
+                &nbsp;
+            </div>
+
+            <div>
+                <b>새 이미지 업로드</b>
+            </div>
+
+            <div>
+                <span id="close_modal2_edit" class="material-icons-outlined"  style="margin-right:250px;">close</span>
+            </div>
+
+        </div>
+        <div style="display:flex; flex-direction:row; margin-top:10px;">
+            <div class="img_upload_space" style=" width:415px; height:540px; "></div>
+            <div style ="margin-left:20px;" >
+            <div>
+                <p style="text-align:center; color:gray;  margin-bottom:10px;">냠냠에게 새로운 맛집을 알려주세요!</p>
+                <p style="text-align:center;"><b> 맛집명 </b></p>
+                <textarea id ="input_name_edit" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1_edit" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 주소 </b> <br> <span style="color:gray; font-size:13px;">도로명주소로 기입됩니다.</span> </p>
+                <textarea id ="input_address_edit" onclick=loadAddressWindow()  class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1_edit" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 전화번호 </b> <br> <span style="color:gray; font-size:13px;">000-0000-0000 형식으로 작성해주세요.</span> </p>
+                <textarea id ="input_phone_edit" class="form-control" style="position:center; width:385px; height:18px; margin-bottom:10px;"  id="exampleFormControlTextarea1_edit" rows="1"></textarea>
+                
+                <p style="text-align:center; margin:3px 0px 2px 0px;"><b> 한줄평 </b> <br> <span style="color:gray; font-size:13px;"> 부적절한 단어는 입력되지 않습니다.</span> </p>
+                <textarea id ="input_comment_edit" class="form-control" style="position:center; width:385px; height:80px;"  id="exampleFormControlTextarea1_edit" rows="2"></textarea>
+
+                <button id="feed_create_button_edit" type="button" class="btn btn-primary" style="visibility:visible; width:385px; margin-top:5px; text-align:center;">  공유하기</button>
+                <button id="feed_create_wait_button_edit" type="button" class="btn btn-primary" style="visibility:hidden; width:385px; margin-top:5px;"> 업로드 중...</button>
+            </div>
+            </div>
+
+        </div>
+        
+
+    </div>
+    </div>
 
 </body>
 
@@ -777,7 +803,6 @@ $('#button_feed_list').click(function(){
 });
 
 //좋아요 클릭시 함수 
-//게시물 클릭시 함수
 $('#button_feed_like_list').click(function(){
     $('#feed_list').css({
         display:"none",
@@ -879,7 +904,7 @@ $('#button_feed_bookmark_list').click(function(){
 
 
 
-
+// 파일 업로드 modal===========================================================================================
 // 전역변수 설정
 let files; // 파일명
 // + 버튼 modal 띄우기
@@ -1076,6 +1101,334 @@ $('#feed_create_button').click(function () {
         }
     })
 });
+// ============================================================================================================
+
+
+// 수정 업로드 modal===========================================================================================
+// 전역변수 설정
+let files_edit; // 파일명
+// + 버튼 modal 띄우기 조건을 바꿀것
+let feed_id_used
+
+//수정버튼 클릭시 이벤트
+$(".feed_edit").click(function(event){
+    feed_id_used =event.target.attributes.getNamedItem("feed_edit_id").value;
+    const modal_edit = document.getElementById("first_modal_edit");
+    modal_edit.style.top = window.pageYOffset + 'px'; // top을 이용해 시작 y위치를 바꿔줌 
+    modal_edit.style.display = "flex";
+    document.body.style.overflowY = "hidden"; // 스크롤 없애기
+
+    });
+
+// x버튼 modal 닫기 코드 -1단계 닫기
+const buttonCloseModal1_edit = document.getElementById("close_modal1_edit");
+const buttonCloseModal2_edit = document.getElementById("close_modal2_edit");
+const modal1_edit = document.getElementById("first_modal_edit");
+const modal2_edit = document.getElementById("second_modal_edit");
+buttonCloseModal1_edit.addEventListener("click", e => {
+    modal1_edit.style.display = "none";
+    document.body.style.overflowY = "visible";
+    $('.img_upload_space').css({
+        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
+        "opacity":"100%",
+        "outline": "none",
+        "background-size": "65%",
+        "background-repeat" : "no-repeat",
+        "background-position" : "center",
+        "background-color" : "white",
+    });
+});
+//-2단계 닫기
+buttonCloseModal2_edit.addEventListener("click", e => {
+    modal2_edit.style.display ="none";
+    document.body.style.overflowY = "visible";
+    $('.img_upload_space').css({
+        "background-image": "url('https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbb4JR8%2FbtrV1TZMsQe%2FmKzeTh9DDEy3LSON2aYzGk%2Fimg.png')",
+        "opacity":"100%",
+        "outline": "none",
+        "background-size": "65%",
+        "background-repeat" : "no-repeat",
+        "background-position" : "center",
+        "background-color" : "white",
+    });
+});
+$('.img_upload_space')
+    .on("dragover", dragOver_edit)
+    .on("dragleave", dragOver_edit)
+    .on("drop", uploadFiles_edit);
+//console.log(e) e는 마우스 이벤트를 나타냄
+function dragOver_edit(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (e.type == "dragover") {
+        $(e.target).css({"background-color": "black", "outline-offset": "-20px"});
+    } else {
+        $(e.target).css({"background-color": "white", "outline-offset": "-10px"});
+    }
+};
+
+function uploadFiles_edit(e){
+    e.stopPropagation();
+    e.preventDefault();
+
+    e.dataTransfer = e.originalEvent.dataTransfer; //2
+    files_edit = e.target.files || e.dataTransfer.files;
+
+    if (files_edit.length > 1) {
+        alert('파일을 1개씩 올려주십시오');
+        return;
+    }
+
+    if (files_edit[0].type.match(/image.*/)) {
+      <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
+      $('#first_modal_edit').css({
+        display:'none'
+      })
+      
+      $('#second_modal_edit').css({
+        display:'flex',
+        // 현재위치에 띄우기
+        top:window.scrollY+'px',
+      })
+      $('.img_upload_space').css({
+          "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+          "outline": "none",
+          "background-size": "100%",
+          "background-repeat" : "no-repeat",
+          "background-position" : "center",
+        
+      });
+    }else{
+    alert('이미지파일이 아닙니다. 파일형식을 확인해주세요 아닙니다.');
+    return;
+    }
+
+};
+
+
+//파일 수정 업로드 버튼
+$('#button_upload_edit').click(function (){
+    $('#input_feed_fileupload_edit').click();
+    });
+// 신규 이미지 등록
+function upload_edit(){
+
+    files_edit = $('#input_feed_fileupload_edit')[0].files;
+
+    if (files_edit[0].type.match(/image.*/)) {
+        <!--파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다-->
+        $('#first_modal_edit').css({
+        display:'none'
+        })
+        
+        $('#second_modal_edit').css({
+        display:'flex',
+        // 현재위치에 띄우기
+        top:window.scrollY+'px',
+        })
+        $('.img_upload_space').css({
+            "background-image": "url(" + window.URL.createObjectURL(files_edit[0]) + ")",
+            "outline": "none",
+            "background-size": "100%",
+            "background-repeat" : "no-repeat",
+            "background-position" : "center",
+        
+        });
+    }else{
+    alert('이미지파일이 아닙니다. 파일형식을 확인해주세요 아닙니다.');
+    return;
+    }
+};
+
+
+
+       
+// 기존 이미지 수정 버튼 클릭시
+$('#button_upload_used').click(function (){
+
+        //해당하는 피드의 id값을 가져옴
+        console.log(feed_id_used)
+        url = "/content/edit?" +"feed_id="+feed_id_used 
+    
+        //GET메소드로 기존 작성값을 가져온다.
+        $.ajax({
+            url: url,
+            data: {},
+            method: "GET",
+            
+            success: function (data) {
+            //이미지는 변경되지 않으므로 그대로 유지한다.
+            var img_url = data.img_url
+            var name = data.name
+            var road_address = data.road_address
+            var phone_number = data.phone_number
+            var comment = data.comment
+            //GET메소드로 가져온 값을 입력한다.
+            $('#input_name_edit').html(name)
+            $('#input_address_edit').html(road_address)
+            $('#input_phone_edit').html(phone_number)
+            $('#input_comment_edit').html(comment)
+            
+
+            //파일이 업로드 되면 1번째 modal을 감추고 2번째 modal을 표시한다
+            $('#first_modal_edit').css({
+            display:'none'
+            });
+            
+            $('#second_modal_edit').css({
+            display:'flex',
+            // 현재위치에 띄우기
+            top:window.scrollY+'px',
+            });
+            console.log("/media/"+img_url)
+            $('.img_upload_space').css({
+                "outline": "none",
+                "background-size": "100%",
+                "background-repeat" : "no-repeat",
+                "background-position" : "center",
+                });
+            },
+            error: function (data) {
+                alert(data.responseJSON.error);
+            },
+            complete: function () {
+            } 
+        });
+            
+    });
+
+
+
+
+
+
+
+// 공유하기 버튼 클릭시
+$('#feed_create_button_edit').click(function () {
+    
+    $('#feed_create_button_edit').css({
+        visibility:"hidden"
+    })
+    $('#feed_create_wait_button_edit').css({
+        visibility:"visible"
+    })
+    //분기처리 필요
+
+    if (files_edit=== undefined){
+        console.log("이것은 기존이미지")
+        //기존이미지 처리시 img_url 유지
+        let name_edit = $('#input_name_edit').val();
+        let road_address_edit = $('#input_address_edit').val();
+        let phone_number_edit = $('#input_phone_edit').val();
+        let comment_edit = $('#input_comment_edit').val();
+        let user_id_edit = $('#user_id').text(); // 유저 id
+        let fd_edit = new FormData();
+
+        fd_edit.append('user_id', user_id_edit);
+        fd_edit.append('name', name_edit);
+        fd_edit.append('road_address', road_address_edit);
+        fd_edit.append('phone_number', phone_number_edit);
+        fd_edit.append('comment', comment_edit);
+        fd_edit.append('feed_id', feed_id_used);
+        fd_edit.append('edit_type', "original");
+        
+
+        //버튼 바꾸기
+        $('#feed_create_button_edit').css({
+            visibility:"hidden"
+        })
+        $('#feed_create_wait_button_edit').css({
+            visibility:"visible"
+        })
+
+        $.ajax({
+            url: "/content/edit",
+            data: fd_edit,
+            method: "PUT",
+            processData: false,    
+            contentType: false,      
+            cache: false,
+            success: function (data) {
+    
+                alert("성공적으로 PUT 되었습니다.");
+                location.replace('')
+            },
+            error: function (data) {
+                alert(data.responseJSON.error);
+            },
+            complete: function () {
+                //버튼 바꾸기
+                $('#feed_create_button_edit').css({
+                    visibility:"visible"
+                })
+                $('#feed_create_wait_button_edit').css({
+                    visibility:"hidden"
+                })
+                
+            }
+        })
+
+
+    }else{
+        console.log("이것은 신규이미지")
+        let image_edit = files_edit[0].name;
+        let name_edit = $('#input_name_edit').val();
+        let road_address_edit = $('#input_address_edit').val();
+        let phone_number_edit = $('#input_phone_edit').val();
+        let comment_edit = $('#input_comment_edit').val();
+        let user_id_edit = $('#user_id').text(); // 유저 id
+        let fd_edit = new FormData();
+        
+        fd_edit.append('user_id', user_id_edit);
+        fd_edit.append('file', files_edit[0]);
+        fd_edit.append('image', image_edit);
+        fd_edit.append('name', name_edit);
+        fd_edit.append('road_address', road_address_edit);
+        fd_edit.append('phone_number', phone_number_edit);
+        fd_edit.append('comment', comment_edit);
+        fd_edit.append('feed_id', feed_id_used);
+        fd_edit.append('edit_type', "new");
+
+        //버튼 바꾸기
+        $('#feed_create_button_edit').css({
+            visibility:"hidden"
+        })
+        $('#feed_create_wait_button_edit').css({
+            visibility:"visible"
+        })
+
+        $.ajax({
+            url: "/content/edit",
+            data: fd_edit,
+            method: "PUT",
+            processData: false,    
+            contentType: false,      
+            cache: false,
+            success: function (data) {
+    
+                alert("성공적으로 PUT 되었습니다.");
+                location.replace('')
+            },
+            error: function (data) {
+                alert(data.responseJSON.error);
+            },
+            complete: function () {
+                //버튼 바꾸기
+                $('#feed_create_button_edit').css({
+                    visibility:"visible"
+                })
+                $('#feed_create_wait_button_edit').css({
+                    visibility:"hidden"
+                })
+                
+            }
+        })
+    }
+
+
+});
+// ============================================================================================================
+
 
 
 $('#button_profile_upload').click(function (){
@@ -1149,14 +1502,14 @@ $('#home_icon').click(function () {
 //삭제버튼 클릭시 이벤트
 $(".feed_delete").click(function(){
     //해당하는 피드의 id값을 가져옴
-    let feed_id = event.target.attributes.getNamedItem("feed_delete_id").value;
-    console.log(feed_id)
+    let feed_id_delete = event.target.attributes.getNamedItem("feed_delete_id").value;
+    console.log(feed_id_delete)
     if (window.confirm("삭제하면 복구할 수 없습니다. 정말 삭제하시겠습니까?")) {
         if (window.confirm("피드를 삭제합니다.")) {
             $.ajax({
                 url: "/content/delete",
                 data: {
-                    feed_id:feed_id
+                    feed_id:feed_id_delete
                 },
                 method: "DELETE",
                 success: function (data) {
@@ -1173,6 +1526,42 @@ $(".feed_delete").click(function(){
         } 
         } 
         });
+
+//수정버튼 클릭시 이벤트
+$(".feed_edit").click(function(){
+    //해당하는 피드의 id값을 가져옴
+    if (window.confirm("게시물을 수정하시겠습니까?")) {
+        url = "/content/edit?" +"feed_id="+feed_id_used 
+        console.log(url)
+
+        //GET메소드로 기존 작성값을 가져온다.
+        $.ajax({
+            url: url,
+            data: {},
+            method: "GET",
+            success: function (data) {
+            var name = data.name
+            var road_address = data.road_address
+            var phone_number = data.phone_number
+            var comment = data.comment
+            //GET메소드로 가져온 값을 입력한다.
+            $('#input_name_edit').html(name)
+            $('#input_address_edit').html(road_address)
+            $('#input_phone_edit').html(phone_number)
+            $('#input_comment_edit').html(comment)
+
+
+            },
+            error: function (data) {
+                alert("수정 실패메세지");
+            },
+            complete: function () {
+            }
+        })  
+
+    } 
+
+    });
 
 
        

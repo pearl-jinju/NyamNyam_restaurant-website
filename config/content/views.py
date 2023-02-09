@@ -248,7 +248,126 @@ class DeleteFeed(APIView):
 
         return Response(status=200)
         
+class EditFeed(APIView):
+    def put(self, request):
+        email = request.session.get('email', None)
         
+        # 비정상 접근 체크
+        if email is None:
+            return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+        # PUT 데이터의 유형구분
+        edit_type = request.data['edit_type']
+
+        
+        # 기존 이미지 업로드 라면
+        if edit_type=="original":
+            # user_data_seq으로 데이터 탐색
+            user_data_seq = request.data['feed_id']
+            edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
+            # 새로운 입력값 받아오기
+            user_id = request.data['user_id']
+            name = request.data['name']
+            road_address = request.data['road_address']
+            phone_number = request.data['phone_number']
+            comment = request.data['comment']
+            
+            
+            edit_target_data.name = name
+            edit_target_data.road_address = road_address
+            edit_target_data.phone_number = phone_number
+            edit_target_data.comment = comment
+            edit_target_data.save()
+            
+            
+        else:
+            # user_data_seq으로 데이터 탐색
+            user_data_seq = request.data['feed_id']
+            edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
+            # 새로운 입력값 받아오기
+            user_id = request.data['user_id']
+            name = request.data['name']
+            road_address = request.data['road_address']
+            phone_number = request.data['phone_number']
+            comment = request.data['comment']
+            
+            file = request.data['file']
+            
+            uuid_name =uuid4().hex
+            save_path = os.path.join(MEDIA_ROOT, uuid_name)
+            # 파일을 저장하는 코드
+            with open(save_path,"wb+") as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            # 변수명 및 양식 통일 
+            image = [uuid_name]
+        
+            edit_target_data = UserData.objects.filter(user_id=user_id, comment=comment).first()
+            # 데이터 수정
+            edit_target_data.name = name
+            edit_target_data.img_url = image
+            edit_target_data.road_address = road_address
+            edit_target_data.phone_number = phone_number
+            edit_target_data.comment = comment
+            edit_target_data.save()
+        
+        return Response(status=200)
+        
+        
+        
+    def get(self, request):
+        feed_id = request.GET.get('feed_id')
+        
+        email = request.session.get('email', None)
+        
+        # 비정상 접근 체크
+        if email is None:
+            return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+        
+        edit_target_data = UserData.objects.filter(user_data_seq=feed_id).first()
+        name = edit_target_data.name
+        road_address = edit_target_data.road_address
+        phone_number = edit_target_data.phone_number
+        img_url = literal_eval(edit_target_data.img_url)[0]
+        comment = edit_target_data.comment
+        
+        data={
+            "name":name,
+            "road_address":road_address,
+            "phone_number":phone_number,
+            "img_url":img_url,
+            "comment":comment
+        }
+        
+        return Response(status=200, data=data)
+        
+
+        # feed_id = request.data.get('feed_id')
+        
+        # email = request.session.get('email', None)
+        
+        # # 비정상 접근 체크
+        # if email is None:
+        #     return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+        
+        # edit_target_data = UserData.objects.filter(user_data_seq=feed_id).first()
+        # name = edit_target_data.name
+        # road_address = edit_target_data.road_address
+        # phone_number = edit_target_data.phone_number
+        # img_url = edit_target_data.img_url[0]
+        # comment = edit_target_data.comment
+        
+        # data={
+        #     "name":name,
+        #     "road_address":road_address,
+        #     "phone_number":phone_number,
+        #     "img_url":img_url,
+        #     "comment":comment
+        # }
+        
+        # return Response(status=200, data=data)
+ 
+        
+
 class Profile(APIView):
     """_    내 프로필을 볼때
     Args:
