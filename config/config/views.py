@@ -323,6 +323,7 @@ class MainFeedGuest(APIView):
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)
+                #TODO writers의 point순으로 정렬할 것
 
             # 딕셔너리 점수 반영 로직
             
@@ -338,7 +339,7 @@ class MainFeedGuest(APIView):
             
             # 2. writers 추출
             # writers 리스트를 넘겨줌
-            df['writers'] =  df['writers'].apply(lambda x: literal_eval(str(x)))
+            df['writers'] =  df['writers'].apply(lambda x: list(set(literal_eval(x))))
             
             # 3. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
@@ -612,6 +613,7 @@ class MainFeed(APIView):
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)
+                #TODO writers의 point순으로 정렬할 것
 
             # 딕셔너리 점수 반영 로직
             
@@ -627,7 +629,8 @@ class MainFeed(APIView):
             
             # 2. writers 추출
             # writers 리스트를 넘겨줌
-            df['writers'] =  df['writers'].apply(lambda x: literal_eval(str(x)))
+            
+            df['writers'] =  df['writers'].apply(lambda x: list(set(literal_eval(x))))
             
             # 3. 맛집명이 공백이 있을경우, 캐러셀 작동 오류가 있으므로 맛집명의 공백을 _로 변경함
             df['name'] =  df['name'].apply(lambda x: x.replace(" ","_"))
