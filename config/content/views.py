@@ -10,11 +10,16 @@ import pandas as pd
 import random
 from ast import literal_eval
 import os
-from config.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import string
 import re
 from konlpy.tag import Okt
 from collections import Counter
+import googlemaps
+
+# # API키 입력
+mykey = SECRET_API_KEY
+maps = googlemaps.Client(key=mykey)  # my key값 입력
 
 
 # 주소 불러오는 함수
@@ -68,6 +73,27 @@ def getLocationFromAddress(address):
     except:
         return None
     return crd
+
+
+def getLocationFromAddress(address):
+    """쿼리로 입력된 주소를 위도 경도로 반환한다
+    단, 주소 오류의 경우 상태를 출력하고 현재위치를 기준으로 탐색한다.
+
+    Args:
+        address (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    try:
+        # 검색위치
+        geo_location = maps.geocode(address)[0].get('geometry')
+
+    except:
+        return None
+        
+    curr_location = {"latitude": geo_location['location']['lat'], "longitude":  geo_location['location']['lng'], "result":"success"}
+    return curr_location
 
 
     

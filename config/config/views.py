@@ -9,10 +9,16 @@ import pandas as pd
 from ast import literal_eval
 from konlpy.tag import Hannanum, Okt
 import os
-from config.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import re
 from collections import Counter
 from haversine import haversine
+import googlemaps
+
+# # API키 입력
+mykey = SECRET_API_KEY
+maps = googlemaps.Client(key=mykey)  # my key값 입력
+# 
 
 # 주소 불러오는 함수
 from geopy.geocoders import Nominatim
@@ -71,14 +77,15 @@ def getLocationFromAddress(address,now_latitude,now_longitude):
         _type_: _description_
     """
     try:
-        geo = geo_local.geocode(address)
+        # 검색위치
+        geo_location = maps.geocode(address)[0].get('geometry')
+
     except:
         curr_location = {"latitude": now_latitude, "longitude":now_longitude, "result":"fail"}
         return curr_location
         
-    curr_location = {"latitude": geo.latitude, "longitude": geo.longitude, "result":"success"}
+    curr_location = {"latitude": geo_location['location']['lat'], "longitude":  geo_location['location']['lng'], "result":"success"}
     return curr_location
-
 
 
 
