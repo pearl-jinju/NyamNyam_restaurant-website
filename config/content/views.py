@@ -13,7 +13,7 @@ import os
 from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import string
 import re
-from konlpy.tag import Okt
+from konlpy.tag import Hannanum #Hannanum#Okt
 from collections import Counter
 import googlemaps
 
@@ -27,7 +27,7 @@ from geopy.geocoders import Nominatim
 geo_local = Nominatim(user_agent='South Korea')
 
 
-konlp = Okt()
+konlp = Hannanum()
 
 # 불용어 리스트
 file_path = "config/stopwords.txt"

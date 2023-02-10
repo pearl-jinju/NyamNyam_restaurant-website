@@ -7,7 +7,7 @@ from user.models import User
 from uuid import uuid4
 import pandas as pd
 from ast import literal_eval
-from konlpy.tag import Hannanum, Okt
+from konlpy.tag import Hannanum #, Okt
 import os
 from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import re
@@ -25,7 +25,7 @@ from geopy.geocoders import Nominatim
 geo_local = Nominatim(user_agent='South Korea')
 
 
-konlp = Okt()
+konlp = Hannanum()
 
 # 불용어 리스트
 file_path = "config/stopwords.txt"
@@ -127,6 +127,7 @@ class MainFeedGuest(APIView):
         address = request.GET.get('address')
         name = request.GET.get('name')
         error= request.GET.get('error')
+    
         
         # 검색어 체크
         search_keyword = ""
@@ -158,16 +159,16 @@ class MainFeedGuest(APIView):
             curr_longitude = float(longitude)
             result = "sucess"
         
+        
         # DB 내 모든 queryset 호출 
         feed_list = Feed.objects.all()  #select * from content_feed;
-        
-        
+
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
         
         #메모리 간소화
         del feed_list
-        
+
         # 한국 데이터 필터링
         cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
         df = df[cond]
@@ -175,6 +176,7 @@ class MainFeedGuest(APIView):
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
         df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
+        
         
         # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
         # df = df[df['distance']<150]
@@ -197,6 +199,7 @@ class MainFeedGuest(APIView):
         if len(df)==0:
             return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
         # =============================.
+        
 
         # 50개 이내로 추출
         df = df.iloc[:20,:]
@@ -216,6 +219,7 @@ class MainFeedGuest(APIView):
         # 간소화 주소 
         df['road_address_short'] = df['road_address'].apply(lambda x: " ".join(x.split(" ")[:3])) 
 
+
         # DB 조회 후, df 내 value 변경
         for restaurant_id in df['restaurant_id'].values:
             # 좋아요 수 가져오기
@@ -233,7 +237,6 @@ class MainFeedGuest(APIView):
             bookmark_count = Bookmark.objects.filter(restaurant_id=restaurant_id, is_marked=True).count()
             cond = df['restaurant_id']==restaurant_id
             df.loc[cond,'bookmark'] = bookmark_count
-            
 
 
         # 유저로그 분기 =========================================================================
@@ -268,10 +271,8 @@ class MainFeedGuest(APIView):
             
             # 활성유저 리스트 추출
             # 현재 active 상태인지 확인후, active 상태의 유저만 추출
-            user_data = User.objects.filter(is_active="active").values_list("nickname",flat=True)
-            valid_user_list = [str(user_id) for user_id in user_data]
-            #메모리 간소화
-            del user_data
+            valid_user_list = User.objects.filter(is_active="active").values_list("nickname",flat=True)
+
             
             # 데이터 전처리
             user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\s",'',x))
@@ -294,6 +295,7 @@ class MainFeedGuest(APIView):
             
             # 필터링 된 유저 정보를 원본 데이터에 반영
             for idx_user_df in range(len(user_df)):
+
                 # 식당명 추출
                 name = user_df.loc[idx_user_df,'name']
                 cond = df['name']==name
@@ -326,7 +328,7 @@ class MainFeedGuest(APIView):
                 #TODO writers의 point순으로 정렬할 것
 
             # 딕셔너리 점수 반영 로직
-            
+
             
             
             # 현재 위치 저장
@@ -349,6 +351,7 @@ class MainFeedGuest(APIView):
 
         # 결과물 출력
         df = df.to_dict('records')
+        
             
         # 결과 df 유효성 확인
         if len(df)<1:
@@ -558,11 +561,8 @@ class MainFeed(APIView):
             
             # 활성유저 리스트 추출
             # 현재 active 상태인지 확인후, active 상태의 유저만 추출
-            user_data = User.objects.filter(is_active="active").values_list("nickname",flat=True)
-            valid_user_list = [str(user_id) for user_id in user_data]
-            #메모리 간소화
-            del user_data
-            
+            valid_user_list = User.objects.filter(is_active="active").values_list("nickname",flat=True)
+
             # 데이터 전처리
             user_df['user_id'] = user_df['user_id'].apply(lambda x : re.sub(r"\s",'',x))
              
