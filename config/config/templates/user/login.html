@@ -77,10 +77,10 @@ $('#guest').click(function(){
               method: "POST",
               dataTyoe: "json",
               success: function () {
-              location.replace('\\main')
+              location.replace('/main')
               },
-              error: function (request, status, error) {
-                  alert(error);
+              error: function (data) {
+                alert(data.responseJSON.error);
               },
               complete: function () {
                   
