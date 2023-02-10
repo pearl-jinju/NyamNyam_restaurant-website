@@ -462,6 +462,7 @@ class Profile(APIView):
         if len(feed_list)>0:
             # 이미지 리스트형식을 문자열로 변경
             feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            feed_list = feed_list.loc[::-1]
             feed_list = feed_list.to_dict('records')
             
             feed_count = len(feed_list)
@@ -484,7 +485,9 @@ class Profile(APIView):
             like_feed_list =  pd.DataFrame(list(like_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             like_feed_list['img_url'] =  like_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            like_feed_list = like_feed_list.loc[::-1]
             like_feed_list = like_feed_list.to_dict('records')
+            
         # 없다면
         else:
             like_feed_list="empty"
@@ -500,7 +503,9 @@ class Profile(APIView):
             hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            hate_feed_list = hate_feed_list.loc[::-1]
             hate_feed_list = hate_feed_list.to_dict('records')
+            
         # 없다면
         else:
             hate_feed_list="empty"
@@ -514,7 +519,9 @@ class Profile(APIView):
             bookmark_feed_list =  pd.DataFrame(list(bookmark_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             bookmark_feed_list['img_url'] =  bookmark_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            bookmark_feed_list = bookmark_feed_list.loc[::-1]
             bookmark_feed_list = bookmark_feed_list.to_dict('records')
+            
         # 없다면
         else:
             bookmark_feed_list='empty'
@@ -600,6 +607,7 @@ class UserProfile(APIView):
         if  len(feed_list)>0:
             # 이미지 리스트형식을 문자열로 변경
             feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            feed_list = feed_list.loc[::-1]
             feed_list = feed_list.to_dict('records')
 
             feed_count = len(feed_list)
@@ -619,6 +627,7 @@ class UserProfile(APIView):
             like_feed_list =  pd.DataFrame(list(like_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             like_feed_list['img_url'] =  like_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            like_feed_list = like_feed_list.loc[::-1]
             like_feed_list = like_feed_list.to_dict('records')
         # 없다면
         else:
@@ -633,6 +642,7 @@ class UserProfile(APIView):
             hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            hate_feed_list = hate_feed_list.loc[::-1]
             hate_feed_list = hate_feed_list.to_dict('records')
         # 없다면
         else:
@@ -646,6 +656,7 @@ class UserProfile(APIView):
             bookmark_feed_list =  pd.DataFrame(list(bookmark_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             bookmark_feed_list['img_url'] =  bookmark_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+            bookmark_feed_list = bookmark_feed_list.loc[::-1]
             bookmark_feed_list = bookmark_feed_list.to_dict('records')
         else:
             bookmark_feed_list="empty"
