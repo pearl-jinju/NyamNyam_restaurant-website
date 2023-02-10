@@ -1089,6 +1089,7 @@ $('#feed_create_button').click(function () {
 
             alert("성공적으로 업로드 되었습니다.");
             location.replace('')
+            window.location.reload()
         },
         error: function (data) {
             alert(data.responseJSON.error);
@@ -1356,6 +1357,7 @@ $('#feed_create_button_edit').click(function () {
     
                 alert("성공적으로 수정되었습니다.");
                 location.replace('')
+                window.location.reload()
             },
             error: function (data) {
                 alert(data.responseJSON.error);
@@ -1412,6 +1414,7 @@ $('#feed_create_button_edit').click(function () {
     
                 alert("성공적으로 수정되었습니다.");
                 location.replace('')
+                window.location.reload()
             },
             error: function (data) {
                 alert(data.responseJSON.error);
@@ -1456,6 +1459,7 @@ function profile_upload(){
         contentType: false,
         success: function (data) {
         alert("프로필 이미지가 성공적으로 변경되었습니다.");
+        window.location.reload()
         },
         error: function (request, status, error) {
             alert("업로드 오류입니다.");

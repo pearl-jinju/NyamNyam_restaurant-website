@@ -995,6 +995,7 @@ $('#feed_create_button').click(function () {
 
            alert("성공적으로 업로드 되었습니다.");
            location.replace('')
+           window.location.reload()
         },
         error: function (data) {
             alert(data.responseJSON.error);
