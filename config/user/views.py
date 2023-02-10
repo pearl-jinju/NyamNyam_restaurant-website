@@ -63,13 +63,19 @@ class LogIn(APIView):
         # TODO 로그인
         email = request.data.get('email',None)
         password = request.data.get('password',None)
+        pattern = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+        # 이메일 형식 확인
+        if pattern.match(email)!= None:
+            pass
+        else:
+            return JsonResponse({"error": "아이디는 이메일 형식(ex. example@gmail.com)입니다."}, status=400)
         
         user_data = User.objects.filter(email=email).first()   #쿼리셋(리스트)에서 첫번째를 지정하여 값으로
-
+        
+        #유저 정보 확인
         if user_data is None:
             # 해킹 방지를 위한 중의적 메세지 출력
-
-            return JsonResponse({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}, status=400)
+            return JsonResponse({"error": "아이디 또는 비밀번호가 올바르지 않습니다"}, status=400)
         
         if user_data.check_password(password):
             # 로그인 성공, 세션 또는 쿠키에 넣는다
@@ -78,8 +84,7 @@ class LogIn(APIView):
         
         else:
             # 해킹 방지를 위한 중의적 메세지 출력
-
-             return JsonResponse({"error": "이메일 또는 비밀번호가 올바르지 않습니다"}, status=400)         
+             return JsonResponse({"error": "아이디 또는 비밀번호가 올바르지 않습니다"}, status=400)         
         
 class LogOut(APIView):
     def get(self, request):
