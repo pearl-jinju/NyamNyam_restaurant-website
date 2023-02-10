@@ -140,8 +140,7 @@ class MainFeedGuest(APIView):
         
         # 검색어 적정성 확인 error는 error, correct로 나뉨
         if error =="error":
-             return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것
-                 
+             return render(request,'nyam/search_guide.html',status=200) #context html로 넘길것               
         
         # 데이터 조회 시작
         
@@ -221,16 +220,20 @@ class MainFeedGuest(APIView):
         for restaurant_id in df['restaurant_id'].values:
             # 좋아요 수 가져오기
             like_count = Like.objects.filter(restaurant_id=restaurant_id, is_like=True).count()
+            cond = df['restaurant_id']==restaurant_id
             df.loc[cond,'like'] = like_count
             
             # 싫어요 수 가져오기
             hate_count = Hate.objects.filter(restaurant_id=restaurant_id, is_hate=True).count()
+            cond = df['restaurant_id']==restaurant_id
             df.loc[cond,'hate'] = hate_count
             
             # 북마크 가져오기
             # restaurant_id 기준 유저 개인의 북마크 기록 가져오기
             bookmark_count = Bookmark.objects.filter(restaurant_id=restaurant_id, is_marked=True).count()
+            cond = df['restaurant_id']==restaurant_id
             df.loc[cond,'bookmark'] = bookmark_count
+            
 
 
         # 유저로그 분기 =========================================================================
