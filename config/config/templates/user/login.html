@@ -3,7 +3,7 @@
   <head>
     {% comment %} <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> {% endcomment %}
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>냠냠 로그인</title>
 
     <!-- Bootstrap CSS -->
@@ -24,7 +24,7 @@
 
             <div class="form-floating mb-2" style="padding:4px 10px 0px 10px;">
                 <input type="email" class="form-control" id="input_email" style="font-size:14px; height:40px; padding: 4px 15px 0px 15px;" placeholder="name@example.com">
-                <label for="input_email" style="padding:8px 10px 0px 15px;">이메일 주소 입력(로그인 ID)</label>
+                <label for="input_email" style="padding:8px 10px 0px 15px;">아이디(이메일 주소)</label>
             </div>
 
             <div class="form-floating" style="padding:4px 10px 0px 10px;">
@@ -34,14 +34,22 @@
 
 
             <div class="form-floating" style="padding:4px 10px 0px 10px;">
-            <button id="login_button" type="button" style="width:100%; " class="btn btn-primary">로그인</button>
+            <button id="login_button" type="button" style="width:100%; font-weight:bold; " class="btn btn-primary">로그인</button>
             </div>
 
 
         </div >
         
-        <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 80px; margin-top:15px; padding:20px; font-size:14px;'> 계정이 없으신가요? <a  href="join" ><button style="margin-left:10px;"class="btn btn-primary">회원가입</button></a>  </div>
-        <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 50px;  padding:10px; font-size:14px;'> <a style=" cursor: pointer;" id="guest">로그인 없이 접속하기  </a>
+        <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 80px; margin-top:2px; padding:20px; font-size:14px; color:blue;'> 계정이 없으신가요? <a  href="join" ><button style="margin-left:10px; font-weight:bold;"class="btn btn-primary">회원가입</button></a>  </div>
+        <div style=' border: solid 1px rgba(219,219,219,1);  text-align:center;  background-color: white; width: 300px; height: 50px; margin-top:2px; padding:10px; font-size:14px;'> <a style=" cursor: pointer;" id="guest"><b style="color:blue; text-decoration: underline;">로그인 없이 접속하기</b>  </a>
+        <!--하단 광고 -->
+        <div style="display:flex; flex-direction:row; justify-content:center; margin-top:20px;">
+            <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit = "DAN-LTVZ2BYB82HpIiFD"
+            data-ad-width = "300"
+            data-ad-height = "250"></ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+        </div>
     </div>
 
     <script>
