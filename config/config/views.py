@@ -126,7 +126,7 @@ class MainFeedGuest(APIView):
         tag = request.GET.get('tag')
         address = request.GET.get('address')
         name = request.GET.get('name')
-        error= request.GET.get('error')
+        error= request.GET.get('error')      
     
         
         # 검색어 체크
@@ -640,6 +640,7 @@ class MainFeed(APIView):
 
         # 결과물 출력
         df = df.to_dict('records')
+        
         
         # 결과 df 유효성 확인
         if len(df)<1:

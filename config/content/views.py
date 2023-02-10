@@ -262,16 +262,66 @@ class DeleteFeed(APIView):
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
         
         # 현재 session의 이메일에 해당하는 유저 닉네임 확인
+        # 유저의 닉네임 확인 email
+
 
         # 삭제 대상 feed data확인
         delete_target_data = UserData.objects.filter(user_data_seq=feed_id).first()
-        
+
         # 만약 현재유저 닉네임 매치되는게 없다면?
-        if not delete_target_data:
+        if  delete_target_data is None:
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
         
-        delete_target_data.delete()
+        # 같은 식당의 다른 피드데이터 확인
+        other_data_cnt = UserData.objects.filter(restaurant_id = delete_target_data.restaurant_id).count()
+        # 메인데이터 확인
+        main_data = Feed.objects.filter(restaurant_id = delete_target_data.restaurant_id).first()
+        
+        # 만약 여기 쓰여진 식당의 feed가 1개면서, 삭제 해당데이터가 원본이라면?
+        if (other_data_cnt<=1)and(main_data.img_url==delete_target_data.img_url):
+            # userdata 삭제
+            delete_target_data.delete()
+            # 해당 id의 메인 데이터도 삭제
+            main_data.delete()
+            
+        # 만약 여기 쓰여진 식당의 feed가 1개지만 삭제 해당데이터가 원본이 아니라면?
+        elif (other_data_cnt<=1)and(main_data.img_url!=delete_target_data.img_url):
+            # userdata 삭제
+            delete_target_data.delete()
+            
 
+        # 만약 2개 이상이면서, 삭제 해당데이터가 원본이라면?
+        elif (other_data_cnt>1)and(main_data.img_url==delete_target_data.img_url):
+            #  userdata 삭제
+            delete_target_data.delete()
+
+            # 삭제후 메인데이터에 입력할 새로운 데이터 불러오기
+            alt_data = UserData.objects.filter(restaurant_id = delete_target_data.restaurant_id).first()
+
+            # 메인데이터 대체
+            main_data.name  = alt_data.name
+            main_data.img_url = alt_data.img_url
+            main_data.road_address = alt_data.road_address
+            main_data.phone_number = alt_data.phone_number
+            
+            crd = getLocationFromAddress(alt_data.road_address)
+            main_data.latitude = crd['latitude']
+            main_data.longitude = crd['longitude']
+            main_data.comment  = alt_data.comment
+            main_data.restaurant_type  = alt_data.restaurant_type
+            vector_result = toVector(alt_data.comment)
+            main_data.vectors  = vector_result[0]
+            main_data.vectors_dict  = vector_result[1]
+            main_data.save()
+
+        # 만약 2개 이상이면서, 삭제 해당데이터가 아니라면?
+        elif (other_data_cnt>1)and(main_data.img_url!=delete_target_data.img_url):
+            delete_target_data.delete()
+        else:
+            return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
+            
+
+        
         return Response(status=200)
         
 class EditFeed(APIView):
@@ -283,13 +333,22 @@ class EditFeed(APIView):
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
         # PUT 데이터의 유형구분
         edit_type = request.data['edit_type']
+        
+
+
 
         
         # 기존 이미지 업로드 라면
         if edit_type=="original":
             # user_data_seq으로 데이터 탐색
             user_data_seq = request.data['feed_id']
+            # 수정 대상 데이터 확인
             edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
+            # 메인데이터 확인
+            main_data = Feed.objects.filter(restaurant_id = edit_target_data.restaurant_id).first()
+            # 메인데이터 여부확인 조건식
+            cond = main_data.img_url == edit_target_data.img_url
+            
             # 새로운 입력값 받아오기
             user_id = request.data['user_id']
             name = request.data['name']
@@ -297,18 +356,45 @@ class EditFeed(APIView):
             phone_number = request.data['phone_number']
             comment = request.data['comment']
             
-            
-            edit_target_data.name = name
-            edit_target_data.road_address = road_address
-            edit_target_data.phone_number = phone_number
-            edit_target_data.comment = comment
-            edit_target_data.save()
+            # 수정 대상 데이터가 메인데이터라면,
+            if cond:
+                edit_target_data.name = name
+                edit_target_data.road_address = road_address
+                edit_target_data.phone_number = phone_number
+                edit_target_data.comment = comment
+                edit_target_data.save()
+                
+                #메인데이터도 수정할 것
+                main_data.name  = name
+                main_data.road_address = road_address
+                main_data.phone_number = phone_number
+
+                crd = getLocationFromAddress(road_address)
+                main_data.latitude = crd['latitude']
+                main_data.longitude = crd['longitude']
+                main_data.comment  = comment
+                vector_result = toVector(comment)
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+                main_data.save()
+                
+            else:
+                edit_target_data.name = name
+                edit_target_data.road_address = road_address
+                edit_target_data.phone_number = phone_number
+                edit_target_data.comment = comment
+                edit_target_data.save()
             
             
         else:
             # user_data_seq으로 데이터 탐색
             user_data_seq = request.data['feed_id']
+            # 수정 대상 데이터 확인
             edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
+            # 메인데이터 확인
+            main_data = Feed.objects.filter(restaurant_id = edit_target_data.restaurant_id).first()
+            # 메인데이터 여부확인 조건식
+            cond = main_data.img_url == edit_target_data.img_url
             # 새로운 입력값 받아오기
             user_id = request.data['user_id']
             name = request.data['name']
@@ -327,21 +413,44 @@ class EditFeed(APIView):
             # 변수명 및 양식 통일 
             image = [uuid_name]
         
-            edit_target_data = UserData.objects.filter(user_id=user_id, comment=comment).first()
+            edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq, comment=comment).first()
             # 데이터 수정
-            edit_target_data.name = name
-            edit_target_data.img_url = image
-            edit_target_data.road_address = road_address
-            edit_target_data.phone_number = phone_number
-            edit_target_data.comment = comment
-            edit_target_data.save()
+            if cond:
+                edit_target_data.name = name
+                edit_target_data.road_address = road_address
+                edit_target_data.phone_number = phone_number
+                edit_target_data.comment = comment
+                edit_target_data.save()
+                
+                #메인데이터도 수정할 것
+                main_data.name  = name
+                main_data.img_url = road_address
+                main_data.road_address = road_address
+                main_data.phone_number = phone_number
+
+                crd = getLocationFromAddress(road_address)
+                main_data.latitude = crd['latitude']
+                main_data.longitude = crd['longitude']
+                main_data.img_url  = image
+                main_data.comment  = comment
+                vector_result = toVector(comment)
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+                main_data.save()
+            else:
+                edit_target_data.name = name
+                edit_target_data.img_url = image
+                edit_target_data.road_address = road_address
+                edit_target_data.phone_number = phone_number
+                edit_target_data.comment = comment
+                edit_target_data.save()
         
         return Response(status=200)
         
         
         
     def get(self, request):
-        feed_id = request.GET.get('feed_id')
+        user_data_seq = request.GET.get('feed_id')
         
         email = request.session.get('email', None)
         
@@ -349,7 +458,7 @@ class EditFeed(APIView):
         if email is None:
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
         
-        edit_target_data = UserData.objects.filter(user_data_seq=feed_id).first()
+        edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
         name = edit_target_data.name
         road_address = edit_target_data.road_address
         phone_number = edit_target_data.phone_number
