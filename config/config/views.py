@@ -7,7 +7,7 @@ from user.models import User
 from uuid import uuid4
 import pandas as pd
 from ast import literal_eval
-from konlpy.tag import Hannanum #, Okt
+from konlpy.tag import Okt
 import os
 from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import re
@@ -18,25 +18,23 @@ import googlemaps
 # # API키 입력
 mykey = SECRET_API_KEY
 maps = googlemaps.Client(key=mykey)  # my key값 입력
-# 
 
 # 주소 불러오는 함수
 from geopy.geocoders import Nominatim
 geo_local = Nominatim(user_agent='South Korea')
 
-
-konlp = Hannanum()
+konlp = Okt()
 
 # 불용어 리스트
 file_path = "config/stopwords.txt"
 
 with open(file_path, encoding='utf-8') as f:
     stopwords = f.read().splitlines()
-
-
-
+    
+    
 # 위치 옮길것
 def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditions=10):
+    
     """
         빈도순으로 10개의 명사를 추출하는 함수
     """
@@ -44,10 +42,11 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
     new_phrase = re.sub("^[가-힣]", "", phrase)
     new_phrase = re.sub("([ㄱ-ㅎㅏ-ㅣ]+)", "", new_phrase)
     new_phrase = re.sub("([0-9])", "", new_phrase)
-    # 일부 특수문자 제거
-    new_phrase = re.sub("/.", "", new_phrase)
-    new_phrase = re.sub("_", "", new_phrase)
-    new_phrase = re.sub("─", "", new_phrase)
+    # new_phrase = re.sub(" ", "", new_phrase)
+    # # 일부 특수문자 제거
+    # new_phrase = re.sub("/.", "", new_phrase)
+    # new_phrase = re.sub("_", "", new_phrase)
+    # new_phrase = re.sub("─", "", new_phrase)
     # 명사만 추출
     noun_list = konlp.nouns(new_phrase)
    
@@ -57,7 +56,7 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
 
-    # 빈도순 정렬
+    # 리스트 빈도순 정렬
     main_noun_list_count = noun_list_count.most_common(10)
     # 길이가 2자 이상인 명사, 빈도수가 2회 이상인 단어만
     main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>=length_conditions) and (n[1]>=minmum_frequency) and (len(n[0])<=max_length_conditions)][:10]
@@ -160,54 +159,57 @@ class MainFeedGuest(APIView):
             result = "sucess"
         
         
-        # DB 내 모든 queryset 호출 
-        feed_list = Feed.objects.all()  #select * from content_feed;
+        # DB 내 한국 위도경도에 해당하는 데이터만 추출
+        feed_list = Feed.objects.all()  
+        # 한국 데이터 필터링(기존방식)
+        # cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
+        feed_list = Feed.objects.filter(latitude__gte=32,latitude__lte=44,longitude__gte=123,longitude__lte=133)
 
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
         
         #메모리 간소화
         del feed_list
-
-        # 한국 데이터 필터링
-        cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
-        df = df[cond]
         
+         # 맛집명 검색기능 ======================== ======================== ========================
+        if name != "default":
+            df = df[df['name'].str.contains(name)]
+                    # 맛집명 검색결과가 없다면?
+            if len(df)==0:
+                return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+        
+            
+        # 태그명 검색기능 ========================= ======================== ========================
+        if tag != "default":     
+            # tag cond
+            tag_df = df[df['vectors'].str.contains(tag)]
+            tag_search_id_main = list(tag_df['restaurant_id'].values)
+            tag_search_id_user = list(UserData.objects.filter(comment__contains=tag).values_list("restaurant_id",flat=True))
+            tag_search_id_result = tag_search_id_main + tag_search_id_user
+            # 태그 검색결과가 없다면?
+            if len(tag_search_id_result)==0:
+                return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+            # 태그 검색결과가 있다면? 해당 태그가 포함된 df로 출력
+            else:
+                df = df[df['restaurant_id'].isin(tag_search_id_result)]
+
+
+        # =============================
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
         df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
         
-        
-        # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
+        # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
         # df = df[df['distance']<150]
         df = df.sort_values(by='distance')
         
-        # 맛집명 검색기능 ======================== ======================== ========================
-        if name != "default":
-            df = df[df['name'].str.contains(name)]
-        
-        # 맛집명 검색결과가 없다면?
-        if len(df)==0:
-            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
-            
-        
-        # 태그명 검색기능 ========================= ======================== ========================
-        if tag != "default":     
-            # tag cond
-            df = df[df['vectors'].str.contains(tag)]
-        # 태그 검색결과가 없다면?
-        if len(df)==0:
-            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
-        # =============================.
-        
-
-        # 50개 이내로 추출
+        # 20개 이내로 추출
         df = df.iloc[:20,:]
 
-        # 출력된 맛집 id만 출력
+        # 조건에 해당하는 맛집 id만 출력
         feed_restaurant_id_list =  df['restaurant_id'].values
         
-        # 출력된 맛집 id에 해당하는 유저 피드 데이터만 가져오기
+        # 출력된 맛집 id에 해당하는 유저피드 데이터만 가져오기
         user_data_list = UserData.objects.filter(restaurant_id__in=feed_restaurant_id_list)
               
 
@@ -260,6 +262,7 @@ class MainFeedGuest(APIView):
         else:            
             # 필터링 된 유저로그를 데이터프레임으로 변환
             user_df =  pd.DataFrame(list(user_data_list.values())).reset_index(drop=True)
+            # user_id DB데이터 오류 문제 
             user_id_list = [re.sub(r"\s",'',user_id) for user_id in user_data_list.values_list("user_id",flat=True)]
             
             
@@ -282,7 +285,6 @@ class MainFeedGuest(APIView):
             #메모리 간소화
             del valid_user_list
             user_df = user_df[cond]
-            
             
             # 유저 점수테이블과 결합
             user_df = pd.merge(user_df,user_info, how='left', on='user_id')
@@ -315,29 +317,24 @@ class MainFeedGuest(APIView):
                 # vector 변경
                 user_comment = user_df.loc[idx_user_df,'comment']
                 
-                new_comment =  df.loc[cond,'comment'].values[0] +" " + user_comment
-                new_vectors = list(toVector(new_comment)[0])
-                df.loc[cond,'vectors'] = str(new_vectors)
-                #메모리 간소화
-                del new_comment
-                del new_vectors
+                df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
                 
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)
                 #TODO writers의 point순으로 정렬할 것
+                
+            # 변경된 comment를 한번에 벡터로 변환
+            df['vectors'] = df['comment'].apply(lambda x: str(list(toVector(x)[0])))
 
-            # 딕셔너리 점수 반영 로직
+            # 딕셔너리 점수 반영 로직======
 
-            
-            
             # 현재 위치 저장
             df['curr_place'] = str(latitude) +"," + str(longitude)
   
             # 1. img_url 추출
             # 캐러셀로 구현을 위해 이미지 리스트를 넘겨줌
             df['img_url'] =  df['img_url'].apply(lambda x: " ".join(literal_eval(str(x))).split(" "))
-            
             
             # 2. writers 추출
             # writers 리스트를 넘겨줌
@@ -348,6 +345,8 @@ class MainFeedGuest(APIView):
             # 4. vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
+            
+
 
         # 결과물 출력
         df = df.to_dict('records')
@@ -444,53 +443,53 @@ class MainFeed(APIView):
             curr_latitude = float(latitude)
             curr_longitude = float(longitude)
             result = "sucess"
-        
-        # DB 내 모든 queryset 호출 
-        feed_list = Feed.objects.all()  #select * from content_feed;
-        
-        
+                # DB 내 한국 위도경도에 해당하는 데이터만 추출
+        feed_list = Feed.objects.all()  
+        # 한국 데이터 필터링(기존방식)
+        # cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
+        feed_list = Feed.objects.filter(latitude__gte=32,latitude__lte=44,longitude__gte=123,longitude__lte=133)
+
         #데이터프레임으로 변환
         df =  pd.DataFrame(list(feed_list.values()))
         
         #메모리 간소화
         del feed_list
         
-        # 한국 데이터 필터링
-        cond = ((df['latitude'] >= 32)&(44 >= df['latitude'])) | ((df['longitude']>=123) & (133 >= df['longitude']))
-        df = df[cond]
-        
-        # 현재 위치기준 거리별 정렬 
-        df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
-        df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
-        
-        # # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
-        # df = df[df['distance']<150]
-        df = df.sort_values(by='distance')
-        
-        
         # 맛집명 검색기능 ======================== ======================== ========================
         if name != "default":
             df = df[df['name'].str.contains(name)]
-        
-        # 맛집명 검색결과가 없다면?
-        if len(df)==0:
-            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
-            
+            # 맛집명 검색결과가 없다면?
+            if len(df)==0:
+                return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
         
         # 태그명 검색기능 ========================= ======================== ========================
         if tag != "default":     
             # tag cond
-            df = df[df['vectors'].str.contains(tag)]
-            
-        # 태그 검색결과가 없다면?
-        if len(df)==0:
-            return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
-        # =============================.
+            tag_df = df[df['vectors'].str.contains(tag)]
+            tag_search_id_main = list(tag_df['restaurant_id'].values)
+            tag_search_id_user = list(UserData.objects.filter(comment__contains=tag).values_list("restaurant_id",flat=True))
+            tag_search_id_result = tag_search_id_main + tag_search_id_user
+            # 태그 검색결과가 없다면?
+            if len(tag_search_id_result)==0:
+                return render(request,'nyam/empty_feed.html',context=dict(mainfeeds=df),status=200) #context html로 넘길것
+            # 태그 검색결과가 있다면? 해당 태그가 포함된 df로 출력
+            else:
+                df = df[df['restaurant_id'].isin(tag_search_id_result)]
 
-        # 50개 이내로 추출
+                
+        # =============================
+        # 현재 위치기준 거리별 정렬 
+        df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
+        df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
+        
+        # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
+        # df = df[df['distance']<150]
+        df = df.sort_values(by='distance')
+        
+        # 20개 이내로 추출
         df = df.iloc[:20,:]
 
-        # 출력된 맛집 id만 출력
+        # 조건에 해당하는 맛집 id만 출력
         feed_restaurant_id_list =  df['restaurant_id'].values
         
         # 출력된 맛집 id에 해당하는 유저 피드 데이터만 가져오기
@@ -604,22 +603,18 @@ class MainFeed(APIView):
                 # vector 변경
                 user_comment = user_df.loc[idx_user_df,'comment']
                 
-                new_comment =  df.loc[cond,'comment'].values[0] +" " + user_comment
-                new_vectors = list(toVector(new_comment)[0])
-                df.loc[cond,'vectors'] = str(new_vectors)
-                #메모리 간소화
-                del new_comment
-                del new_vectors
+                df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
                 
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)
                 #TODO writers의 point순으로 정렬할 것
 
-            # 딕셔너리 점수 반영 로직
-            
-            
-            
+            # 변경된 comment를 한번에 벡터로 변환
+            df['vectors'] = df['comment'].apply(lambda x: str(list(toVector(x)[0])))
+
+            # 딕셔너리 점수 반영 로직======
+          
             # 현재 위치 저장
             df['curr_place'] = str(latitude) +"," + str(longitude)
   
@@ -638,6 +633,8 @@ class MainFeed(APIView):
             # 4. vector 전처리
             df['vectors_1row'] =  df['vectors'].apply(lambda x: literal_eval(x)[:5])
             df['vectors_2row'] =  df['vectors'].apply(lambda x: literal_eval(x)[5:10]) 
+            
+
 
         # 결과물 출력
         df = df.to_dict('records')

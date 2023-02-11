@@ -13,7 +13,7 @@ import os
 from config.settings import MEDIA_ROOT, SECRET_API_KEY
 import string
 import re
-from konlpy.tag import Hannanum #Hannanum#Okt
+from konlpy.tag import  Okt
 from collections import Counter
 import googlemaps
 
@@ -27,7 +27,7 @@ from geopy.geocoders import Nominatim
 geo_local = Nominatim(user_agent='South Korea')
 
 
-konlp = Hannanum()
+konlp = Okt()
 
 # 불용어 리스트
 file_path = "config/stopwords.txt"
@@ -37,6 +37,7 @@ with open(file_path, encoding='utf-8') as f:
 
 # 위치 옮길것
 def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditions=10):
+    
     """
         빈도순으로 10개의 명사를 추출하는 함수
     """
@@ -44,10 +45,11 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
     new_phrase = re.sub("^[가-힣]", "", phrase)
     new_phrase = re.sub("([ㄱ-ㅎㅏ-ㅣ]+)", "", new_phrase)
     new_phrase = re.sub("([0-9])", "", new_phrase)
-    # 일부 특수문자 제거
-    new_phrase = re.sub("/.", "", new_phrase)
-    new_phrase = re.sub("_", "", new_phrase)
-    new_phrase = re.sub("─", "", new_phrase)
+    # new_phrase = re.sub(" ", "", new_phrase)
+    # # 일부 특수문자 제거
+    # new_phrase = re.sub("/.", "", new_phrase)
+    # new_phrase = re.sub("_", "", new_phrase)
+    # new_phrase = re.sub("─", "", new_phrase)
     # 명사만 추출
     noun_list = konlp.nouns(new_phrase)
    
@@ -57,7 +59,7 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
 
-    # 빈도순 정렬
+    # 리스트 빈도순 정렬
     main_noun_list_count = noun_list_count.most_common(10)
     # 길이가 2자 이상인 명사, 빈도수가 2회 이상인 단어만
     main_noun_list_count = [n[0] for n in main_noun_list_count if (len(n[0])>=length_conditions) and (n[1]>=minmum_frequency) and (len(n[0])<=max_length_conditions)][:10]
@@ -65,6 +67,7 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
     # # 명사 빈도수 딕셔너리 
     noun_dict_count = dict(noun_list_count)
     return [main_noun_list_count,noun_dict_count]
+
 
 def getLocationFromAddress(address):
     try:
@@ -318,7 +321,7 @@ class DeleteFeed(APIView):
             main_data.vectors  = vector_result[0]
             main_data.vectors_dict  = vector_result[1]
             main_data.save()
-                        # 해당 유저의 좋아요 싫어요 기록 삭제
+            # 해당 유저의 좋아요 싫어요 기록 삭제
             Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
@@ -326,7 +329,7 @@ class DeleteFeed(APIView):
         # 만약 2개 이상이면서, 삭제 해당데이터가 원본이 아니라면?
         elif (other_data_cnt>1)and(main_data.img_url!=delete_target_data.img_url):
             delete_target_data.delete()
-                        # 해당 유저의 좋아요 싫어요 기록 삭제
+            # 해당 유저의 좋아요 싫어요 기록 삭제
             Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
