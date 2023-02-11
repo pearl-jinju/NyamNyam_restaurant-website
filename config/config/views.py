@@ -192,9 +192,17 @@ class MainFeedGuest(APIView):
             # 태그 검색결과가 있다면? 해당 태그가 포함된 df로 출력
             else:
                 df = df[df['restaurant_id'].isin(tag_search_id_result)]
-
-
         # =============================
+        
+        # 검색 값이 없다면 너무 많은 조건이 기본으로 출력된다. 
+        # 기본 출력시 데이터를 현재 위치 기준으로 줄이자
+        if (name=="default")and(tag=="default")and(address=="default"):
+            latitude_radius= 0.4
+            longitude_radius= 0.4
+            cond = (curr_latitude-latitude_radius<=df['latitude']) & (df['latitude']<=curr_latitude+latitude_radius) & (curr_longitude-longitude_radius<=df['longitude']) & (df['longitude']<=curr_longitude+longitude_radius)
+            df = df[cond]
+
+
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
         df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
@@ -202,7 +210,7 @@ class MainFeedGuest(APIView):
         # 주변거리 기준 필터링(15km 이내) 거리 필터는 우선 꺼두자
         # df = df[df['distance']<150]
         df = df.sort_values(by='distance')
-        
+
         # 20개 이내로 추출
         df = df.iloc[:20,:]
 
@@ -294,7 +302,7 @@ class MainFeedGuest(APIView):
             
             # 작성자 리스트 초기화
             df['writers'] = "[]"
-            
+           
             # 필터링 된 유저 정보를 원본 데이터에 반영
             for idx_user_df in range(len(user_df)):
 
@@ -325,8 +333,11 @@ class MainFeedGuest(APIView):
                 #TODO writers의 point순으로 정렬할 것
                 
             # 변경된 comment를 한번에 벡터로 변환
+            import time
+            a = time.time()
             df['vectors'] = df['comment'].apply(lambda x: str(list(toVector(x)[0])))
-
+            b = time.time()
+            print(b-a,"++++++++++++++++++++++++++++++++")
             # 딕셔너리 점수 반영 로직======
 
             # 현재 위치 저장
@@ -350,7 +361,7 @@ class MainFeedGuest(APIView):
 
         # 결과물 출력
         df = df.to_dict('records')
-        
+ 
             
         # 결과 df 유효성 확인
         if len(df)<1:
@@ -475,9 +486,16 @@ class MainFeed(APIView):
             # 태그 검색결과가 있다면? 해당 태그가 포함된 df로 출력
             else:
                 df = df[df['restaurant_id'].isin(tag_search_id_result)]
-
-                
         # =============================
+
+        # 검색 값이 없다면 너무 많은 조건이 기본으로 출력된다. 
+        # 기본 출력시 데이터를 현재 위치 기준으로 줄이자
+        if (name=="default")and(tag=="default")and(address=="default"):
+            latitude_radius= 0.4
+            longitude_radius= 0.4
+            cond = (curr_latitude-latitude_radius<=df['latitude']) & (df['latitude']<=curr_latitude+latitude_radius) & (curr_longitude-longitude_radius<=df['longitude']) & (df['longitude']<=curr_longitude+longitude_radius)
+            df = df[cond]
+
         # 현재 위치기준 거리별 정렬 
         df['distance'] = df.apply(lambda x: int(haversine((curr_latitude, curr_longitude),(float(x['latitude']), float(x['longitude'])), unit='m')),axis=1 ) 
         df['distance'] = df['distance'].apply(lambda x: float(round((x)/1000,1)))
