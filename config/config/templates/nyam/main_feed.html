@@ -250,7 +250,6 @@ $(".tagSearch").click(function (event){
         let latitude_name =  position.coords.latitude;
         let longitude_name =  position.coords.longitude;
         let url_name = "/mainfeed?" + "latitude="+latitude_name+"&"+"longitude="+longitude_name+"&"+"tag="+tag+"&"+"address=default"+"&"+"name=default"+"&"+"error=correct"
-        console.log(url_name)
     
         $.ajax({
             url: url_name,
@@ -296,7 +295,6 @@ $(".addressSearch").click(function (event){
         let latitude_address =  position.coords.latitude;
         let longitude_address =  position.coords.longitude;
         let url_address = "/mainfeed?" + "latitude="+latitude_address+"&"+"longitude="+longitude_address+"&"+"tag=default"+"&"+"address="+address+"&"+"name=default"+"&"+"error=correct"
-        console.log(url_address)
     
         $.ajax({
             url: url_address,
