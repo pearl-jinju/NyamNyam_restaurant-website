@@ -283,13 +283,18 @@ class DeleteFeed(APIView):
             delete_target_data.delete()
             # 해당 id의 메인 데이터도 삭제
             main_data.delete()
-            
+             # 해당 유저의 좋아요 싫어요 기록 삭제
+            Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
         # 만약 여기 쓰여진 식당의 feed가 1개지만 삭제 해당데이터가 원본이 아니라면?
         elif (other_data_cnt<=1)and(main_data.img_url!=delete_target_data.img_url):
             # userdata 삭제
             delete_target_data.delete()
-            
-
+            # 해당 유저의 좋아요 싫어요 기록 삭제
+            Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
         # 만약 2개 이상이면서, 삭제 해당데이터가 원본이라면?
         elif (other_data_cnt>1)and(main_data.img_url==delete_target_data.img_url):
             #  userdata 삭제
@@ -313,10 +318,18 @@ class DeleteFeed(APIView):
             main_data.vectors  = vector_result[0]
             main_data.vectors_dict  = vector_result[1]
             main_data.save()
-
-        # 만약 2개 이상이면서, 삭제 해당데이터가 아니라면?
+                        # 해당 유저의 좋아요 싫어요 기록 삭제
+            Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            
+        # 만약 2개 이상이면서, 삭제 해당데이터가 원본이 아니라면?
         elif (other_data_cnt>1)and(main_data.img_url!=delete_target_data.img_url):
             delete_target_data.delete()
+                        # 해당 유저의 좋아요 싫어요 기록 삭제
+            Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
+            Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
         else:
             return JsonResponse({"error": "비정상적 접근입니다."}, status=400)
             
@@ -335,9 +348,6 @@ class EditFeed(APIView):
         edit_type = request.data['edit_type']
         
 
-
-
-        
         # 기존 이미지 업로드 라면
         if edit_type=="original":
             # user_data_seq으로 데이터 탐색
@@ -747,7 +757,7 @@ class UserProfile(APIView):
         # 싫어요 목록이 있다면
         if len(hate_list)>0:
             hate_feed_list = Feed.objects.filter(restaurant_id__in=hate_list)
-                    
+
             hate_feed_list =  pd.DataFrame(list(hate_feed_list.values())).reset_index(drop=True)
             # 이미지 리스트형식을 문자열로 변경
             hate_feed_list['img_url'] =  hate_feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])

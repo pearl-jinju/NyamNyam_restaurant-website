@@ -406,6 +406,7 @@ class MainFeed(APIView):
             search_keyword = tag
         if name!= "default":
             search_keyword = name
+        
 
         
         # 검색어 적정성 확인 error는 error, correct로 나뉨
