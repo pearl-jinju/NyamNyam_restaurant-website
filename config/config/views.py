@@ -52,7 +52,7 @@ def toVector(phrase, minmum_frequency=1, length_conditions=2, max_length_conditi
    
     # 불용어/불건전한 단어 제거
     noun_list = [word for word in noun_list if not word in stopwords]
-    
+
     # 명사 빈도수 
     noun_list_count = Counter(noun_list)
 
@@ -325,7 +325,11 @@ class MainFeedGuest(APIView):
                 # vector 변경
                 user_comment = user_df.loc[idx_user_df,'comment']
                 
-                df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
+                # 메인데이터와 같은지 확인
+                if df.loc[cond,'comment'].values[0]==user_comment:
+                    pass
+                else:                    
+                    df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
                 
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
@@ -333,11 +337,8 @@ class MainFeedGuest(APIView):
                 #TODO writers의 point순으로 정렬할 것
                 
             # 변경된 comment를 한번에 벡터로 변환
-            import time
-            a = time.time()
             df['vectors'] = df['comment'].apply(lambda x: str(list(toVector(x)[0])))
-            b = time.time()
-            print(b-a,"++++++++++++++++++++++++++++++++")
+
             # 딕셔너리 점수 반영 로직======
 
             # 현재 위치 저장
@@ -401,6 +402,7 @@ class Main(APIView):
 class MainFeed(APIView):
     def get(self, request): 
         # 쿼리 받아오기
+    
         latitude = request.GET.get('latitude')
         longitude = request.GET.get('longitude')
         tag = request.GET.get('tag')
@@ -416,7 +418,7 @@ class MainFeed(APIView):
             search_keyword = tag
         if name!= "default":
             search_keyword = name
-        
+            
 
         
         # 검색어 적정성 확인 error는 error, correct로 나뉨
@@ -621,8 +623,12 @@ class MainFeed(APIView):
                 # vector 변경
                 user_comment = user_df.loc[idx_user_df,'comment']
                 
-                df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
-                
+                # 메인데이터와 같은지 확인
+                if df.loc[cond,'comment'].values[0]==user_comment:
+                    pass
+                else:                    
+                    df.loc[cond,'comment'] =  [df.loc[cond,'comment'].values[0] +" " + user_comment]
+                    
                 # 작성자 이름 반영                
                 writer_list = list(user_df[user_df['name']==name]['user_id'].values)
                 df.loc[cond,'writers'] = str(writer_list)

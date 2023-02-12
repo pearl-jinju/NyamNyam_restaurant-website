@@ -170,6 +170,9 @@ class UploadFeed(APIView):
             restaurant_id =  db_data.restaurant_id
             restaurant_type = "-"
             
+            latitude = crd['latitude']
+            longitude = crd['longitude']
+            
             # 유저 DB에 입력하기
             UserData.objects.create(
                 restaurant_id = restaurant_id,
@@ -177,10 +180,26 @@ class UploadFeed(APIView):
                 name=name,
                 road_address=road_address,
                 phone_number=phone_number,
+                latitude = latitude,
+                longitude = longitude,
                 img_url=[image],
                 comment=comment,
                 restaurant_type=restaurant_type,
                 )
+            
+            # 원본 DB수정
+            # comment_list 불러오기 추가
+            db_comment_list =  literal_eval(str(db_data.comment_list))
+            db_comment_list.append(str(comment))
+            #원본데이터 수정
+            # comment_list 추가
+            db_data.comment_list = db_comment_list
+            # vectors/vectors_dict변경 추가
+            vevtorizing =  toVector(" ".join(db_data.comment_list))
+            db_data.vectors =vevtorizing[0]
+            db_data.vectors_dict =vevtorizing[1]
+            db_data.save()
+            
             return Response(status=200)
             
         # 기존에 파일이 없는 경우(신규 등록)
@@ -238,6 +257,7 @@ class UploadFeed(APIView):
                 vectors_dict = new_vectors_dict,
                 like=like,
                 hate=hate,
+                comment_list = [new_comment]
                 # vectors_dict=
                 )
             # 유저 DB에 입력하기
@@ -247,6 +267,8 @@ class UploadFeed(APIView):
                 name=new_name,
                 road_address=new_road_address,
                 phone_number=new_phone_number,
+                latitude=latitude,
+                longitude=longitude,
                 img_url=img_url_list,
                 comment=new_comment,
                 restaurant_type=restaurant_type,
@@ -280,7 +302,7 @@ class DeleteFeed(APIView):
         # 메인데이터 확인
         main_data = Feed.objects.filter(restaurant_id = delete_target_data.restaurant_id).first()
         
-        # 만약 여기 쓰여진 식당의 feed가 1개면서, 삭제 해당데이터가 원본이라면?
+        # 만약 여기 쓰여진 식당의 feed가 1개면서, 삭제 해당데이터가 main이라면?
         if (other_data_cnt<=1)and(main_data.img_url==delete_target_data.img_url):
             # userdata 삭제
             delete_target_data.delete()
@@ -290,7 +312,7 @@ class DeleteFeed(APIView):
             Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Bookmark.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
-        # 만약 여기 쓰여진 식당의 feed가 1개지만 삭제 해당데이터가 원본이 아니라면?
+        # 만약 여기 쓰여진 식당의 feed가 1개지만 삭제 해당데이터가 main이 아니라면? # 관리자 업로드 피드
         elif (other_data_cnt<=1)and(main_data.img_url!=delete_target_data.img_url):
             # userdata 삭제
             delete_target_data.delete()
@@ -301,25 +323,38 @@ class DeleteFeed(APIView):
         # 만약 2개 이상이면서, 삭제 해당데이터가 원본이라면?
         elif (other_data_cnt>1)and(main_data.img_url==delete_target_data.img_url):
             #  userdata 삭제
+            # vector에 영향주는 comment를 변수로 저장
+            remove_comment = delete_target_data.comment
+            
+            # 지울건 지우자
             delete_target_data.delete()
 
             # 삭제후 메인데이터에 입력할 새로운 데이터 불러오기
             alt_data = UserData.objects.filter(restaurant_id = delete_target_data.restaurant_id).first()
 
-            # 메인데이터 대체
+            # 메인데이터를 대체 데이터로 기록
             main_data.name  = alt_data.name
             main_data.img_url = alt_data.img_url
             main_data.road_address = alt_data.road_address
             main_data.phone_number = alt_data.phone_number
-            
             crd = getLocationFromAddress(alt_data.road_address)
             main_data.latitude = crd['latitude']
             main_data.longitude = crd['longitude']
+            main_data_comment_list = literal_eval(str(main_data.comment_list))
+            main_data_comment_list.remove(remove_comment)
+            main_data.comment_list =  main_data_comment_list
             main_data.comment  = alt_data.comment
+            
             main_data.restaurant_type  = alt_data.restaurant_type
-            vector_result = toVector(alt_data.comment)
-            main_data.vectors  = vector_result[0]
-            main_data.vectors_dict  = vector_result[1]
+            if len(literal_eval(str(main_data.comment_list)))>0:
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))    
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+            else:
+                main_data.vectors  = []
+                main_data.vectors_dict  = {}
+                
+                
             main_data.save()
             # 해당 유저의 좋아요 싫어요 기록 삭제
             Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
@@ -328,7 +363,22 @@ class DeleteFeed(APIView):
             
         # 만약 2개 이상이면서, 삭제 해당데이터가 원본이 아니라면?
         elif (other_data_cnt>1)and(main_data.img_url!=delete_target_data.img_url):
+            remove_comment = delete_target_data.comment
             delete_target_data.delete()
+            main_data_comment_list = literal_eval(str(main_data.comment_list))
+            main_data_comment_list.remove(remove_comment)
+            main_data.comment_list = main_data_comment_list
+            main_data.comment  = alt_data.comment
+            
+            main_data.restaurant_type  = alt_data.restaurant_type
+            if len(literal_eval(str(main_data.comment_list))) > 0:
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))    
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+            else:
+                main_data.vectors  = []
+                main_data.vectors_dict  = {}          
+
             # 해당 유저의 좋아요 싫어요 기록 삭제
             Like.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
             Hate.objects.filter(restaurant_id=main_data.restaurant_id, email=email).all().delete()
@@ -357,6 +407,9 @@ class EditFeed(APIView):
             user_data_seq = request.data['feed_id']
             # 수정 대상 데이터 확인
             edit_target_data = UserData.objects.filter(user_data_seq=user_data_seq).first()
+            
+            # 수정 전 comment 
+            original_comment = edit_target_data.comment
             # 메인데이터 확인
             main_data = Feed.objects.filter(restaurant_id = edit_target_data.restaurant_id).first()
             # 메인데이터 여부확인 조건식
@@ -386,7 +439,12 @@ class EditFeed(APIView):
                 main_data.latitude = crd['latitude']
                 main_data.longitude = crd['longitude']
                 main_data.comment  = comment
-                vector_result = toVector(comment)
+                #메인 comment_list 수정할것
+                main_data_comment_list = literal_eval(str(main_data.comment_list))
+                main_data_comment_list.remove(original_comment)
+                main_data_comment_list.append(comment)
+                main_data.comment_list = main_data_comment_list
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))
                 main_data.vectors  = vector_result[0]
                 main_data.vectors_dict  = vector_result[1]
                 main_data.save()
@@ -398,7 +456,15 @@ class EditFeed(APIView):
                 edit_target_data.comment = comment
                 edit_target_data.save()
             
-            
+                #메인 comment_list 수정할것
+                main_data_comment_list = literal_eval(str(main_data.comment_list))
+                main_data_comment_list.remove(original_comment)
+                main_data_comment_list.append(comment)
+                main_data.comment_list = main_data_comment_list
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+                main_data.save()
         else:
             # user_data_seq으로 데이터 탐색
             user_data_seq = request.data['feed_id']
@@ -446,17 +512,31 @@ class EditFeed(APIView):
                 main_data.longitude = crd['longitude']
                 main_data.img_url  = image
                 main_data.comment  = comment
-                vector_result = toVector(comment)
+                #메인 comment_list 수정할것
+                main_data_comment_list = literal_eval(str(main_data.comment_list))
+                main_data_comment_list.remove(original_comment)
+                main_data_comment_list.append(comment)
+                main_data.comment_list = main_data_comment_list
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))
                 main_data.vectors  = vector_result[0]
                 main_data.vectors_dict  = vector_result[1]
                 main_data.save()
             else:
                 edit_target_data.name = name
-                edit_target_data.img_url = image
                 edit_target_data.road_address = road_address
                 edit_target_data.phone_number = phone_number
                 edit_target_data.comment = comment
                 edit_target_data.save()
+            
+                #메인 comment_list 수정할것
+                main_data_comment_list =literal_eval(str(main_data.comment_list))
+                main_data_comment_list.remove(original_comment)
+                main_data_comment_list.append(comment)
+                main_data.comment_list = main_data_comment_list
+                vector_result = toVector(" ".join(literal_eval(str(main_data.comment_list))))
+                main_data.vectors  = vector_result[0]
+                main_data.vectors_dict  = vector_result[1]
+                main_data.save()
         
         return Response(status=200)
         
@@ -524,8 +604,7 @@ class Profile(APIView):
     def get(self, request):
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
-        email = request.session.get('email', None)
-        
+        email = request.session.get('email', None)        
         # 내 프로필에 접근하는 경우인지 확인해야함
         # 세션정보가 없는경우
         if email is None:
@@ -538,59 +617,69 @@ class Profile(APIView):
         if user is None:
             return render(request,"user/login.html") #context html로 넘길것 
         
-
-        # 사용자 ID 기준으로 작성 및 업로드한 피드 리스트 호출 (최종형태 df)
+        # 해당사용자 ID 기준으로 작성 및 업로드한 피드 리스트 호출 (최종형태 df)
         user_data =  UserData.objects.all()
-         
-        feed_list =  pd.DataFrame(list(user_data.values())).reset_index(drop=True)
-        # user_id filter 적용이 안됨.. df 변환 및 데이터 전처리 후 df 필터링
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\r",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\n",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
+        if user_data is None:
+            user_data = pd.DataFrame()
         
-        cond = feed_list['user_id']==user.nickname
-        feed_list = feed_list[cond]
-        
-        # 결과 피드 리스트가 있다면,
-        if len(feed_list['restaurant_id'].values)>0:
+        if len(user_data)>0:
             
-            feed_list_restaurant_ids= feed_list['restaurant_id'].values
-        
-            for feed_list_restaurant_id in feed_list_restaurant_ids:
-                like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-                hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-                bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-                cond = feed_list['restaurant_id']==feed_list_restaurant_id
-                feed_list.loc[cond,'like_count'] = like_count
-                feed_list.loc[cond,'hate_count'] = hate_count
-                feed_list.loc[cond,'bookmark_count'] = bookmark_count
-        else:
-            # 없다면, 0으로
-            feed_list['like_count'] = 0
-            feed_list['hate_count'] = 0
-            feed_list['bookmark_count'] = 0
-        
+            feed_list =  pd.DataFrame(list(user_data.values())).reset_index(drop=True)
+            # user_id filter 적용이 안됨.. df 변환 및 데이터 전처리 후 df 필터링
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\r",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\n",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
+            
+            cond = feed_list['user_id']==user.nickname
+            feed_list = feed_list[cond]
+            
+            # 결과 피드 리스트가 있다면,
+            if len(feed_list['restaurant_id'].values)>0:
                 
-        # 왜 값을 넣을 때  int()가 안먹히는 걸까
-        feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
-        like_sum = feed_list['like_count'].sum()
-        feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
-        hate_sum = feed_list['hate_count'].sum()
-        feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
-        bookmark_sum = feed_list['bookmark_count'].sum()
-
-        # 결과 피드가 있다면
-        if len(feed_list)>0:
-            # 이미지 리스트형식을 문자열로 변경
-            feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-            feed_list = feed_list.loc[::-1]
-            feed_list = feed_list.to_dict('records')
+                feed_list_restaurant_ids= feed_list['restaurant_id'].values
             
-            feed_count = len(feed_list)
+                for feed_list_restaurant_id in feed_list_restaurant_ids:
+                    like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                    hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                    bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                    cond = feed_list['restaurant_id']==feed_list_restaurant_id
+                    feed_list.loc[cond,'like_count'] = like_count
+                    feed_list.loc[cond,'hate_count'] = hate_count
+                    feed_list.loc[cond,'bookmark_count'] = bookmark_count
+            else:
+                # 없다면, 0으로
+                feed_list['like_count'] = 0
+                feed_list['hate_count'] = 0
+                feed_list['bookmark_count'] = 0
+            
+                    
+            # 왜 값을 넣을 때  int()가 안먹히는 걸까
+            feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
+            like_sum = feed_list['like_count'].sum()
+            feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
+            hate_sum = feed_list['hate_count'].sum()
+            feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
+            bookmark_sum = feed_list['bookmark_count'].sum()
+
+            # 결과 피드가 있다면
+            if len(feed_list)>0:
+                # 이미지 리스트형식을 문자열로 변경
+                feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+                feed_list = feed_list.loc[::-1]
+                feed_list = feed_list.to_dict('records')
+                
+                feed_count = len(feed_list)
+            else:
+                feed_list = "empty"
+                feed_count = 0
         else:
             feed_list = "empty"
             feed_count = 0
+            like_sum = 0
+            hate_sum = 0
+            bookmark_sum = 0
+            
             
 
         
@@ -666,9 +755,7 @@ class UserProfile(APIView):
         APIView (_type_): _description_
     """
     def get(self, request):
-        
-
-        
+             
         # 세션 정보 받아오기
         #  로그인 관련 정보 출력
         email = request.session.get('email', None)
@@ -693,50 +780,61 @@ class UserProfile(APIView):
         
         # 사용자 ID 기준으로 작성 및 업로드한 피드 리스트 호출 (최종형태 df)
         user_data =  UserData.objects.all()
+        if user_data is None:
+            user_data = pd.DataFrame()
          
-        feed_list =  pd.DataFrame(list(user_data.values())).reset_index(drop=True)
-        # user_id filter 적용이 안됨.. df 변환 및 데이터 전처리 후 df 필터링
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\r",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\n",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
-        feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
-
-        
-        # 결과 피드 리스트
-        feed_list = feed_list[feed_list['user_id']==username.nickname]
-        
-        feed_list_restaurant_ids = feed_list['restaurant_id'].values
-        
-        for feed_list_restaurant_id in feed_list_restaurant_ids:
-            like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
-            cond = feed_list['restaurant_id']==feed_list_restaurant_id
-            feed_list.loc[cond,'like_count'] = like_count
-            feed_list.loc[cond,'hate_count'] = hate_count
-            feed_list.loc[cond,'bookmark_count'] = bookmark_count
+        if len(user_data)>0:
                 
-        # 왜 값을 넣을 때  int()가 안먹히는 걸까
-        feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
-        like_sum = feed_list['like_count'].sum()
-        feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
-        hate_sum = feed_list['hate_count'].sum()
-        feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
-        bookmark_sum = feed_list['bookmark_count'].sum()
-        
-        
-        # 결과 피드가 있다면
-        if  len(feed_list)>0:
-            # 이미지 리스트형식을 문자열로 변경
-            feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
-            feed_list = feed_list.loc[::-1]
-            feed_list = feed_list.to_dict('records')
+            feed_list =  pd.DataFrame(list(user_data.values())).reset_index(drop=True)
+            # user_id filter 적용이 안됨.. df 변환 및 데이터 전처리 후 df 필터링
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\r",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(r"\n",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : re.sub(" ",'',x))
+            feed_list['user_id'] = feed_list['user_id'].apply(lambda x : str(x))
 
-            feed_count = len(feed_list)
-        #없다면
+            # 결과 피드 리스트
+            cond = feed_list['user_id']==username.nickname
+            feed_list = feed_list[cond]
+            
+            feed_list_restaurant_ids = feed_list['restaurant_id'].values
+            
+            for feed_list_restaurant_id in feed_list_restaurant_ids:
+                like_count = Like.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                hate_count = Hate.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                bookmark_count = Bookmark.objects.filter(restaurant_id=feed_list_restaurant_id).count()
+                cond = feed_list['restaurant_id']==feed_list_restaurant_id
+                feed_list.loc[cond,'like_count'] = like_count
+                feed_list.loc[cond,'hate_count'] = hate_count
+                feed_list.loc[cond,'bookmark_count'] = bookmark_count
+                    
+            # 왜 값을 넣을 때  int()가 안먹히는 걸까
+            feed_list['like_count'] = feed_list['like_count'].apply(lambda x: int(x))
+            like_sum = feed_list['like_count'].sum()
+            feed_list['hate_count'] = feed_list['hate_count'].apply(lambda x: int(x))
+            hate_sum = feed_list['hate_count'].sum()
+            feed_list['bookmark_count'] = feed_list['bookmark_count'].apply(lambda x: int(x))
+            bookmark_sum = feed_list['bookmark_count'].sum()
+            
+            
+            # 결과 피드가 있다면
+            if  len(feed_list)>0:
+                # 이미지 리스트형식을 문자열로 변경
+                feed_list['img_url'] =  feed_list['img_url'].apply(lambda x: literal_eval(str(x))[0])
+                feed_list = feed_list.loc[::-1]
+                feed_list = feed_list.to_dict('records')
+
+                feed_count = len(feed_list)
+            #없다면
+            else:
+                feed_list="empty"
+                feed_count = 0
         else:
-            feed_list="empty"
+            feed_list = "empty"
             feed_count = 0
+            like_sum = 0
+            hate_sum = 0
+            bookmark_sum = 0
+            
 
         #(최종형태 Queryset)
          
