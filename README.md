@@ -56,6 +56,7 @@ URL:  https://nyamnyam.shop/
 > - 2023.02.10 좋아요/싫어요 기능 구현 완료
 > - 2023.02.09 Kakao adfit 적용
 > - 2023.02.10 구글 geolocation API 적용
+> - 2023.02.13 user action log 수집 기능 구현(검색, 버튼 클릭 
 
 
 # 3. 발견된 문제점 및 해결 상황
