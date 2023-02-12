@@ -389,6 +389,25 @@ $('#run_search').click(function(){
     if (serch_keyword==""){
         alert("검색어를 입력해주세요!")
     }else{
+        // 검색로그 전송
+        var user_name_guest = $('#user_id').text(); 
+        //slicing 전 serch_keyword 를 보냄
+        var fd_log_guest = new FormData();
+        fd_log_guest.append('user_id', user_name_guest);
+        fd_log_guest.append('search_keyword', serch_keyword);
+        fd_log_guest.append('search_route', "search_box");
+        $.ajax({
+            url: "/logs/searchlog",
+            data: fd_log_guest,
+            method: "POST",
+            processData: false,
+            contentType: false,
+            success: function (data) {},
+            error: function (data) {},
+            complete: function () {
+                console.log("성공")
+            }
+        });
     
         //!맛집명 / #태그 / @주소
         let search_tag = serch_keyword.slice(0,1)

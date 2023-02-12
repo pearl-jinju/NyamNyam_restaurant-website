@@ -29,6 +29,7 @@ urlpatterns = [
     path('mainfeed/', MainFeed.as_view()),
     path('content/', include('content.urls')),  # api 경로 정의 , 실행할 앱 선택
     path('user/', include('user.urls')),
+    path('logs/', include('logs.urls')),
     path('main/join', Join.as_view()),
     path('main/login', LogIn.as_view()),
     ]
